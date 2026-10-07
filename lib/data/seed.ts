@@ -1,0 +1,252 @@
+import type {
+  Announcement, AppNotification, Conversation, Customer, FollowUp, Invoice, Offer, Order, OrderStatus, Payment, Product, User, Visit, ActivityItem,
+} from '@/types/domain';
+import { PRODUCTS } from './catalog';
+import { buildOrderTotals } from '@/lib/domain/pricing';
+
+export interface MockDb {
+  version: number;
+  users: User[];
+  customers: Customer[];
+  products: Product[];
+  orders: Order[];
+  invoices: Invoice[];
+  payments: Payment[];
+  announcements: Announcement[];
+  offers: Offer[];
+  conversations: Conversation[];
+  notifications: AppNotification[];
+  followUps: FollowUp[];
+  visits: Visit[];
+  activity: ActivityItem[];
+  seq: { order: number; invoice: number };
+}
+
+// deterministic PRNG so the demo looks the same for everyone
+function rng(seed: number) {
+  return () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
+}
+
+const DAY = 86400000;
+const ago = (days: number, hours = 0) => new Date(Date.now() - days * DAY - hours * 3600000).toISOString();
+const ahead = (days: number) => new Date(Date.now() + days * DAY).toISOString();
+
+const addr = (line1: string, city: string, state: string, postalCode: string) => ({ line1, city, state, postalCode, country: 'India' });
+
+export function createSeed(): MockDb {
+  const r = rng(42);
+  const pick = <T,>(a: T[]) => a[Math.floor(r() * a.length)];
+
+  const reps: User[] = [
+    { id: 'usr_rep_1', name: 'Ravi Kumar', email: 'ravi.kumar@nexusb2b.in', phone: '+91 98480 11223', role: 'sales', status: 'active', title: 'Senior Sales Representative', region: 'Andhra Pradesh & Telangana', monthlyTarget: 1800000, createdAt: ago(700), lastLoginAt: ago(0, 1) },
+    { id: 'usr_rep_2', name: 'Priya Sharma', email: 'priya.sharma@nexusb2b.in', phone: '+91 98201 44556', role: 'sales', status: 'active', title: 'Sales Representative', region: 'Maharashtra & Gujarat', monthlyTarget: 1500000, createdAt: ago(420), lastLoginAt: ago(0, 3) },
+    { id: 'usr_rep_3', name: 'Arjun Reddy', email: 'arjun.reddy@nexusb2b.in', phone: '+91 99001 77889', role: 'sales', status: 'active', title: 'Sales Representative', region: 'Karnataka', monthlyTarget: 1200000, createdAt: ago(300), lastLoginAt: ago(1) },
+    { id: 'usr_rep_4', name: 'Meera Nair', email: 'meera.nair@nexusb2b.in', phone: '+91 94440 22331', role: 'sales', status: 'active', title: 'Sales Representative', region: 'Tamil Nadu', monthlyTarget: 1300000, createdAt: ago(250), lastLoginAt: ago(0, 6) },
+  ];
+
+  const C = (id: number, code: string, name: string, contactName: string, email: string, phone: string, a: ReturnType<typeof addr>, rep: number, tier: 'A' | 'B' | 'C', creditLimit: number, status: Customer['status'] = 'active'): Customer => ({
+    id: `cus_${String(id).padStart(3, '0')}`, code, name, contactName, email, phone, gstin: `${36 + (id % 4)}AAB${code.slice(-3)}C1Z${id % 9}`,
+    address: a, billingAddress: a, status, salesRepId: reps[rep].id, priceTier: tier, tierDiscountPct: tier === 'A' ? 12 : tier === 'B' ? 7 : 3,
+    contractPrices: {}, creditLimit, outstanding: 0, paymentTerms: tier === 'A' ? 'Net 45' : 'Net 30', since: ago(200 + id * 60),
+  });
+
+  const customers: Customer[] = [
+    C(1, 'BP-HYD-0001', 'ABC Distributors', 'Venkat Rao', 'accounts@abcdistributors.in', '+91 40 2754 1100', addr('Plot 14, IDA Balanagar', 'Hyderabad', 'Telangana', '500037'), 0, 'A', 2500000),
+    C(2, 'BP-VJA-0002', 'Sri Lakshmi Traders', 'Lakshmi Prasad', 'srilakshmi.traders@gmail.com', '+91 866 247 3390', addr('12-4-56, Governorpet', 'Vijayawada', 'Andhra Pradesh', '520002'), 0, 'B', 900000),
+    C(3, 'BP-MAA-0003', 'Metro Industrial Supplies', 'Karthik Subramanian', 'purchase@metroindustrial.co.in', '+91 44 2625 8800', addr('No. 45, SIDCO Industrial Estate, Guindy', 'Chennai', 'Tamil Nadu', '600032'), 3, 'A', 3000000),
+    C(4, 'BP-BOM-0004', 'National Wholesale', 'Rajesh Mehta', 'orders@nationalwholesale.in', '+91 22 2850 6611', addr('Gala 7, Andheri Kurla Road', 'Mumbai', 'Maharashtra', '400059'), 1, 'A', 4000000),
+    C(5, 'BP-PNQ-0005', 'Deccan Engineering Stores', 'Sanjay Kulkarni', 'deccan.eng@outlook.com', '+91 20 2712 4455', addr('S. No. 112, Bhosari MIDC', 'Pune', 'Maharashtra', '411026'), 1, 'B', 1200000),
+    C(6, 'BP-VTZ-0006', 'Krishna Hardware & Tools', 'Murali Krishna', 'krishnahardware.vzg@gmail.com', '+91 891 256 7781', addr('D.No. 9-1-22, Gajuwaka', 'Visakhapatnam', 'Andhra Pradesh', '530026'), 0, 'C', 500000),
+    C(7, 'BP-BLR-0007', 'Bharat Machinery Mart', 'Anil Gowda', 'procurement@bharatmachinery.in', '+91 80 2839 3300', addr('No. 88, Peenya 2nd Stage', 'Bengaluru', 'Karnataka', '560058'), 2, 'B', 1500000),
+    C(8, 'BP-RJY-0008', 'Godavari Agro Equipments', 'Satyanarayana Murthy', 'godavariagro@yahoo.co.in', '+91 883 246 1290', addr('Main Road, Danavaipeta', 'Rajahmundry', 'Andhra Pradesh', '533103'), 0, 'C', 400000, 'on_hold'),
+    C(9, 'BP-CJB-0009', 'Pioneer Electricals', 'Senthil Kumar', 'pioneer.elec@pioneercbe.com', '+91 422 257 9900', addr('23, Avinashi Road, Peelamedu', 'Coimbatore', 'Tamil Nadu', '641004'), 3, 'B', 1100000),
+    C(10, 'BP-AMD-0010', 'Royal Fasteners Co.', 'Hitesh Patel', 'sales@royalfasteners.in', '+91 79 2589 4412', addr('Shed 31, GIDC Vatva', 'Ahmedabad', 'Gujarat', '382445'), 1, 'B', 1000000),
+    C(11, 'BP-NAG-0011', 'Sunrise Pumps & Motors', 'Prakash Deshmukh', 'sunrisepumps@gmail.com', '+91 712 223 6678', addr('Plot B-12, Hingna MIDC', 'Nagpur', 'Maharashtra', '440016'), 1, 'C', 600000),
+    C(12, 'BP-GNT-0012', 'Venkateswara Industrial Corp', 'Srinivas Chowdary', 'vic.guntur@gmail.com', '+91 863 223 4410', addr('Auto Nagar, Phase 2', 'Guntur', 'Andhra Pradesh', '522001'), 0, 'B', 800000, 'inactive'),
+    C(13, 'BP-MYS-0013', 'Cauvery Tools & Spares', 'Ramesh Hegde', 'cauverytools@gmail.com', '+91 821 241 7765', addr('Hebbal Industrial Area', 'Mysuru', 'Karnataka', '570016'), 2, 'C', 450000),
+    C(14, 'BP-MDU-0014', 'Meenakshi Engineering Works', 'Balaji Pandian', 'mew.madurai@gmail.com', '+91 452 253 8812', addr('K. Pudur Industrial Estate', 'Madurai', 'Tamil Nadu', '625007'), 3, 'C', 500000),
+  ];
+  // negotiated contract prices for key accounts
+  customers[0].contractPrices = { prd_001: 158, prd_015: 205, prd_019: 1010, prd_023: 2140 };
+  customers[2].contractPrices = { prd_006: 1240, prd_011: 11200, prd_027: 25900 };
+  customers[3].contractPrices = { prd_016: 112, prd_017: 66, prd_028: 4890 };
+
+  const customerUsers: User[] = customers.map((c, i) => ({
+    id: `usr_cus_${i + 1}`, name: c.contactName, email: c.email, phone: c.phone, role: 'customer', status: c.status === 'inactive' ? 'inactive' : 'active',
+    title: `Purchase Head, ${c.name}`, customerId: c.id, createdAt: c.since, lastLoginAt: ago(i % 5, i),
+  }));
+
+  const users: User[] = [
+    { id: 'usr_admin_1', name: 'Anita Desai', email: 'admin@nexusb2b.in', phone: '+91 98450 00001', role: 'admin', status: 'active', title: 'Platform Administrator', createdAt: ago(900), lastLoginAt: ago(0, 0) },
+    { id: 'usr_mgr_1', name: 'Suresh Iyer', email: 'manager@nexusb2b.in', phone: '+91 98450 00002', role: 'manager', status: 'active', title: 'Regional Sales Manager – South & West', createdAt: ago(800), lastLoginAt: ago(0, 2) },
+    { id: 'usr_mgr_2', name: 'Kavita Joshi', email: 'kavita.joshi@nexusb2b.in', phone: '+91 98450 00003', role: 'manager', status: 'active', title: 'Operations Manager', createdAt: ago(500), lastLoginAt: ago(2) },
+    ...reps,
+    { id: 'usr_rep_5', name: 'Imran Shaikh', email: 'imran.shaikh@nexusb2b.in', phone: '+91 97300 66778', role: 'sales', status: 'pending', title: 'Sales Representative (Trainee)', region: 'Maharashtra', monthlyTarget: 600000, createdAt: ago(2) },
+    ...customerUsers,
+    { id: 'usr_cus_p1', name: 'Naveen Babu', email: 'naveen@tirupatisteel.in', phone: '+91 877 228 1200', role: 'customer', status: 'pending', title: 'Owner, Tirupati Steel Agencies (new signup)', createdAt: ago(1) },
+    { id: 'usr_cus_p2', name: 'Farhan Qureshi', email: 'farhan@qureshibrothers.com', phone: '+91 40 2456 9981', role: 'customer', status: 'pending', title: 'Director, Qureshi Brothers (new signup)', createdAt: ago(0, 5) },
+  ];
+
+  // ---------- orders ----------
+  const orders: Order[] = [];
+  const invoices: Invoice[] = [];
+  let seqOrder = 4100;
+  let seqInv = 2210;
+  const activeCustomers = customers.filter((c) => c.status !== 'inactive');
+  for (let i = 0; i < 96; i++) {
+    const cust = i < 14 ? activeCustomers[i % activeCustomers.length] : pick(activeCustomers);
+    const age = i < 10 ? r() * 1.2 : Math.floor(r() * 120) + (r() > 0.5 ? 0 : 1);
+    const nLines = 1 + Math.floor(r() * 4);
+    const prods = new Set<Product>();
+    while (prods.size < nLines) prods.add(pick(PRODUCTS));
+    const lines = [...prods].map((p) => ({ product: p, quantity: p.moq * (1 + Math.floor(r() * 4)) }));
+    let status: OrderStatus;
+    if (age < 1.3) status = r() > 0.45 ? 'pending_approval' : 'confirmed';
+    else if (age < 4) status = pick(['confirmed', 'processing', 'packed', 'pending_approval'] as OrderStatus[]);
+    else if (age < 9) status = pick(['packed', 'dispatched', 'dispatched'] as OrderStatus[]);
+    else status = r() > 0.92 ? 'cancelled' : 'delivered';
+    const date = ago(age, Math.floor(r() * 8));
+    const rep = reps.find((u) => u.id === cust.salesRepId)!;
+    const byRep = r() > 0.45;
+    const createdBy = byRep ? { id: rep.id, name: rep.name, role: 'sales' as const } : { id: customerUsers.find((u) => u.customerId === cust.id)!.id, name: cust.contactName, role: 'customer' as const };
+    const totals = buildOrderTotals(lines, cust, []);
+    const flow: OrderStatus[] = ['pending_approval', 'confirmed', 'processing', 'packed', 'dispatched', 'delivered'];
+    const idx = flow.indexOf(status);
+    const timeline = (status === 'cancelled' ? ['pending_approval', 'cancelled'] : flow.slice(0, idx + 1)).map((s, k) => ({
+      status: s as OrderStatus, at: new Date(new Date(date).getTime() + k * DAY * 0.9 + (k ? 3600000 : 0)).toISOString(),
+      by: k === 0 ? createdBy.name : s === 'confirmed' ? 'Suresh Iyer' : 'Warehouse – Hyderabad DC',
+      note: s === 'confirmed' ? 'Approved and posted to Sage X3' : s === 'dispatched' ? `LR No. VRL${4400000 + i * 37} via VRL Logistics` : undefined,
+    }));
+    const id = `ord_${seqOrder}`;
+    const o: Order = {
+      id, number: `SO-26-${String(seqOrder++).padStart(5, '0')}`, customerId: cust.id, customerName: cust.name, salesRepId: rep.id, createdBy,
+      source: byRep ? 'sales_app' : 'portal', date, expectedDelivery: new Date(new Date(date).getTime() + (4 + Math.floor(r() * 4)) * DAY).toISOString(),
+      status, ...totals, poNumber: r() > 0.4 ? `PO/${cust.code.slice(3, 6)}/${2600 + i}` : undefined, deliveryAddress: cust.address, billingAddress: cust.billingAddress,
+      timeline, comments: [], erpRef: idx >= 1 ? `SOH${260000 + i * 13}` : undefined,
+    };
+    if (['dispatched', 'delivered'].includes(status)) {
+      const invDate = timeline.find((t) => t.status === 'dispatched')!.at;
+      const due = new Date(new Date(invDate).getTime() + (cust.priceTier === 'A' ? 45 : 30) * DAY).toISOString();
+      const overdue = new Date(due).getTime() < Date.now();
+      const paidFull = age > 50 ? r() > 0.15 : age > 25 ? r() > 0.55 : r() > 0.85;
+      const partial = !paidFull && r() > 0.7;
+      const inv: Invoice = {
+        id: `inv_${seqInv}`, number: `INV-26-${String(seqInv++).padStart(5, '0')}`, orderId: o.id, orderNumber: o.number, customerId: cust.id, date: invDate, dueDate: due,
+        amount: o.total, paid: paidFull ? o.total : partial ? Math.round(o.total * 0.4) : 0,
+        status: paidFull ? 'paid' : overdue ? 'overdue' : partial ? 'partially_paid' : 'unpaid',
+      };
+      invoices.push(inv);
+      o.invoiceId = inv.id;
+    }
+    orders.push(o);
+  }
+  orders.sort((a, b) => b.date.localeCompare(a.date));
+
+  // derive customer balances from invoices
+  for (const c of customers) {
+    c.outstanding = invoices.filter((i) => i.customerId === c.id).reduce((s, i) => s + (i.amount - i.paid), 0);
+    const last = orders.find((o) => o.customerId === c.id && o.status !== 'cancelled');
+    c.lastOrderDate = last?.date;
+    c.lastOrderAmount = last?.total;
+  }
+
+  const payments: Payment[] = invoices.filter((i) => i.paid > 0).map((i, k) => ({
+    id: `pay_${k + 1}`, customerId: i.customerId, date: new Date(new Date(i.date).getTime() + (10 + (k % 20)) * DAY).toISOString(), amount: i.paid,
+    method: (['NEFT', 'RTGS', 'Cheque', 'UPI'] as const)[k % 4], reference: `UTR${88120000 + k * 917}`, invoiceNumbers: [i.number],
+  })).filter((p) => new Date(p.date).getTime() < Date.now());
+
+  const announcements: Announcement[] = [
+    { id: 'ann_1', title: 'Diwali dispatch schedule 2026', body: 'Our Hyderabad and Chennai distribution centres will operate on reduced hours from 18–22 October. Orders confirmed before 16 October will be dispatched before the holidays. Please plan your stock requirements accordingly.', category: 'notice', audience: ['all'], status: 'published', publishAt: ago(1), createdBy: 'Suresh Iyer', pinned: true },
+    { id: 'ann_2', title: 'New SKF bearing range now in stock', body: 'We have added 120+ new SKF Explorer series bearings to the catalog with customer-specific pricing. Contact your sales representative for bulk quotations.', category: 'product', audience: ['customer', 'sales'], status: 'published', publishAt: ago(4), createdBy: 'Anita Desai' },
+    { id: 'ann_3', title: 'Online ordering portal – faster approvals', body: 'Orders up to ₹2,00,000 from Tier A customers are now approved within 2 business hours. Track every status change in real time from the Orders screen.', category: 'company', audience: ['all'], status: 'published', publishAt: ago(9), createdBy: 'Anita Desai' },
+    { id: 'ann_4', title: 'Revised price list effective 1 November', body: 'Copper-based electrical products will see a 4–6% revision due to raw material costs. Contract prices remain protected until their expiry date.', category: 'notice', audience: ['customer', 'sales', 'manager'], status: 'scheduled', publishAt: ahead(5), createdBy: 'Suresh Iyer' },
+    { id: 'ann_5', title: 'Q3 sales review meeting', body: 'All sales representatives: quarterly review on Friday 10:00 AM at the Hyderabad office and on Teams. Please update your follow-ups before the meeting.', category: 'company', audience: ['sales', 'manager'], status: 'published', publishAt: ago(2), createdBy: 'Suresh Iyer' },
+    { id: 'ann_6', title: 'Safety week campaign (draft)', body: 'Draft content for National Safety Week PPE campaign.', category: 'product', audience: ['customer'], status: 'draft', publishAt: ahead(20), createdBy: 'Anita Desai' },
+  ];
+
+  const offers: Offer[] = [
+    { id: 'off_1', code: 'PPE-SAFETY10', title: 'Safety Week: 10% off PPE', description: 'Extra 10% on helmets, vests, gloves and safety shoes on orders placed this month.', productIds: ['prd_015', 'prd_016', 'prd_017', 'prd_018'], discountPct: 10, validFrom: ago(5), validTo: ahead(20), status: 'active', audience: 'all' },
+    { id: 'off_2', code: 'BRG-SKF8', title: 'SKF Bearings – 8% festive offer', description: 'Additional 8% discount on SKF deep groove ball bearings.', productIds: ['prd_001', 'prd_002'], discountPct: 8, validFrom: ago(3), validTo: ahead(12), status: 'active', audience: 'all' },
+    { id: 'off_3', code: 'LUBE-DRUM5', title: 'Bulk lubricants – 5% off drums', description: '5% off on 210 L hydraulic oil drums and gear oil pails for Tier A accounts.', productIds: ['prd_027', 'prd_029'], discountPct: 5, validFrom: ago(10), validTo: ahead(30), status: 'active', audience: 'tier_A' },
+    { id: 'off_4', code: 'TOOLS-NOV', title: 'Power tools November launch', description: 'Introductory pricing on DeWalt and Makita cordless range.', productIds: ['prd_011', 'prd_013'], discountPct: 6, validFrom: ahead(10), validTo: ahead(40), status: 'scheduled', audience: 'all' },
+    { id: 'off_5', code: 'MONSOON-VLV', title: 'Monsoon valves clearance', description: 'Clearance on gate valves and NRVs.', productIds: ['prd_007', 'prd_008'], discountPct: 12, validFrom: ago(80), validTo: ago(20), status: 'expired', audience: 'all' },
+  ];
+
+  const cu = (cid: string) => customerUsers.find((u) => u.customerId === cid)!;
+  const conversations: Conversation[] = [
+    { id: 'conv_1', subject: 'Delivery date for SO-26-04101', customerId: 'cus_001', orderRef: orders[1]?.number, participantIds: ['usr_cus_1', 'usr_rep_1', 'usr_mgr_1', 'usr_admin_1'], participantNames: ['Venkat Rao', 'Ravi Kumar', 'Support'], updatedAt: ago(0, 1), unreadBy: ['usr_rep_1', 'usr_mgr_1', 'usr_admin_1'], messages: [
+      { id: 'm1', senderId: 'usr_cus_1', senderName: 'Venkat Rao', senderRole: 'customer', body: 'Hi Ravi, can you confirm the delivery date for our latest bearing order? We have a plant shutdown on Monday.', at: ago(0, 3) },
+      { id: 'm2', senderId: 'usr_rep_1', senderName: 'Ravi Kumar', senderRole: 'sales', body: 'Hello Venkat garu, checking with the Hyderabad DC now. It should be packed today.', at: ago(0, 2) },
+      { id: 'm3', senderId: 'usr_cus_1', senderName: 'Venkat Rao', senderRole: 'customer', body: 'Thanks. Please also share the invoice once dispatched.', at: ago(0, 1) },
+    ] },
+    { id: 'conv_2', subject: 'Credit limit enhancement request', customerId: 'cus_004', participantIds: ['usr_cus_4', 'usr_mgr_1', 'usr_admin_1', 'usr_rep_2'], participantNames: ['Rajesh Mehta', 'Suresh Iyer'], updatedAt: ago(0, 5), unreadBy: ['usr_mgr_1', 'usr_admin_1'], messages: [
+      { id: 'm1', senderId: 'usr_cus_4', senderName: 'Rajesh Mehta', senderRole: 'customer', body: 'We are expanding to a second warehouse in Bhiwandi. Requesting credit limit increase from ₹40L to ₹60L.', at: ago(0, 6) },
+      { id: 'm2', senderId: 'usr_mgr_1', senderName: 'Suresh Iyer', senderRole: 'manager', body: 'Thank you Rajesh ji. Please share your latest audited financials and we will review this week.', at: ago(0, 5) },
+    ] },
+    { id: 'conv_3', subject: 'Wrong pack size received – PPE gloves', customerId: 'cus_003', participantIds: ['usr_cus_3', 'usr_rep_4', 'usr_mgr_1', 'usr_admin_1'], participantNames: ['Karthik Subramanian', 'Meera Nair'], updatedAt: ago(1), unreadBy: [], messages: [
+      { id: 'm1', senderId: 'usr_cus_3', senderName: 'Karthik Subramanian', senderRole: 'customer', body: 'We ordered 12-pair packs of nitrile gloves but received 6-pair packs.', at: ago(1, 4) },
+      { id: 'm2', senderId: 'usr_rep_4', senderName: 'Meera Nair', senderRole: 'sales', body: 'Apologies Karthik. Replacement is scheduled for tomorrow; return pickup arranged.', at: ago(1) },
+    ] },
+    { id: 'conv_4', subject: 'Quotation for 5 HP motors (qty 12)', customerId: 'cus_002', participantIds: ['usr_cus_2', 'usr_rep_1', 'usr_mgr_1', 'usr_admin_1'], participantNames: ['Lakshmi Prasad', 'Ravi Kumar'], updatedAt: ago(2), unreadBy: ['usr_cus_2'], messages: [
+      { id: 'm1', senderId: 'usr_cus_2', senderName: 'Lakshmi Prasad', senderRole: 'customer', body: 'Need best price for 12 nos Crompton 5 HP IE2 motors.', at: ago(2, 5) },
+      { id: 'm2', senderId: 'usr_rep_1', senderName: 'Ravi Kumar', senderRole: 'sales', body: 'Sir, I can offer ₹20,350 per unit including freight. Valid for 7 days.', at: ago(2) },
+    ] },
+    { id: 'conv_5', subject: 'Onboarding: Tirupati Steel Agencies', participantIds: ['usr_admin_1', 'usr_mgr_1'], participantNames: ['Anita Desai', 'Suresh Iyer'], updatedAt: ago(0, 8), unreadBy: ['usr_mgr_1'], messages: [
+      { id: 'm1', senderId: 'usr_admin_1', senderName: 'Anita Desai', senderRole: 'admin', body: 'New signup from Tirupati Steel Agencies. Should we map them to Ravi\'s territory before approval?', at: ago(0, 8) },
+    ] },
+  ];
+  void cu;
+
+  const N = (userId: string, k: number, type: AppNotification['type'], title: string, body: string, hrs: number, href?: string, read = false): AppNotification => ({ id: `ntf_${userId}_${k}`, userId, type, title, body, at: ago(0, hrs), read, href });
+  const pending = orders.filter((o) => o.status === 'pending_approval');
+  const notifications: AppNotification[] = [
+    N('usr_admin_1', 1, 'approval_required', '2 new user registrations', 'Tirupati Steel Agencies and Qureshi Brothers are awaiting approval.', 1, '/users'),
+    N('usr_admin_1', 2, 'message', 'New message from Rajesh Mehta', 'Credit limit enhancement request', 5, '/messages'),
+    N('usr_admin_1', 3, 'order_new', `${pending.length} orders pending approval`, 'Supervisors have been notified.', 7, '/orders', true),
+    N('usr_mgr_1', 1, 'approval_required', 'Approval required', `${pending[0]?.number} from ${pending[0]?.customerName} – needs your review.`, 0.5, '/approvals'),
+    N('usr_mgr_1', 2, 'approval_required', 'Approval required', `${pending[1]?.number} from ${pending[1]?.customerName}.`, 2, '/approvals'),
+    N('usr_mgr_1', 3, 'message', 'New message from Rajesh Mehta', 'Credit limit enhancement request', 5, '/messages'),
+    N('usr_mgr_1', 4, 'order_dispatched', 'Dispatch delay risk', '3 orders packed for more than 48 hours at Hyderabad DC.', 20, '/orders', true),
+    N('usr_rep_1', 1, 'message', 'Venkat Rao replied', 'Please also share the invoice once dispatched.', 1, '/messages'),
+    N('usr_rep_1', 2, 'order_confirmed', 'Order confirmed', `${orders.find((o) => o.salesRepId === 'usr_rep_1' && o.status === 'confirmed')?.number ?? 'SO-26-04102'} approved by Suresh Iyer.`, 3, '/orders'),
+    N('usr_rep_1', 3, 'announcement', 'Q3 sales review meeting', 'Friday 10:00 AM – Hyderabad office.', 30, '/announcements', true),
+    N('usr_cus_1', 1, 'order_dispatched', 'Your order has been dispatched', `${orders.find((o) => o.customerId === 'cus_001' && o.status === 'dispatched')?.number ?? 'SO-26-04110'} is on the way via VRL Logistics.`, 2, '/orders'),
+    N('usr_cus_1', 2, 'offer', 'New offer: Safety Week 10% off PPE', 'Valid for the next 20 days on helmets, vests and gloves.', 6, '/offers'),
+    N('usr_cus_1', 3, 'announcement', 'Diwali dispatch schedule', 'Plan your orders before 16 October.', 24, '/announcements'),
+    N('usr_cus_1', 4, 'order_confirmed', 'Order confirmed', 'Your order has been accepted in Sage X3.', 50, '/orders', true),
+  ];
+
+  const followUps: FollowUp[] = [
+    { id: 'fu_1', customerId: 'cus_002', salesRepId: 'usr_rep_1', date: ago(0), type: 'quote', notes: 'Follow up on 5 HP motor quotation (12 nos). Customer comparing with local dealer.', status: 'open' },
+    { id: 'fu_2', customerId: 'cus_006', salesRepId: 'usr_rep_1', date: ago(2), type: 'payment', notes: 'Collect cheque for overdue invoices. Owner travelling until Wednesday.', status: 'open' },
+    { id: 'fu_3', customerId: 'cus_001', salesRepId: 'usr_rep_1', date: ahead(1), type: 'visit', notes: 'Plant shutdown requirement – bearings and grease. Bring SKF catalogue.', status: 'open' },
+    { id: 'fu_4', customerId: 'cus_008', salesRepId: 'usr_rep_1', date: ahead(3), type: 'call', notes: 'Account on hold – discuss payment plan to release orders.', status: 'open' },
+    { id: 'fu_5', customerId: 'cus_012', salesRepId: 'usr_rep_1', date: ago(6), type: 'visit', notes: 'Re-activation visit; customer moved to new premises.', status: 'done' },
+    { id: 'fu_6', customerId: 'cus_004', salesRepId: 'usr_rep_2', date: ahead(2), type: 'visit', notes: 'Bhiwandi warehouse visit with credit team.', status: 'open' },
+    { id: 'fu_7', customerId: 'cus_003', salesRepId: 'usr_rep_4', date: ago(0), type: 'call', notes: 'Confirm glove replacement delivered.', status: 'open' },
+  ];
+
+  const today = new Date().toISOString();
+  const visits: Visit[] = [
+    { id: 'vis_1', customerId: 'cus_001', salesRepId: 'usr_rep_1', date: today, time: '10:00', purpose: 'Shutdown requirement review', status: 'completed' },
+    { id: 'vis_2', customerId: 'cus_002', salesRepId: 'usr_rep_1', date: today, time: '12:30', purpose: 'Motor quotation negotiation', status: 'checked_in' },
+    { id: 'vis_3', customerId: 'cus_006', salesRepId: 'usr_rep_1', date: today, time: '15:00', purpose: 'Payment collection', status: 'planned' },
+    { id: 'vis_4', customerId: 'cus_012', salesRepId: 'usr_rep_1', date: today, time: '17:15', purpose: 'Re-activation & new catalog', status: 'planned' },
+    { id: 'vis_5', customerId: 'cus_004', salesRepId: 'usr_rep_2', date: today, time: '11:00', purpose: 'Monthly review', status: 'planned' },
+  ];
+
+  const activity: ActivityItem[] = [
+    { id: 'act_1', at: ago(0, 0.3), actor: 'Venkat Rao', text: 'placed order ' + (orders[0]?.number ?? ''), kind: 'order' },
+    { id: 'act_2', at: ago(0, 1), actor: 'Naveen Babu', text: 'registered as a new B2B customer (pending approval)', kind: 'user' },
+    { id: 'act_3', at: ago(0, 2), actor: 'Suresh Iyer', text: 'approved order ' + (orders[3]?.number ?? ''), kind: 'approval' },
+    { id: 'act_4', at: ago(0, 4), actor: 'National Wholesale', text: 'paid ₹4,82,300 via RTGS', kind: 'payment' },
+    { id: 'act_5', at: ago(0, 5), actor: 'Rajesh Mehta', text: 'requested credit limit enhancement', kind: 'message' },
+    { id: 'act_6', at: ago(0, 7), actor: 'Ravi Kumar', text: 'checked in at ABC Distributors, Hyderabad', kind: 'customer' },
+    { id: 'act_7', at: ago(1, 1), actor: 'Meera Nair', text: 'created order for Metro Industrial Supplies', kind: 'order' },
+  ];
+
+  return { version: 3, users, customers, products: PRODUCTS, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, seq: { order: seqOrder, invoice: seqInv } };
+}

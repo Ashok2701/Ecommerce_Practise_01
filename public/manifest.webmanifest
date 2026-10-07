@@ -1,0 +1,21 @@
+{
+  "name": "Nexus B2B – Customer & Sales Portal",
+  "short_name": "Nexus B2B",
+  "description": "ERP-connected B2B ordering for customers and field sales.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F5F7FA",
+  "theme_color": "#0B1B33",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icons/icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "New order", "url": "/orders/new" },
+    { "name": "Catalog", "url": "/catalog" },
+    { "name": "Orders", "url": "/orders" }
+  ]
+}
