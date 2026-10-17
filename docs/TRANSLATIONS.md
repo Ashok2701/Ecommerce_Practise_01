@@ -42,15 +42,15 @@ Only the keys you list are replaced; everything else keeps the shipped text.
 Reload the page to see the change. To find a key, search the English file
 `lib/i18n/locales/en.json` for the text you see on screen.
 
-## Add a new language (for example Telugu)
+## Add a new language (for example Dutch)
 
-1. Copy `lib/i18n/locales/en.json` to `client-config/i18n/te.json` and translate the values (never the keys).
+1. Copy `lib/i18n/locales/en.json` to `client-config/i18n/nl.json` and translate the values (never the keys).
 2. In `client-config/settings.json`, register and enable it:
 
 ```json
 {
-  "languages": ["en", "te"],
-  "customLanguages": [{ "code": "te", "label": "తెలుగు", "dir": "ltr" }]
+  "languages": ["en", "fr", "de", "nl"],
+  "customLanguages": [{ "code": "nl", "label": "Nederlands", "dir": "ltr" }]
 }
 ```
 
