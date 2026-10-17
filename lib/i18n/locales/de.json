@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "language": "Sprache"
+  },
+  "theme": {
+    "label": "Design",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System"
+  },
+  "errors": {
+    "generic": "Etwas ist schiefgelaufen. Versuchen Sie es erneut.",
+    "auth": {
+      "invalidCredentials": "E-Mail oder Passwort ist falsch.",
+      "pendingApproval": "Ihr Konto wartet auf die Freigabe durch einen Administrator.",
+      "inactive": "Ihr Konto wurde deaktiviert. Wenden Sie sich an Ihren Administrator."
+    }
+  },
+  "login": {
+    "title": "Anmelden",
+    "subtitle": "Melden Sie sich mit Ihrer geschäftlichen E-Mail an.",
+    "email": "Geschäftliche E-Mail",
+    "emailPlaceholder": "name@firma.de",
+    "password": "Passwort",
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort verbergen",
+    "forgot": "Passwort vergessen?",
+    "forgotInfo": "Bitten Sie Ihren Administrator, Ihr Passwort zurückzusetzen.",
+    "remember": "Auf diesem Gerät angemeldet bleiben",
+    "signIn": "Anmelden",
+    "signingIn": "Anmeldung läuft…",
+    "ssoWith": "Mit {provider} anmelden",
+    "ssoInfo": "Single Sign-on ist noch nicht eingerichtet. Wenden Sie sich an Ihren Administrator.",
+    "orEmail": "oder mit E-Mail anmelden",
+    "missing": "Geben Sie Ihre geschäftliche E-Mail und Ihr Passwort ein.",
+    "welcome": "Willkommen zurück, {name}",
+    "demo": "Demo-Konten",
+    "demoHint": "Wählen Sie eine Rolle zum Anmelden. Passwort: {password}",
+    "heroTitle": "Anfragen, freigeben, liefern.",
+    "heroText": "Kunden, Vertrieb und Lieferanten erstellen hier ihre Anfragen. Jede freigegebene Anfrage wird zum Auftrag in {erp} und lässt sich bis zur Lieferung verfolgen.",
+    "privacy": "Datenschutz",
+    "terms": "Bedingungen",
+    "version": "Version {version}",
+    "slipLabel": "Beispiel: eine Verkaufsanfrage bis zur Lieferung",
+    "points": {
+      "pricing": "Ihre eigenen Preise und Live-Bestand für Ihren Standort",
+      "approvals": "Freigaben mit integrierter Kreditprüfung",
+      "devices": "Auf Smartphone, Tablet und Desktop, auch bei schwacher Verbindung"
+    },
+    "slip": {
+      "title": "Verkaufsanfrage",
+      "customer": "Kunde",
+      "lines": {
+        "one": "{count} Position",
+        "other": "{count} Positionen"
+      },
+      "total": "Gesamt",
+      "item1": "Rillenkugellager 6205-2RS",
+      "item2": "EP2-Fett, 18-kg-Eimer",
+      "steps": {
+        "requested": "Angefragt",
+        "approved": "Freigegeben",
+        "ordered": "Auftrag im ERP",
+        "delivered": "Geliefert"
+      }
+    }
+  },
+  "roles": {
+    "admin": "Administrator",
+    "manager": "Supervisor / Manager",
+    "sales": "Außendienst",
+    "customer": "B2B-Kunde"
+  },
+  "roleBlurb": {
+    "admin": "Benutzer, Kunden und Einstellungen",
+    "manager": "Freigaben und Team",
+    "sales": "Außendienstaufträge und Besuche",
+    "customer": "Katalog, Bestellungen und Rechnungen"
+  },
+  "shell": {
+    "skipToContent": "Zum Inhalt springen",
+    "mainMenu": "Hauptmenü",
+    "bottomNav": "Untere Navigation",
+    "accountMenu": "Kontomenü",
+    "companyAccount": "Firma und Konto",
+    "noNotifications": "Keine neuen Benachrichtigungen",
+    "notificationsUnread": {
+      "one": "Benachrichtigungen, {count} ungelesen",
+      "other": "Benachrichtigungen, {count} ungelesen"
+    },
+    "askAi": "KI fragen",
+    "searchShortcut": "Strg K",
+    "demoReset": "Demodaten zurückgesetzt",
+    "connectedTo": "Verbunden mit {erp}",
+    "search": {
+      "navigate": "Gehe zu",
+      "products": "Produkte",
+      "customers": "Kunden",
+      "orders": "Aufträge"
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "users": "Benutzer",
+    "customers": "Kunden",
+    "myCustomers": "Meine Kunden",
+    "approvals": "Freigaben",
+    "orders": "Bestellungen",
+    "newOrder": "Neue Bestellung",
+    "catalog": "Katalog",
+    "quickOrder": "Schnellbestellung",
+    "cart": "Warenkorb",
+    "invoices": "Rechnungen",
+    "account": "Konto",
+    "announcements": "Mitteilungen",
+    "offers": "Angebote",
+    "messages": "Nachrichten",
+    "notifications": "Benachrichtigungen",
+    "assistant": "KI-Assistent",
+    "salesReps": "Vertriebsteam",
+    "followUps": "Wiedervorlagen",
+    "performance": "Leistung",
+    "settings": "Einstellungen",
+    "more": "Mehr",
+    "home": "Start",
+    "support": "Support",
+    "groups": {
+      "overview": "Übersicht",
+      "commerce": "Handel",
+      "operations": "Betrieb",
+      "engage": "Kommunikation",
+      "admin": "Verwaltung"
+    }
+  },
+  "common": {
+    "search": "Suchen",
+    "searchPlaceholder": "Produkte, Kunden, Bestellungen suchen…",
+    "all": "Alle",
+    "status": "Status",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "submit": "Absenden",
+    "view": "Ansehen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "approve": "Freigeben",
+    "reject": "Ablehnen",
+    "back": "Zurück",
+    "loading": "Wird geladen…",
+    "noResults": "Keine Ergebnisse",
+    "noResultsHint": "Passen Sie Suche oder Filter an.",
+    "retry": "Erneut versuchen",
+    "error": "Etwas ist schiefgelaufen",
+    "errorHint": "Die Daten konnten nicht geladen werden. Bitte erneut versuchen.",
+    "total": "Gesamt",
+    "subtotal": "Zwischensumme",
+    "tax": "MwSt. (18 %)",
+    "discount": "Rabatt",
+    "quantity": "Menge",
+    "unitPrice": "Stückpreis",
+    "actions": "Aktionen",
+    "reply": "Antworten",
+    "send": "Senden",
+    "signOut": "Abmelden",
+    "profile": "Profil",
+    "online": "Online",
+    "offline": "Offline",
+    "viewAll": "Alle anzeigen",
+    "addToCart": "In den Warenkorb",
+    "markAllRead": "Alle als gelesen markieren",
+    "language": "Sprache",
+    "simulateOffline": "Offline simulieren",
+    "resetDemo": "Demodaten zurücksetzen",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "showing": "{from}–{to} von {total}",
+    "date": "Datum",
+    "amount": "Betrag",
+    "customer": "Kunde",
+    "clear": "Zurücksetzen",
+    "filters": "Filter",
+    "close": "Schließen"
+  },
+  "status": {
+    "draft": "Entwurf",
+    "pending_sync": "Sync ausstehend",
+    "pending_approval": "Freigabe ausstehend",
+    "changes_requested": "Änderungen angefordert",
+    "confirmed": "Bestätigt",
+    "processing": "In Bearbeitung",
+    "packed": "Verpackt",
+    "dispatched": "Versandt",
+    "delivered": "Zugestellt",
+    "cancelled": "Storniert",
+    "rejected": "Abgelehnt",
+    "paid": "Bezahlt",
+    "unpaid": "Offen",
+    "partially_paid": "Teilweise bezahlt",
+    "overdue": "Überfällig",
+    "active": "Aktiv",
+    "pending": "Ausstehend",
+    "inactive": "Inaktiv",
+    "on_hold": "Gesperrt",
+    "published": "Veröffentlicht",
+    "scheduled": "Geplant",
+    "expired": "Abgelaufen",
+    "open": "Offen",
+    "done": "Erledigt",
+    "in_stock": "Auf Lager",
+    "low_stock": "Geringer Bestand",
+    "out_of_stock": "Nicht vorrätig",
+    "planned": "Geplant",
+    "checked_in": "Eingecheckt",
+    "completed": "Abgeschlossen"
+  },
+  "dashboard": {
+    "admin": "Plattformübersicht",
+    "manager": "Betriebsübersicht",
+    "sales": "Guten Tag, {name}",
+    "customer": "Willkommen zurück, {name}"
+  },
+  "catalog": {
+    "title": "Produktkatalog",
+    "subtitle": "Die angezeigten Preise gelten für {customer}.",
+    "moq": "MBM",
+    "uom": "Einheit",
+    "yourPrice": "Ihr Preis",
+    "listPrice": "Liste"
+  },
+  "cart": {
+    "title": "Warenkorb",
+    "empty": "Ihr Warenkorb ist leer",
+    "emptyHint": "Durchsuchen Sie den Katalog, um Produkte hinzuzufügen.",
+    "checkout": "Bestellung prüfen",
+    "deliveryInfo": "Lieferinformationen"
+  },
+  "checkout": {
+    "title": "Bestellung prüfen und absenden",
+    "submit": "Bestellung absenden",
+    "submitOffline": "Offline speichern (Sync ausstehend)",
+    "success": "Bestellung übermittelt",
+    "successOffline": "Bestellung auf dem Gerät gespeichert"
+  },
+  "assistant": {
+    "title": "KI-Assistent",
+    "preview": "Vorschau",
+    "placeholder": "Fragen zu Bestellungen, Salden, Produkten…",
+    "disclaimer": "Simulierte Antworten. Künftig werden berechtigungsgeprüfte Geschäftsfunktionen über das Backend genutzt."
+  },
+  "offline": {
+    "banner": "Sie sind offline. Katalog und aktuelle Daten kommen aus dem Cache; neue Bestellungen werden als „Sync ausstehend“ gespeichert.",
+    "pending": "{count} Bestellung(en) warten auf Sync",
+    "syncNow": "Jetzt synchronisieren"
+  }
+}

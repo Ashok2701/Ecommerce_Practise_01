@@ -30,3 +30,10 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - Credit Hold Alerts: credit exposure check (outstanding + open un-invoiced orders), credit panel in approvals, "Credit hold" badge, one-tap Override & approve (audited in timeline/comments), manager dashboard credit alerts, notification on over-limit submission
 - Quick Order Entry (/quick-order): SKU/name autocomplete + Enter, Excel paste import with error list, camera barcode scan (BarcodeDetector) + demo scan, MOQ rounding, customer pricing
 - Visit Check-in Notes: visit report sheet (outcome, contact, notes, compressed photos, next steps, auto follow-up), customer Visits tab, dashboard Complete & report
+
+## Iteration 3 – Login, translations, theme, client settings (Oct 2026)
+- New login page: request-slip illustration (Request → Approved → Order in ERP → Delivered), language and light/dark/system switchers, SSO button only when enabled, demo accounts only in demo mode, translated error codes
+- Translations: JSON files per language (lib/i18n/locales), per-client overrides and client-added languages in client-config/i18n (no rebuild), plurals, English fallback, `npm run i18n:check`; guide in docs/TRANSLATIONS.md
+- Client settings: client-config/settings.json (product/company name, logo, brand colour, languages, region, currency, demo mode, SSO, privacy/terms links), served at runtime; CLIENT_CONFIG_DIR for server installs
+- Theme: brand colour drives all tokens; petrol default; dark mode; IBM Plex Sans bundled (works offline)
+- App shell fully translated; page bodies still to be moved into translation files screen by screen

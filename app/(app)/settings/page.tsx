@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { Cpu, Globe, Smartphone, Bell, Database, CheckCircle2, Download, Plug } from 'lucide-react';
 import { toast } from 'sonner';
 import { appConfig } from '@/lib/config';
-import { LOCALES, useT } from '@/lib/i18n';
+import { useT } from '@/lib/i18n';
+import { useSettings } from '@/lib/settings';
 import { useInstallPrompt } from '@/lib/pwa/useInstallPrompt';
 import { PageHeader, SectionCard } from '@/components/common';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,8 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function SettingsPage() {
-  const { locale, setLocale } = useT();
+  const { locale, setLocale, languages } = useT();
+  const settings = useSettings();
   const install = useInstallPrompt();
   const [sw, setSw] = useState('checking…');
   const [prefs, setPrefs] = useState({ approvalThreshold: '200000', autoApproveTierA: true, emailDigest: true, pushOrders: true });
@@ -23,7 +25,7 @@ export default function SettingsPage() {
       <PageHeader title="Application settings" description="Platform configuration for Version 1." actions={<Button onClick={() => toast.success('Settings saved (demo)')}>Save changes</Button>} />
       <div className="grid gap-4 lg:grid-cols-2">
         <SectionCard title={<span className="flex items-center gap-2"><Cpu className="h-4 w-4 text-primary" />ERP integration</span>} bodyClassName="space-y-4 p-4">
-          <div className="flex items-center justify-between rounded-md border p-3"><div><div className="text-sm font-medium">{appConfig.erp.name}</div><div className="text-xs text-muted-foreground">Adapter: sage-x3 · via Node.js backend</div></div><span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{appConfig.erp.mode} mode</span></div>
+          <div className="flex items-center justify-between rounded-md border p-3"><div><div className="text-sm font-medium">{settings.erpName}</div><div className="text-xs text-muted-foreground">Adapter: sage-x3 · via Node.js backend</div></div><span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{appConfig.dataSource === 'mock' ? 'Mock' : 'Live'} mode</span></div>
           <div className="space-y-1.5"><Label htmlFor="api">Backend API base URL</Label><Input id="api" placeholder="https://api.yourcompany.com" defaultValue={appConfig.apiBaseUrl} /><p className="text-xs text-muted-foreground">Set <code className="font-mono">NEXT_PUBLIC_DATA_SOURCE=api</code> and <code className="font-mono">NEXT_PUBLIC_API_BASE_URL</code> to switch every service from mock data to the backend.</p></div>
           <div className="flex items-center gap-2 text-sm"><Database className="h-4 w-4 text-muted-foreground" />Current data source: <b className="uppercase">{appConfig.dataSource}</b></div>
           <Button variant="outline" onClick={() => toast.info('Connection test will call GET /health on the Node.js backend.')}><Plug className="mr-2 h-4 w-4" />Test connection</Button>
@@ -35,9 +37,9 @@ export default function SettingsPage() {
           <label className="flex items-center justify-between gap-3 text-sm"><span>Block orders for customers on hold</span><Switch defaultChecked /></label>
         </SectionCard>
         <SectionCard title={<span className="flex items-center gap-2"><Globe className="h-4 w-4 text-primary" />Language & region</span>} bodyClassName="space-y-4 p-4">
-          <div className="space-y-1.5"><Label>Default language</Label><Select value={locale} onValueChange={(v: any) => setLocale(v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{LOCALES.map((l) => <SelectItem key={l.code} value={l.code}>{l.label}{!l.ready ? ' (coming soon)' : ''}</SelectItem>)}</SelectContent></Select></div>
+          <div className="space-y-1.5"><Label>Default language</Label><Select value={locale} onValueChange={(v: any) => setLocale(v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{languages.map((l) => <SelectItem key={l.code} value={l.code}>{l.label}</SelectItem>)}</SelectContent></Select></div>
           <p className="text-xs text-muted-foreground">All UI strings are served from translation dictionaries (<code className="font-mono">lib/i18n/locales</code>). Arabic is configured for right-to-left layout.</p>
-          <div className="grid grid-cols-2 gap-3 text-sm"><div className="rounded-md bg-muted/60 p-3"><div className="text-xs text-muted-foreground">Currency</div><div className="font-medium">{appConfig.currency}</div></div><div className="rounded-md bg-muted/60 p-3"><div className="text-xs text-muted-foreground">Number format</div><div className="font-medium">{appConfig.locale}</div></div></div>
+          <div className="grid grid-cols-2 gap-3 text-sm"><div className="rounded-md bg-muted/60 p-3"><div className="text-xs text-muted-foreground">Currency</div><div className="font-medium">{settings.currency}</div></div><div className="rounded-md bg-muted/60 p-3"><div className="text-xs text-muted-foreground">Number format</div><div className="font-medium">{settings.region}</div></div></div>
         </SectionCard>
         <SectionCard title={<span className="flex items-center gap-2"><Smartphone className="h-4 w-4 text-primary" />PWA & notifications</span>} bodyClassName="space-y-4 p-4">
           <div className="flex items-center gap-2 text-sm"><CheckCircle2 className="h-4 w-4 text-emerald-600" />Web app manifest configured</div>

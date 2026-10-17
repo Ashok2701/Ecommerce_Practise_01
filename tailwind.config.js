@@ -19,7 +19,14 @@ module.exports = {
         }
       },
       extend: {
+        fontFamily: {
+          sans: ['"IBM Plex Sans"', 'ui-sans-serif', 'system-ui', '"Segoe UI"', 'sans-serif'],
+        },
         colors: {
+          signal: {
+            DEFAULT: 'hsl(var(--signal))',
+            foreground: 'hsl(var(--signal-foreground))'
+          },
           border: 'hsl(var(--border))',
           input: 'hsl(var(--input))',
           ring: 'hsl(var(--ring))',

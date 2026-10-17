@@ -1,51 +1,100 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Theme tokens
+ * ------------
+ * The brand colour comes from settings.brandColor (public/config/settings.json):
+ * SettingsProvider writes --brand-h / --brand-s / --brand-l on <html>.
+ * Everything brand-coloured (primary, ring, accent, sidebar) derives from those
+ * three numbers, so a client re-brands the whole app by changing one hex value.
+ * Defaults below = petrol #0F5257.
+ */
 @layer base {
   :root {
-    --background: 220 23% 97%;
-    --foreground: 222 47% 11%;
+    --brand-h: 184;
+    --brand-s: 70%;
+    --brand-l: 20%;
+
+    --background: 160 14% 94%;
+    --foreground: 198 19% 13%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 198 19% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 217 86% 42%;
+    --popover-foreground: 198 19% 13%;
+    --primary: var(--brand-h) var(--brand-s) var(--brand-l);
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 20% 94%;
-    --secondary-foreground: 222 47% 15%;
-    --muted: 220 20% 95%;
-    --muted-foreground: 218 13% 42%;
-    --accent: 217 80% 96%;
-    --accent-foreground: 217 86% 32%;
-    --destructive: 0 72% 48%;
+    --secondary: 165 12% 91%;
+    --secondary-foreground: 198 19% 15%;
+    --muted: 165 12% 92%;
+    --muted-foreground: 195 9% 36%;
+    --accent: var(--brand-h) 32% 93%;
+    --accent-foreground: var(--brand-h) var(--brand-s) 20%;
+    --destructive: 0 70% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 16% 89%;
-    --input: 220 16% 86%;
-    --ring: 217 86% 48%;
-    --chart-1: 217 86% 48%;
-    --chart-2: 172 66% 36%;
-    --chart-3: 38 92% 50%;
-    --chart-4: 262 60% 56%;
-    --chart-5: 346 72% 54%;
+    --signal: 41 93% 46%;
+    --signal-foreground: 35 90% 18%;
+    --border: 165 12% 85%;
+    --input: 165 10% 79%;
+    --ring: var(--brand-h) var(--brand-s) calc(var(--brand-l) + 10%);
+    --chart-1: var(--brand-h) var(--brand-s) calc(var(--brand-l) + 12%);
+    --chart-2: 41 93% 46%;
+    --chart-3: 206 60% 45%;
+    --chart-4: 262 45% 55%;
+    --chart-5: 346 62% 50%;
     --radius: 0.5rem;
-    --sidebar-background: 216 58% 12%;
-    --sidebar-foreground: 215 25% 80%;
-    --sidebar-primary: 217 86% 55%;
+
+    --sidebar-background: var(--brand-h) 48% 12%;
+    --sidebar-foreground: var(--brand-h) 14% 78%;
+    --sidebar-primary: var(--brand-h) 55% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 216 45% 18%;
+    --sidebar-accent: var(--brand-h) 35% 16%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 216 40% 20%;
-    --sidebar-ring: 217 86% 60%;
+    --sidebar-border: var(--brand-h) 30% 17%;
+    --sidebar-ring: var(--brand-h) 55% 55%;
+  }
+
+  .dark {
+    --background: 195 20% 7%;
+    --foreground: 170 12% 91%;
+    --card: 195 18% 10%;
+    --card-foreground: 170 12% 91%;
+    --popover: 195 18% 11%;
+    --popover-foreground: 170 12% 91%;
+    --primary: var(--brand-h) calc(var(--brand-s) - 28%) calc(var(--brand-l) + 30%);
+    --primary-foreground: 195 30% 7%;
+    --secondary: 195 14% 16%;
+    --secondary-foreground: 170 12% 91%;
+    --muted: 195 14% 15%;
+    --muted-foreground: 180 8% 64%;
+    --accent: var(--brand-h) 30% 17%;
+    --accent-foreground: var(--brand-h) 45% 80%;
+    --destructive: 0 65% 56%;
+    --destructive-foreground: 0 0% 100%;
+    --signal: 41 90% 55%;
+    --signal-foreground: 41 90% 85%;
+    --border: 195 14% 20%;
+    --input: 195 14% 25%;
+    --ring: var(--brand-h) calc(var(--brand-s) - 28%) calc(var(--brand-l) + 30%);
+    --chart-1: var(--brand-h) calc(var(--brand-s) - 28%) calc(var(--brand-l) + 30%);
+
+    --sidebar-background: 195 22% 5%;
+    --sidebar-foreground: 180 10% 72%;
+    --sidebar-accent: 195 18% 12%;
+    --sidebar-border: 195 16% 13%;
   }
 }
 
 @layer base {
   * { @apply border-border; }
-  body { @apply bg-background text-foreground; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; font-feature-settings: 'cv11', 'ss01'; }
-  .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+    font-feature-settings: 'kern', 'liga';
+  }
+  .font-mono { font-family: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Menlo, Consolas, monospace; }
   :focus-visible { @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background; }
 }
 
@@ -54,4 +103,16 @@
   .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
   .scrollbar-none { scrollbar-width: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
+}
+
+/* Login: the request slip advances through its four steps once, then gets stamped. */
+@keyframes slip-step { from { background-color: hsl(var(--border)); transform: scale(0.6); } to { transform: scale(1); } }
+@keyframes slip-rail { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes slip-stamp { 0% { opacity: 0; transform: rotate(-8deg) scale(1.6); } 60% { opacity: 1; transform: rotate(-8deg) scale(0.94); } 100% { opacity: 1; transform: rotate(-8deg) scale(1); } }
+.slip-step { animation: slip-step 0.35s ease-out both; }
+.slip-rail { transform-origin: left; animation: slip-rail 0.45s ease-in-out both; }
+[dir='rtl'] .slip-rail { transform-origin: right; }
+.slip-stamp { animation: slip-stamp 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+@media (prefers-reduced-motion: reduce) {
+  .slip-step, .slip-rail, .slip-stamp { animation: none; }
 }

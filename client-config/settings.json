@@ -1,0 +1,26 @@
+{
+  "productName": "Nexus B2B",
+  "companyName": "Demo Company",
+  "logoUrl": "",
+  "brandColor": "#0F5257",
+  "erpName": "Sage X3",
+  "defaultLanguage": "en",
+  "languages": [
+    "en",
+    "fr",
+    "de",
+    "es",
+    "it",
+    "pt"
+  ],
+  "customLanguages": [],
+  "region": "IN",
+  "currency": "INR",
+  "demoMode": true,
+  "sso": {
+    "enabled": false,
+    "provider": "Microsoft"
+  },
+  "privacyUrl": "",
+  "termsUrl": ""
+}

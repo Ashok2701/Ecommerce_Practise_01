@@ -10,9 +10,9 @@ export const authService = {
   login: (email: string, password: string) =>
     source<Session>(() => {
       const user = getDb().users.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
-      if (!user || password !== DEMO_PASSWORD) throw new Error('Invalid email or password');
-      if (user.status === 'pending') throw new Error('Your account is awaiting administrator approval');
-      if (user.status === 'inactive') throw new Error('Your account has been deactivated');
+      if (!user || password !== DEMO_PASSWORD) throw new Error('errors.auth.invalidCredentials');
+      if (user.status === 'pending') throw new Error('errors.auth.pendingApproval');
+      if (user.status === 'inactive') throw new Error('errors.auth.inactive');
       user.lastLoginAt = new Date().toISOString();
       commit();
       return { user, token: `mock.${user.id}.${Date.now()}` };

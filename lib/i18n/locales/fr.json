@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "language": "Langue"
+  },
+  "theme": {
+    "label": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "errors": {
+    "generic": "Une erreur s’est produite. Réessayez.",
+    "auth": {
+      "invalidCredentials": "E-mail ou mot de passe incorrect.",
+      "pendingApproval": "Votre compte attend la validation d’un administrateur.",
+      "inactive": "Votre compte a été désactivé. Contactez votre administrateur."
+    }
+  },
+  "login": {
+    "title": "Connexion",
+    "subtitle": "Utilisez votre e-mail professionnel pour continuer.",
+    "email": "E-mail professionnel",
+    "emailPlaceholder": "nom@entreprise.com",
+    "password": "Mot de passe",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "forgot": "Mot de passe oublié ?",
+    "forgotInfo": "Demandez à votre administrateur de réinitialiser votre mot de passe.",
+    "remember": "Rester connecté sur cet appareil",
+    "signIn": "Se connecter",
+    "signingIn": "Connexion…",
+    "ssoWith": "Se connecter avec {provider}",
+    "ssoInfo": "L’authentification unique n’est pas encore configurée. Contactez votre administrateur.",
+    "orEmail": "ou connectez-vous par e-mail",
+    "missing": "Saisissez votre e-mail professionnel et votre mot de passe.",
+    "welcome": "Bon retour, {name}",
+    "demo": "Comptes de démonstration",
+    "demoHint": "Choisissez un rôle pour vous connecter. Mot de passe : {password}",
+    "heroTitle": "Demandez, validez, livrez.",
+    "heroText": "Clients, commerciaux et fournisseurs créent leurs demandes ici. Chaque demande validée devient une commande dans {erp}, suivie jusqu’à la livraison.",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "version": "Version {version}",
+    "slipLabel": "Exemple : une demande de vente suivie jusqu’à la livraison",
+    "points": {
+      "pricing": "Vos prix et le stock en temps réel de votre site",
+      "approvals": "Des validations avec contrôle de crédit intégré",
+      "devices": "Sur téléphone, tablette et ordinateur, même avec une connexion faible"
+    },
+    "slip": {
+      "title": "Demande de vente",
+      "customer": "Client",
+      "lines": {
+        "one": "{count} ligne",
+        "other": "{count} lignes"
+      },
+      "total": "Total",
+      "item1": "Roulement à billes 6205-2RS",
+      "item2": "Graisse EP2, seau de 18 kg",
+      "steps": {
+        "requested": "Demandée",
+        "approved": "Validée",
+        "ordered": "Commande dans l’ERP",
+        "delivered": "Livrée"
+      }
+    }
+  },
+  "roles": {
+    "admin": "Administrateur",
+    "manager": "Superviseur / Responsable",
+    "sales": "Commercial terrain",
+    "customer": "Client B2B"
+  },
+  "roleBlurb": {
+    "admin": "Utilisateurs, clients et paramètres",
+    "manager": "Approbations et équipe",
+    "sales": "Commandes terrain et visites",
+    "customer": "Catalogue, commandes et factures"
+  },
+  "shell": {
+    "skipToContent": "Aller au contenu",
+    "mainMenu": "Menu principal",
+    "bottomNav": "Navigation inférieure",
+    "accountMenu": "Menu du compte",
+    "companyAccount": "Entreprise et compte",
+    "noNotifications": "Aucune nouvelle notification",
+    "notificationsUnread": {
+      "one": "Notifications, {count} non lue",
+      "other": "Notifications, {count} non lues"
+    },
+    "askAi": "Demander à l’IA",
+    "searchShortcut": "Ctrl K",
+    "demoReset": "Données de démo réinitialisées",
+    "connectedTo": "Connecté à {erp}",
+    "search": {
+      "navigate": "Aller à",
+      "products": "Produits",
+      "customers": "Clients",
+      "orders": "Commandes"
+    }
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "users": "Utilisateurs",
+    "customers": "Clients",
+    "myCustomers": "Mes clients",
+    "approvals": "Approbations",
+    "orders": "Commandes",
+    "newOrder": "Nouvelle commande",
+    "catalog": "Catalogue",
+    "quickOrder": "Commande rapide",
+    "cart": "Panier",
+    "invoices": "Factures",
+    "account": "Compte",
+    "announcements": "Annonces",
+    "offers": "Offres",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "assistant": "Assistant IA",
+    "salesReps": "Équipe commerciale",
+    "followUps": "Relances",
+    "performance": "Performance",
+    "settings": "Paramètres",
+    "more": "Plus",
+    "home": "Accueil",
+    "support": "Support",
+    "groups": {
+      "overview": "Vue d’ensemble",
+      "commerce": "Commerce",
+      "operations": "Opérations",
+      "engage": "Communication",
+      "admin": "Administration"
+    }
+  },
+  "common": {
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher produits, clients, commandes…",
+    "all": "Tous",
+    "status": "Statut",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "submit": "Envoyer",
+    "view": "Voir",
+    "edit": "Modifier",
+    "create": "Créer",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "back": "Retour",
+    "loading": "Chargement…",
+    "noResults": "Aucun résultat",
+    "noResultsHint": "Modifiez votre recherche ou vos filtres.",
+    "retry": "Réessayer",
+    "error": "Une erreur est survenue",
+    "errorHint": "Impossible de charger ces données. Veuillez réessayer.",
+    "total": "Total",
+    "subtotal": "Sous-total",
+    "tax": "TVA (18 %)",
+    "discount": "Remise",
+    "quantity": "Quantité",
+    "unitPrice": "Prix unitaire",
+    "actions": "Actions",
+    "reply": "Répondre",
+    "send": "Envoyer",
+    "signOut": "Se déconnecter",
+    "profile": "Profil",
+    "online": "En ligne",
+    "offline": "Hors ligne",
+    "viewAll": "Tout voir",
+    "addToCart": "Ajouter au panier",
+    "markAllRead": "Tout marquer comme lu",
+    "language": "Langue",
+    "simulateOffline": "Simuler hors ligne",
+    "resetDemo": "Réinitialiser la démo",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "showing": "{from}–{to} sur {total}",
+    "date": "Date",
+    "amount": "Montant",
+    "customer": "Client",
+    "clear": "Effacer",
+    "filters": "Filtres",
+    "close": "Fermer"
+  },
+  "status": {
+    "draft": "Brouillon",
+    "pending_sync": "En attente de synchro",
+    "pending_approval": "En attente d’approbation",
+    "changes_requested": "Modifications demandées",
+    "confirmed": "Confirmée",
+    "processing": "En préparation",
+    "packed": "Emballée",
+    "dispatched": "Expédiée",
+    "delivered": "Livrée",
+    "cancelled": "Annulée",
+    "rejected": "Rejetée",
+    "paid": "Payée",
+    "unpaid": "Impayée",
+    "partially_paid": "Partiellement payée",
+    "overdue": "En retard",
+    "active": "Actif",
+    "pending": "En attente",
+    "inactive": "Inactif",
+    "on_hold": "Bloqué",
+    "published": "Publiée",
+    "scheduled": "Planifiée",
+    "expired": "Expirée",
+    "open": "Ouverte",
+    "done": "Terminée",
+    "in_stock": "En stock",
+    "low_stock": "Stock faible",
+    "out_of_stock": "Rupture",
+    "planned": "Planifiée",
+    "checked_in": "Sur place",
+    "completed": "Terminée"
+  },
+  "dashboard": {
+    "admin": "Vue d’ensemble de la plateforme",
+    "manager": "Vue d’ensemble des opérations",
+    "sales": "Bonjour, {name}",
+    "customer": "Bon retour, {name}"
+  },
+  "catalog": {
+    "title": "Catalogue produits",
+    "subtitle": "Les prix affichés sont propres à {customer}.",
+    "moq": "MOQ",
+    "uom": "Unité",
+    "yourPrice": "Votre prix",
+    "listPrice": "Catalogue"
+  },
+  "cart": {
+    "title": "Panier",
+    "empty": "Votre panier est vide",
+    "emptyHint": "Parcourez le catalogue pour ajouter des produits.",
+    "checkout": "Vérifier la commande",
+    "deliveryInfo": "Informations de livraison"
+  },
+  "checkout": {
+    "title": "Vérifier et envoyer la commande",
+    "submit": "Envoyer la commande",
+    "submitOffline": "Enregistrer hors ligne (synchro en attente)",
+    "success": "Commande envoyée",
+    "successOffline": "Commande enregistrée sur l’appareil"
+  },
+  "assistant": {
+    "title": "Assistant IA",
+    "preview": "Aperçu",
+    "placeholder": "Questions sur commandes, soldes, produits…",
+    "disclaimer": "Réponses simulées. La version future utilisera des fonctions métier contrôlées par les droits via le backend."
+  },
+  "offline": {
+    "banner": "Vous êtes hors ligne. Le catalogue et les données récentes viennent du cache ; les nouvelles commandes sont en attente de synchro.",
+    "pending": "{count} commande(s) en attente de synchro",
+    "syncNow": "Synchroniser"
+  }
+}

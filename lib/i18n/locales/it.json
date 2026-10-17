@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "language": "Lingua"
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "system": "Sistema"
+  },
+  "errors": {
+    "generic": "Si è verificato un errore. Riprova.",
+    "auth": {
+      "invalidCredentials": "Email o password non corretti.",
+      "pendingApproval": "Il tuo account è in attesa di approvazione da parte di un amministratore.",
+      "inactive": "Il tuo account è stato disattivato. Contatta il tuo amministratore."
+    }
+  },
+  "login": {
+    "title": "Accedi",
+    "subtitle": "Usa la tua email di lavoro per continuare.",
+    "email": "Email di lavoro",
+    "emailPlaceholder": "nome@azienda.it",
+    "password": "Password",
+    "showPassword": "Mostra password",
+    "hidePassword": "Nascondi password",
+    "forgot": "Password dimenticata?",
+    "forgotInfo": "Chiedi al tuo amministratore di reimpostare la password.",
+    "remember": "Resta connesso su questo dispositivo",
+    "signIn": "Accedi",
+    "signingIn": "Accesso in corso…",
+    "ssoWith": "Accedi con {provider}",
+    "ssoInfo": "Il single sign-on non è ancora configurato. Rivolgiti al tuo amministratore.",
+    "orEmail": "oppure accedi con l’email",
+    "missing": "Inserisci la tua email di lavoro e la password.",
+    "welcome": "Bentornato, {name}",
+    "demo": "Account demo",
+    "demoHint": "Scegli un ruolo per accedere. Password: {password}",
+    "heroTitle": "Richiedi, approva, consegna.",
+    "heroText": "Clienti, team commerciali e fornitori inseriscono qui le loro richieste. Ogni richiesta approvata diventa un ordine in {erp} e si segue fino alla consegna.",
+    "privacy": "Privacy",
+    "terms": "Termini",
+    "version": "Versione {version}",
+    "slipLabel": "Esempio: una richiesta di vendita fino alla consegna",
+    "points": {
+      "pricing": "I tuoi prezzi e lo stock in tempo reale della tua sede",
+      "approvals": "Approvazioni con controllo del credito integrato",
+      "devices": "Su smartphone, tablet e computer, anche con connessione debole"
+    },
+    "slip": {
+      "title": "Richiesta di vendita",
+      "customer": "Cliente",
+      "lines": {
+        "one": "{count} riga",
+        "other": "{count} righe"
+      },
+      "total": "Totale",
+      "item1": "Cuscinetto a sfere 6205-2RS",
+      "item2": "Grasso EP2, secchio da 18 kg",
+      "steps": {
+        "requested": "Richiesta",
+        "approved": "Approvata",
+        "ordered": "Ordine nell’ERP",
+        "delivered": "Consegnata"
+      }
+    }
+  },
+  "roles": {
+    "admin": "Amministratore",
+    "manager": "Supervisore / Responsabile",
+    "sales": "Agente di vendita",
+    "customer": "Cliente B2B"
+  },
+  "roleBlurb": {
+    "admin": "Utenti, clienti e impostazioni",
+    "manager": "Approvazioni e team",
+    "sales": "Ordini sul campo e visite",
+    "customer": "Catalogo, ordini e fatture"
+  },
+  "shell": {
+    "skipToContent": "Vai al contenuto",
+    "mainMenu": "Menu principale",
+    "bottomNav": "Navigazione inferiore",
+    "accountMenu": "Menu account",
+    "companyAccount": "Azienda e account",
+    "noNotifications": "Nessuna nuova notifica",
+    "notificationsUnread": {
+      "one": "Notifiche, {count} da leggere",
+      "other": "Notifiche, {count} da leggere"
+    },
+    "askAi": "Chiedi all’IA",
+    "searchShortcut": "Ctrl K",
+    "demoReset": "Dati demo reimpostati",
+    "connectedTo": "Connesso a {erp}",
+    "search": {
+      "navigate": "Vai a",
+      "products": "Prodotti",
+      "customers": "Clienti",
+      "orders": "Ordini"
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "users": "Utenti",
+    "customers": "Clienti",
+    "myCustomers": "I miei clienti",
+    "approvals": "Approvazioni",
+    "orders": "Ordini",
+    "newOrder": "Nuovo ordine",
+    "catalog": "Catalogo",
+    "quickOrder": "Ordine rapido",
+    "cart": "Carrello",
+    "invoices": "Fatture",
+    "account": "Conto",
+    "announcements": "Comunicazioni",
+    "offers": "Offerte",
+    "messages": "Messaggi",
+    "notifications": "Notifiche",
+    "assistant": "Assistente IA",
+    "salesReps": "Team vendite",
+    "followUps": "Promemoria",
+    "performance": "Prestazioni",
+    "settings": "Impostazioni",
+    "more": "Altro",
+    "home": "Home",
+    "support": "Assistenza",
+    "groups": {
+      "overview": "Panoramica",
+      "commerce": "Commercio",
+      "operations": "Operazioni",
+      "engage": "Comunicazione",
+      "admin": "Amministrazione"
+    }
+  },
+  "common": {
+    "search": "Cerca",
+    "searchPlaceholder": "Cerca prodotti, clienti, ordini…",
+    "all": "Tutti",
+    "status": "Stato",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "submit": "Invia",
+    "view": "Visualizza",
+    "edit": "Modifica",
+    "create": "Crea",
+    "approve": "Approva",
+    "reject": "Rifiuta",
+    "back": "Indietro",
+    "loading": "Caricamento…",
+    "noResults": "Nessun risultato",
+    "noResultsHint": "Modifica la ricerca o i filtri.",
+    "retry": "Riprova",
+    "error": "Si è verificato un errore",
+    "errorHint": "Impossibile caricare i dati. Riprova.",
+    "total": "Totale",
+    "subtotal": "Subtotale",
+    "tax": "IVA (18%)",
+    "discount": "Sconto",
+    "quantity": "Quantità",
+    "unitPrice": "Prezzo unitario",
+    "actions": "Azioni",
+    "reply": "Rispondi",
+    "send": "Invia",
+    "signOut": "Esci",
+    "profile": "Profilo",
+    "online": "Online",
+    "offline": "Offline",
+    "viewAll": "Vedi tutto",
+    "addToCart": "Aggiungi al carrello",
+    "markAllRead": "Segna tutto come letto",
+    "language": "Lingua",
+    "simulateOffline": "Simula offline",
+    "resetDemo": "Ripristina demo",
+    "previous": "Precedente",
+    "next": "Successivo",
+    "showing": "{from}–{to} di {total}",
+    "date": "Data",
+    "amount": "Importo",
+    "customer": "Cliente",
+    "clear": "Cancella",
+    "filters": "Filtri",
+    "close": "Chiudi"
+  },
+  "status": {
+    "draft": "Bozza",
+    "pending_sync": "In attesa di sincronizzazione",
+    "pending_approval": "In attesa di approvazione",
+    "changes_requested": "Modifiche richieste",
+    "confirmed": "Confermato",
+    "processing": "In lavorazione",
+    "packed": "Imballato",
+    "dispatched": "Spedito",
+    "delivered": "Consegnato",
+    "cancelled": "Annullato",
+    "rejected": "Rifiutato",
+    "paid": "Pagata",
+    "unpaid": "Non pagata",
+    "partially_paid": "Parzialmente pagata",
+    "overdue": "Scaduta",
+    "active": "Attivo",
+    "pending": "In attesa",
+    "inactive": "Inattivo",
+    "on_hold": "Bloccato",
+    "published": "Pubblicato",
+    "scheduled": "Programmato",
+    "expired": "Scaduto",
+    "open": "Aperto",
+    "done": "Fatto",
+    "in_stock": "Disponibile",
+    "low_stock": "Scorte basse",
+    "out_of_stock": "Esaurito",
+    "planned": "Pianificata",
+    "checked_in": "In visita",
+    "completed": "Completata"
+  },
+  "dashboard": {
+    "admin": "Panoramica della piattaforma",
+    "manager": "Panoramica operativa",
+    "sales": "Buongiorno, {name}",
+    "customer": "Bentornato, {name}"
+  },
+  "catalog": {
+    "title": "Catalogo prodotti",
+    "subtitle": "I prezzi mostrati sono specifici per {customer}.",
+    "moq": "Min. ordine",
+    "uom": "Unità",
+    "yourPrice": "Il tuo prezzo",
+    "listPrice": "Listino"
+  },
+  "cart": {
+    "title": "Carrello",
+    "empty": "Il carrello è vuoto",
+    "emptyHint": "Sfoglia il catalogo per aggiungere prodotti.",
+    "checkout": "Rivedi ordine",
+    "deliveryInfo": "Informazioni di consegna"
+  },
+  "checkout": {
+    "title": "Rivedi e invia l’ordine",
+    "submit": "Invia ordine",
+    "submitOffline": "Salva offline (in attesa di sincronizzazione)",
+    "success": "Ordine inviato",
+    "successOffline": "Ordine salvato sul dispositivo"
+  },
+  "assistant": {
+    "title": "Assistente IA",
+    "preview": "Anteprima",
+    "placeholder": "Chiedi di ordini, saldi, prodotti…",
+    "disclaimer": "Risposte simulate. La versione futura userà funzioni aziendali con controllo dei permessi tramite il backend."
+  },
+  "offline": {
+    "banner": "Sei offline. Catalogo e dati recenti provengono dalla cache; i nuovi ordini restano in attesa di sincronizzazione.",
+    "pending": "{count} ordine/i in attesa di sincronizzazione",
+    "syncNow": "Sincronizza ora"
+  }
+}

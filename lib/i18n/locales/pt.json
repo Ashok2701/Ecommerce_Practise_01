@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "language": "Idioma"
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "Claro",
+    "dark": "Escuro",
+    "system": "Sistema"
+  },
+  "errors": {
+    "generic": "Ocorreu um erro. Tente novamente.",
+    "auth": {
+      "invalidCredentials": "E-mail ou palavra-passe incorretos.",
+      "pendingApproval": "A sua conta aguarda aprovação de um administrador.",
+      "inactive": "A sua conta foi desativada. Contacte o seu administrador."
+    }
+  },
+  "login": {
+    "title": "Iniciar sessão",
+    "subtitle": "Utilize o seu e-mail profissional para continuar.",
+    "email": "E-mail profissional",
+    "emailPlaceholder": "nome@empresa.pt",
+    "password": "Palavra-passe",
+    "showPassword": "Mostrar palavra-passe",
+    "hidePassword": "Ocultar palavra-passe",
+    "forgot": "Esqueceu-se da palavra-passe?",
+    "forgotInfo": "Peça ao seu administrador para repor a palavra-passe.",
+    "remember": "Manter sessão neste dispositivo",
+    "signIn": "Iniciar sessão",
+    "signingIn": "A iniciar sessão…",
+    "ssoWith": "Iniciar sessão com {provider}",
+    "ssoInfo": "O início de sessão único ainda não está configurado. Contacte o seu administrador.",
+    "orEmail": "ou inicie sessão com e-mail",
+    "missing": "Introduza o seu e-mail profissional e a palavra-passe.",
+    "welcome": "Bem-vindo de volta, {name}",
+    "demo": "Contas de demonstração",
+    "demoHint": "Escolha uma função para entrar. Palavra-passe: {password}",
+    "heroTitle": "Peça, aprove, entregue.",
+    "heroText": "Clientes, equipas comerciais e fornecedores criam aqui os seus pedidos. Cada pedido aprovado torna-se uma encomenda no {erp} e é acompanhado até à entrega.",
+    "privacy": "Privacidade",
+    "terms": "Termos",
+    "version": "Versão {version}",
+    "slipLabel": "Exemplo: um pedido de venda até à entrega",
+    "points": {
+      "pricing": "Os seus preços e o stock em tempo real do seu local",
+      "approvals": "Aprovações com controlo de crédito integrado",
+      "devices": "No telemóvel, tablet e computador, mesmo com ligação fraca"
+    },
+    "slip": {
+      "title": "Pedido de venda",
+      "customer": "Cliente",
+      "lines": {
+        "one": "{count} linha",
+        "other": "{count} linhas"
+      },
+      "total": "Total",
+      "item1": "Rolamento de esferas 6205-2RS",
+      "item2": "Massa EP2, balde de 18 kg",
+      "steps": {
+        "requested": "Pedido",
+        "approved": "Aprovado",
+        "ordered": "Encomenda no ERP",
+        "delivered": "Entregue"
+      }
+    }
+  },
+  "roles": {
+    "admin": "Administrador",
+    "manager": "Supervisor / Gestor",
+    "sales": "Representante comercial",
+    "customer": "Cliente B2B"
+  },
+  "roleBlurb": {
+    "admin": "Utilizadores, clientes e definições",
+    "manager": "Aprovações e equipa",
+    "sales": "Encomendas no terreno e visitas",
+    "customer": "Catálogo, encomendas e faturas"
+  },
+  "shell": {
+    "skipToContent": "Saltar para o conteúdo",
+    "mainMenu": "Menu principal",
+    "bottomNav": "Navegação inferior",
+    "accountMenu": "Menu da conta",
+    "companyAccount": "Empresa e conta",
+    "noNotifications": "Sem novas notificações",
+    "notificationsUnread": {
+      "one": "Notificações, {count} por ler",
+      "other": "Notificações, {count} por ler"
+    },
+    "askAi": "Perguntar à IA",
+    "searchShortcut": "Ctrl K",
+    "demoReset": "Dados de demonstração repostos",
+    "connectedTo": "Ligado a {erp}",
+    "search": {
+      "navigate": "Ir para",
+      "products": "Produtos",
+      "customers": "Clientes",
+      "orders": "Encomendas"
+    }
+  },
+  "nav": {
+    "dashboard": "Painel",
+    "users": "Utilizadores",
+    "customers": "Clientes",
+    "myCustomers": "Os meus clientes",
+    "approvals": "Aprovações",
+    "orders": "Encomendas",
+    "newOrder": "Nova encomenda",
+    "catalog": "Catálogo",
+    "quickOrder": "Encomenda rápida",
+    "cart": "Carrinho",
+    "invoices": "Faturas",
+    "account": "Conta",
+    "announcements": "Avisos",
+    "offers": "Ofertas",
+    "messages": "Mensagens",
+    "notifications": "Notificações",
+    "assistant": "Assistente IA",
+    "salesReps": "Equipa comercial",
+    "followUps": "Acompanhamentos",
+    "performance": "Desempenho",
+    "settings": "Definições",
+    "more": "Mais",
+    "home": "Início",
+    "support": "Suporte",
+    "groups": {
+      "overview": "Visão geral",
+      "commerce": "Comércio",
+      "operations": "Operações",
+      "engage": "Comunicação",
+      "admin": "Administração"
+    }
+  },
+  "common": {
+    "search": "Pesquisar",
+    "searchPlaceholder": "Pesquisar produtos, clientes, encomendas…",
+    "all": "Todos",
+    "status": "Estado",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "submit": "Submeter",
+    "view": "Ver",
+    "edit": "Editar",
+    "create": "Criar",
+    "approve": "Aprovar",
+    "reject": "Rejeitar",
+    "back": "Voltar",
+    "loading": "A carregar…",
+    "noResults": "Sem resultados",
+    "noResultsHint": "Ajuste a pesquisa ou os filtros.",
+    "retry": "Tentar novamente",
+    "error": "Ocorreu um erro",
+    "errorHint": "Não foi possível carregar estes dados. Tente novamente.",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "tax": "IVA (18%)",
+    "discount": "Desconto",
+    "quantity": "Quantidade",
+    "unitPrice": "Preço unitário",
+    "actions": "Ações",
+    "reply": "Responder",
+    "send": "Enviar",
+    "signOut": "Terminar sessão",
+    "profile": "Perfil",
+    "online": "Online",
+    "offline": "Offline",
+    "viewAll": "Ver tudo",
+    "addToCart": "Adicionar ao carrinho",
+    "markAllRead": "Marcar tudo como lido",
+    "language": "Idioma",
+    "simulateOffline": "Simular offline",
+    "resetDemo": "Repor demonstração",
+    "previous": "Anterior",
+    "next": "Seguinte",
+    "showing": "{from}–{to} de {total}",
+    "date": "Data",
+    "amount": "Valor",
+    "customer": "Cliente",
+    "clear": "Limpar",
+    "filters": "Filtros",
+    "close": "Fechar"
+  },
+  "status": {
+    "draft": "Rascunho",
+    "pending_sync": "Sincronização pendente",
+    "pending_approval": "Aprovação pendente",
+    "changes_requested": "Alterações pedidas",
+    "confirmed": "Confirmada",
+    "processing": "Em processamento",
+    "packed": "Embalada",
+    "dispatched": "Expedida",
+    "delivered": "Entregue",
+    "cancelled": "Cancelada",
+    "rejected": "Rejeitada",
+    "paid": "Paga",
+    "unpaid": "Por pagar",
+    "partially_paid": "Parcialmente paga",
+    "overdue": "Vencida",
+    "active": "Ativo",
+    "pending": "Pendente",
+    "inactive": "Inativo",
+    "on_hold": "Bloqueado",
+    "published": "Publicado",
+    "scheduled": "Agendado",
+    "expired": "Expirado",
+    "open": "Aberto",
+    "done": "Concluído",
+    "in_stock": "Em stock",
+    "low_stock": "Stock baixo",
+    "out_of_stock": "Esgotado",
+    "planned": "Planeada",
+    "checked_in": "No cliente",
+    "completed": "Concluída"
+  },
+  "dashboard": {
+    "admin": "Visão geral da plataforma",
+    "manager": "Visão geral das operações",
+    "sales": "Bom dia, {name}",
+    "customer": "Bem-vindo de volta, {name}"
+  },
+  "catalog": {
+    "title": "Catálogo de produtos",
+    "subtitle": "Os preços apresentados são específicos de {customer}.",
+    "moq": "Qtd. mín.",
+    "uom": "Unidade",
+    "yourPrice": "O seu preço",
+    "listPrice": "Tabela"
+  },
+  "cart": {
+    "title": "Carrinho",
+    "empty": "O carrinho está vazio",
+    "emptyHint": "Explore o catálogo para adicionar produtos.",
+    "checkout": "Rever encomenda",
+    "deliveryInfo": "Informação de entrega"
+  },
+  "checkout": {
+    "title": "Rever e submeter encomenda",
+    "submit": "Submeter encomenda",
+    "submitOffline": "Guardar offline (sincronização pendente)",
+    "success": "Encomenda submetida",
+    "successOffline": "Encomenda guardada no dispositivo"
+  },
+  "assistant": {
+    "title": "Assistente IA",
+    "preview": "Pré-visualização",
+    "placeholder": "Pergunte sobre encomendas, saldos, produtos…",
+    "disclaimer": "Respostas simuladas. A versão futura usará funções de negócio com controlo de permissões através do backend."
+  },
+  "offline": {
+    "banner": "Está offline. O catálogo e os dados recentes vêm da cache; as novas encomendas ficam com sincronização pendente.",
+    "pending": "{count} encomenda(s) a aguardar sincronização",
+    "syncNow": "Sincronizar agora"
+  }
+}

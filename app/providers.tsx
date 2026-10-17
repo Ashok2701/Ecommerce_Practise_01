@@ -3,10 +3,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
+import { useTheme } from 'next-themes';
 import { AuthProvider } from '@/lib/auth/AuthProvider';
 import { CartProvider } from '@/lib/cart/CartProvider';
 import { UIProvider } from '@/lib/ui/UIProvider';
 import { I18nProvider } from '@/lib/i18n';
+import { SettingsProvider } from '@/lib/settings';
+import { ThemeProvider } from 'next-themes';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false, retry: 1 } } }));
@@ -16,16 +19,25 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, []);
   return (
     <QueryClientProvider client={queryClient}>
+      <SettingsProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange storageKey="nexus.theme">
       <I18nProvider>
         <AuthProvider>
           <UIProvider>
             <CartProvider>
               {children}
-              <Toaster position="top-right" richColors closeButton />
+              <ThemedToaster />
             </CartProvider>
           </UIProvider>
         </AuthProvider>
       </I18nProvider>
+      </ThemeProvider>
+      </SettingsProvider>
     </QueryClientProvider>
   );
+}
+
+function ThemedToaster() {
+  const { resolvedTheme } = useTheme();
+  return <Toaster position="top-right" richColors closeButton theme={resolvedTheme === 'dark' ? 'dark' : 'light'} />;
 }

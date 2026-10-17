@@ -4,7 +4,7 @@
  * - Stale-while-revalidate for static assets & product images
  * Future: background sync of the Pending Sync order queue + Web Push.
  */
-const VERSION = 'nexus-v1';
+const VERSION = 'nexus-v2';
 const SHELL = ['/offline.html', '/manifest.webmanifest', '/icons/icon.svg'];
 
 self.addEventListener('install', (e) => {
@@ -22,7 +22,9 @@ self.addEventListener('fetch', (e) => {
       .catch(() => caches.match(req).then((r) => r || caches.match('/offline.html'))));
     return;
   }
-  if (url.pathname.startsWith('/_next/static') || url.hostname === 'images.unsplash.com' || url.pathname.startsWith('/icons')) {
+  // Non-sensitive static files only: app code, icons, product images, branding settings and translation overrides.
+  // Never cache API responses (prices, customer data).
+  if (url.pathname.startsWith('/_next/static') || url.hostname === 'images.unsplash.com' || url.pathname.startsWith('/icons') || url.pathname.startsWith('/i18n/') || url.pathname === '/config/settings.json') {
     e.respondWith(caches.open(VERSION).then((c) => c.match(req).then((hit) => {
       const net = fetch(req).then((res) => { if (res.ok || res.type === 'opaque') c.put(req, res.clone()); return res; }).catch(() => hit);
       return hit || net;
