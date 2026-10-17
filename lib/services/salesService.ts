@@ -1,6 +1,7 @@
 import { source, http } from '@/lib/api/httpClient';
 import { getDb, commit, uid } from '@/lib/data/mockDb';
-import type { FollowUp, Order, User, Visit } from '@/types/domain';
+import type { FollowUp, Order, User, Visit, VisitReport } from '@/types/domain';
+import { pushNotification } from './notificationService';
 
 const monthStart = () => { const d = new Date(); d.setDate(1); d.setHours(0, 0, 0, 0); return d.getTime(); };
 const counted = (o: Order) => !['cancelled', 'rejected', 'pending_sync', 'draft'].includes(o.status);
@@ -40,4 +41,22 @@ export const salesService = {
     }, () => (f.id ? http.patch(`/follow-ups/${f.id}`, f) : http.post('/follow-ups', f))),
   getVisits: (repId: string) => source<Visit[]>(() => getDb().visits.filter((v) => v.salesRepId === repId).sort((a, b) => a.time.localeCompare(b.time)), () => http.get('/visits', { repId, date: 'today' })),
   setVisitStatus: (id: string, status: Visit['status']) => source(() => { const v = getDb().visits.find((x) => x.id === id)!; v.status = status; commit(); return v; }, () => http.patch(`/visits/${id}`, { status })),
+  getVisitReports: (q: { customerId?: string; repId?: string } = {}) =>
+    source<VisitReport[]>(() => (getDb().visitReports ??= []).filter((r) => (!q.customerId || r.customerId === q.customerId) && (!q.repId || r.salesRepId === q.repId)).sort((a, b) => b.at.localeCompare(a.at)), () => http.get('/visit-reports', q)),
+  /** Saves a visit report; completes the visit and creates a follow-up when a next-step date is set. Photos -> object storage in API mode. */
+  saveVisitReport: (r: Omit<VisitReport, 'id' | 'at'> & { followUpType?: FollowUp['type'] }) =>
+    source<VisitReport>(() => {
+      const db = getDb();
+      db.visitReports ??= [];
+      const { followUpType, ...rest } = r;
+      const report: VisitReport = { ...rest, id: uid('vr'), at: new Date().toISOString() };
+      db.visitReports.unshift(report);
+      if (r.visitId) { const v = db.visits.find((x) => x.id === r.visitId); if (v) { v.status = 'completed'; v.reportId = report.id; } }
+      if (r.followUpDate) db.followUps.push({ id: uid('fu'), customerId: r.customerId, salesRepId: r.salesRepId, date: r.followUpDate, type: followUpType ?? 'call', notes: r.nextSteps || 'Follow up from visit', status: 'open' });
+      const cust = db.customers.find((c) => c.id === r.customerId);
+      db.activity.unshift({ id: uid('act'), at: report.at, actor: r.salesRepName, text: `logged a visit report for ${cust?.name} (${r.outcome.replace('_', ' ')})`, kind: 'customer' });
+      if (r.outcome === 'issue_reported') pushNotification({ roles: ['manager'] }, 'message', `Issue reported at ${cust?.name}`, r.notes.slice(0, 90), `/customers/${r.customerId}`);
+      commit();
+      return report;
+    }, () => http.post('/visit-reports', r)),
 };

@@ -1,6 +1,8 @@
 import { source, http } from '@/lib/api/httpClient';
 import { getDb, commit, uid } from '@/lib/data/mockDb';
 import { buildOrderTotals } from '@/lib/domain/pricing';
+import { creditCheck } from '@/lib/domain/credit';
+import { fmtMoney } from '@/lib/format';
 import { pushNotification } from './notificationService';
 import type { ActorRef, Order, OrderStatus } from '@/types/domain';
 
@@ -48,7 +50,9 @@ export const orderService = {
       if (!input.offline) {
         cust.lastOrderDate = now; cust.lastOrderAmount = o.total;
         db.activity.unshift({ id: uid('act'), at: now, actor: input.actor.name, text: `placed order ${o.number} for ${cust.name}`, kind: 'order' });
-        pushNotification({ roles: ['manager'] }, 'approval_required', 'Approval required', `${o.number} from ${cust.name} – ${o.lines.length} items`, '/approvals');
+        const cc = creditCheck(o, cust, db.orders);
+        if (cc.over || cc.onHold) pushNotification({ roles: ['manager'] }, 'approval_required', 'Credit hold alert', `${o.number} from ${cust.name} ${cc.onHold ? 'is on an account on hold' : `exceeds available credit by ${fmtMoney(cc.exceededBy)}`}`, `/approvals?order=${o.id}`);
+        else pushNotification({ roles: ['manager'] }, 'approval_required', 'Approval required', `${o.number} from ${cust.name} – ${o.lines.length} items`, '/approvals');
       }
       commit();
       return o;
@@ -68,19 +72,32 @@ export const orderService = {
       return pending.length;
     }, () => http.post('/orders/sync')),
 
-  decide: (id: string, decision: 'approve' | 'reject' | 'changes', actor: ActorRef, comment?: string) =>
+  /** Credit position for an order (mock computes locally; backend asks ERP credit control). */
+  getCreditCheck: (id: string) =>
+    source(() => { const o = find(id); const c = getDb().customers.find((x) => x.id === o.customerId)!; return creditCheck(o, c, getDb().orders); }, () => http.get(`/orders/${id}/credit-check`)),
+
+  decide: (id: string, decision: 'approve' | 'reject' | 'changes', actor: ActorRef, comment?: string, opts: { overrideCredit?: boolean } = {}) =>
     source<Order>(() => {
       const o = find(id);
+      if (decision === 'approve') {
+        const c = getDb().customers.find((x) => x.id === o.customerId)!;
+        const cc = creditCheck(o, c, getDb().orders);
+        if ((cc.over || cc.onHold) && !opts.overrideCredit) throw new Error('Credit limit exceeded \u2013 override required');
+        if (cc.over || cc.onHold) {
+          o.creditOverride = { by: actor.name, at: new Date().toISOString(), exceededBy: cc.exceededBy, reason: comment };
+          o.comments.push({ by: actor.name, at: new Date().toISOString(), text: `Credit override: approved ${cc.over ? `${fmtMoney(cc.exceededBy)} above available credit` : 'despite account hold'}${comment ? ` \u2013 ${comment}` : ''}` });
+        }
+      }
       if (comment) o.comments.push({ by: actor.name, at: new Date().toISOString(), text: comment });
       const map = { approve: 'confirmed', reject: 'rejected', changes: 'changes_requested' } as const;
-      log(o, map[decision], actor.name, decision === 'approve' ? 'Approved and posted to Sage X3 (mock)' : comment);
+      log(o, map[decision], actor.name, decision === 'approve' ? (o.creditOverride ? 'Approved with credit override \u2013 posted to Sage X3 (mock)' : 'Approved and posted to Sage X3 (mock)') : comment);
       if (decision === 'approve') o.erpRef = `SOH${Math.floor(270000 + Math.random() * 9999)}`;
       const titles = { approve: 'Order confirmed', reject: 'Order rejected', changes: 'Changes requested on order' };
       pushNotification({ userIds: [customerUserId(o.customerId)!, o.salesRepId].filter(Boolean) }, decision === 'approve' ? 'order_confirmed' : 'order_new', titles[decision], `${o.number} – ${comment || 'by ' + actor.name}`, `/orders/${o.id}`);
       getDb().activity.unshift({ id: uid('act'), at: new Date().toISOString(), actor: actor.name, text: `${decision === 'approve' ? 'approved' : decision === 'reject' ? 'rejected' : 'requested changes on'} ${o.number}`, kind: 'approval' });
       commit();
       return o;
-    }, () => http.post(`/orders/${id}/${decision}`, { comment })),
+    }, () => http.post(`/orders/${id}/${decision}`, { comment, ...opts })),
 
   addComment: (id: string, actor: ActorRef, text: string) =>
     source<Order>(() => { const o = find(id); o.comments.push({ by: actor.name, at: new Date().toISOString(), text }); commit(); return o; }, () => http.post(`/orders/${id}/comments`, { text })),

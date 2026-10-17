@@ -25,3 +25,8 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - Real translations (Telugu/Hindi first)
 - Background sync + Web Push
 - Real AI via backend tool-calling
+
+## Iteration 2 (done)
+- Credit Hold Alerts: credit exposure check (outstanding + open un-invoiced orders), credit panel in approvals, "Credit hold" badge, one-tap Override & approve (audited in timeline/comments), manager dashboard credit alerts, notification on over-limit submission
+- Quick Order Entry (/quick-order): SKU/name autocomplete + Enter, Excel paste import with error list, camera barcode scan (BarcodeDetector) + demo scan, MOQ rounding, customer pricing
+- Visit Check-in Notes: visit report sheet (outcome, contact, notes, compressed photos, next steps, auto follow-up), customer Visits tab, dashboard Complete & report

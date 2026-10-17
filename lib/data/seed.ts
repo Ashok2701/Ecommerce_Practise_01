@@ -1,5 +1,5 @@
 import type {
-  Announcement, AppNotification, Conversation, Customer, FollowUp, Invoice, Offer, Order, OrderStatus, Payment, Product, User, Visit, ActivityItem,
+  Announcement, AppNotification, Conversation, Customer, FollowUp, Invoice, VisitReport, Offer, Order, OrderStatus, Payment, Product, User, Visit, ActivityItem,
 } from '@/types/domain';
 import { PRODUCTS } from './catalog';
 import { buildOrderTotals } from '@/lib/domain/pricing';
@@ -19,6 +19,7 @@ export interface MockDb {
   followUps: FollowUp[];
   visits: Visit[];
   activity: ActivityItem[];
+  visitReports: VisitReport[];
   seq: { order: number; invoice: number };
 }
 
@@ -145,6 +146,21 @@ export function createSeed(): MockDb {
   }
   orders.sort((a, b) => b.date.localeCompare(a.date));
 
+  // demo: a large pending order that breaches Krishna Hardware's credit limit
+  {
+    const cust = customers.find((c) => c.id === 'cus_006')!;
+    const rep = reps[0];
+    const items = [{ product: PRODUCTS[25], quantity: 2 }, { product: PRODUCTS[26], quantity: 4 }, { product: PRODUCTS[11], quantity: 6 }];
+    const date = ago(0, 2);
+    orders.push({
+      id: `ord_${seqOrder}`, number: `SO-26-${String(seqOrder++).padStart(5, '0')}`, customerId: cust.id, customerName: cust.name, salesRepId: rep.id,
+      createdBy: { id: rep.id, name: rep.name, role: 'sales' }, source: 'sales_app', date, expectedDelivery: ahead(6), status: 'pending_approval',
+      ...buildOrderTotals(items, cust, []), poNumber: 'PO/VTZ/2911', notes: 'Urgent – new workshop line commissioning.', deliveryAddress: cust.address, billingAddress: cust.billingAddress,
+      timeline: [{ status: 'pending_approval', at: date, by: rep.name, note: 'Submitted for approval' }], comments: [],
+    });
+  }
+  orders.sort((a, b) => b.date.localeCompare(a.date));
+
   // derive customer balances from invoices
   for (const c of customers) {
     c.outstanding = invoices.filter((i) => i.customerId === c.id).reduce((s, i) => s + (i.amount - i.paid), 0);
@@ -152,6 +168,8 @@ export function createSeed(): MockDb {
     c.lastOrderDate = last?.date;
     c.lastOrderAmount = last?.total;
   }
+
+  { const k = customers.find((c) => c.id === 'cus_006')!; k.creditLimit = Math.ceil((k.outstanding + 80000) / 10000) * 10000; }
 
   const payments: Payment[] = invoices.filter((i) => i.paid > 0).map((i, k) => ({
     id: `pay_${k + 1}`, customerId: i.customerId, date: new Date(new Date(i.date).getTime() + (10 + (k % 20)) * DAY).toISOString(), amount: i.paid,
@@ -248,5 +266,7 @@ export function createSeed(): MockDb {
     { id: 'act_7', at: ago(1, 1), actor: 'Meera Nair', text: 'created order for Metro Industrial Supplies', kind: 'order' },
   ];
 
-  return { version: 3, users, customers, products: PRODUCTS, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, seq: { order: seqOrder, invoice: seqInv } };
+  return { version: 4, users, customers, products: PRODUCTS, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
+    { id: 'vr_1', visitId: 'vis_1', customerId: 'cus_001', salesRepId: 'usr_rep_1', salesRepName: 'Ravi Kumar', at: ago(0, 3), outcome: 'quote_requested', contactMet: 'Venkat Rao (Purchase Head)', notes: 'Plant shutdown planned for next Monday. Needs 200 bearings (6205/6308) and 6 buckets of EP2 grease. Competitor quoted 4% lower on grease.', nextSteps: 'Send revised grease quote; confirm bearing stock with Hyderabad DC.', followUpDate: ahead(1), photos: [] },
+  ], seq: { order: seqOrder, invoice: seqInv } };
 }

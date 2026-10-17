@@ -3,7 +3,7 @@ const en = {
   app: { tagline: 'B2B Commerce · ERP connected' },
   nav: {
     dashboard: 'Dashboard', users: 'Users', customers: 'Customers', myCustomers: 'My Customers', approvals: 'Approvals', orders: 'Orders', newOrder: 'New Order',
-    catalog: 'Catalog', cart: 'Cart', invoices: 'Invoices', account: 'Account', announcements: 'Announcements', offers: 'Offers', messages: 'Messages',
+    catalog: 'Catalog', quickOrder: 'Quick Order', cart: 'Cart', invoices: 'Invoices', account: 'Account', announcements: 'Announcements', offers: 'Offers', messages: 'Messages',
     notifications: 'Notifications', assistant: 'AI Assistant', salesReps: 'Sales Team', followUps: 'Follow-ups', performance: 'Performance', settings: 'Settings',
     more: 'More', home: 'Home', support: 'Support',
     groups: { overview: 'Overview', commerce: 'Commerce', operations: 'Operations', engage: 'Engage', admin: 'Administration' },

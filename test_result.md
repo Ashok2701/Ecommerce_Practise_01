@@ -199,20 +199,65 @@ frontend:
           agent: "testing"
           comment: "Mobile (390px) and desktop (1440px) layouts fully tested. Mobile: bottom navigation visible (bnav-more working), header avatar visible, NO horizontal overflow detected (body width: 390px), sticky cart bar visible on catalog, mobile checkout button (cart-checkout-mobile) working, 'More' sheet opens correctly. Desktop: all pages render correctly, sidebar navigation working, no layout issues. Complete responsive design verified across both viewports."
 
+  - task: "Credit Hold Alerts (manager override)"
+    implemented: true
+    working: true
+    file: "lib/domain/credit.ts, lib/services/orderService.ts, app/(app)/approvals/page.tsx, features/dashboard/ManagerDashboard.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Seeded pending order for Krishna Hardware & Tools exceeds credit. Approvals: credit-panel, credit-hold-badge, credit-hold-alert, override-approve-btn -> confirm-action. Normal approve-btn throws if over credit. Manager dashboard credit-alerts list. Submitting an over-limit order sends 'Credit hold alert' notification."
+        - working: true
+          agent: "testing"
+          comment: "Comprehensive testing completed successfully. Manager dashboard shows credit-alerts section (data-testid=credit-alerts) with Krishna Hardware & Tools order over limit. /approvals page: credit-hold-badge displayed on order, credit-panel shows limit/outstanding/open orders/available/utilisation (130%), credit-hold-alert with message 'exceeds available credit by ₹1,39,318', override-approve-btn present. Confirmation dialog appears on override click. Orders within limit show normal approve-btn with 'Within credit limit' message. All credit hold features working correctly."
+  - task: "Quick Order Entry (/quick-order)"
+    implemented: true
+    working: true
+    file: "app/(app)/quick-order/page.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "quick-code + quick-qty + Enter/quick-add; suggestions suggest-<SKU>; toggle-paste -> quick-paste -> quick-import (unrecognised in quick-errors); open-scanner -> simulate-scan; qty rounds up to MOQ; quick-add-to-cart -> /cart. Sales needs customer selected."
+        - working: true
+          agent: "testing"
+          comment: "Complete quick order flow tested successfully. Sales rep without customer: prompt to select customer displayed. Selected ABC Distributors (BP-HYD-0001), quick order page loaded. Product entry: BRG-6205-2RS with qty 25 added (rounded to MOQ 30 visible in screenshot). Suggestions working: typed 'helmet', clicked suggest-PPE-HLM-IS2925, line added with qty 20. Paste functionality: pasted 3 lines (LUB-GRS-EP2-18, FST-HB-M12-50, NOTAREALSKU), 2 valid lines added, NOTAREALSKU shown in quick-errors. Scanner: open-scanner dialog opened, simulate-scan added line. Quick total displayed (₹47,304), quick-add-to-cart navigated to /cart with 5 products. Customer role: quick order accessible without customer selection. Mobile view (390px) tested. All features working correctly."
+  - task: "Visit Check-in Notes (visit reports)"
+    implemented: true
+    working: true
+    file: "features/visits/VisitReport.tsx, features/dashboard/SalesDashboard.tsx, app/(app)/customers/[id]/page.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Sales dashboard checked-in visit -> complete-visit-<id> opens visit-report-sheet (outcome-*, vr-notes, vr-photo-input file upload compressed, vr-next, vr-followup-date, vr-save). Creates follow-up when date set, marks visit completed. Customer detail: log-visit button, tab-visits -> visit-report-list."
+        - working: true
+          agent: "testing"
+          comment: "Complete visit check-in flow tested successfully. Sales dashboard: complete-visit-vis_2 button found for Sri Lakshmi Traders (checked in), clicked and visit-report-sheet opened. Filled report: outcome-quote_requested selected, vr-notes filled with detailed text, vr-next filled, vr-followup-date set to future date (2026-10-24), photo uploaded via vr-photo-input (compressed). Clicked vr-save, visit marked as Completed with 'View report' button. Follow-ups page shows new follow-up 'Send revised quote for EP2 grease by Friday' for Sri Lakshmi Traders. /customers/cus_002?tab=visits: visit-report-list displays outcome badge, notes, next steps, and photo thumbnail. /customers/cus_001: log-visit button opens sheet, saving without notes shows error validation, with notes saves successfully. Seeded report from Ravi Kumar visible in visits tab. Manager view: log-visit button correctly hidden (read-only), can view visit-report-list. Mobile view (390px) tested for visit report sheet. All visit features working correctly."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 2
+  test_sequence: 3
   run_ui: true
 
 test_plan:
   current_focus: []
   stuck_tasks: []
-  test_all: true
-  test_priority: "completed"
+  test_all: false
+  test_priority: "high_first"
 
 agent_communication:
     - agent: "main"
       message: "Frontend-only app. No backend to test. Mock data persists in localStorage key nexus.mockdb.v3 (User menu > Reset demo data to reset)."
     - agent: "testing"
       message: "Comprehensive testing completed successfully. All major features tested on both desktop (1440px) and mobile (390px) viewports. All 4 roles (Admin, Manager, Sales Rep, Customer) working correctly. Complete order flows tested end-to-end. Offline mode fully functional. No critical bugs found. No horizontal overflow issues. All data-testid attributes present and working. Minor: Some accessibility warnings in console (DialogContent descriptions) - non-blocking. Application is fully functional as a frontend-only PWA prototype."
+    - agent: "testing"
+      message: "Testing completed for 3 NEW features (Credit Hold Alerts, Quick Order Entry, Visit Check-in Notes). All features tested comprehensively and working correctly. Credit Hold Alerts: Dashboard alerts, credit panel, override functionality, confirmation dialogs all working. Quick Order Entry: Code entry with MOQ rounding, suggestions, paste list with error handling, scanner simulation, add to cart - all working. Visit Check-in Notes: Complete visit flow, report filling with outcome/notes/next steps/follow-up date/photo upload, visit completion, follow-ups creation, customer visits tab, log visit button, error validation, manager read-only view - all working. Mobile views (390px) tested for quick order and visit report sheet. No critical issues found. All data-testid attributes present and functional."

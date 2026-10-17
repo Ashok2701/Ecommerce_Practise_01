@@ -1,7 +1,7 @@
 import type { Role } from '@/types/domain';
 import {
   LayoutDashboard, Users, Building2, ClipboardCheck, Package, ShoppingCart, FileText, Wallet, Megaphone, BadgePercent, MessageSquare,
-  Bell, Sparkles, UserSquare2, CalendarCheck, TrendingUp, Settings, PlusCircle, Boxes, type LucideIcon,
+  Bell, Sparkles, UserSquare2, CalendarCheck, TrendingUp, Settings, PlusCircle, Boxes, Zap, type LucideIcon,
 } from 'lucide-react';
 
 /** Route-level access control. Backend will enforce the same rules on every API call. */
@@ -15,6 +15,7 @@ const ACCESS: [string, Role[]][] = [
   ['/orders/new', ['sales']],
   ['/orders', ['admin', 'manager', 'sales', 'customer']],
   ['/catalog', ['sales', 'customer']],
+  ['/quick-order', ['sales', 'customer']],
   ['/cart', ['sales', 'customer']],
   ['/checkout', ['sales', 'customer']],
   ['/invoices', ['customer']],
@@ -47,6 +48,7 @@ const I = {
   orders: { href: '/orders', label: 'nav.orders', icon: Package },
   newOrder: { href: '/orders/new', label: 'nav.newOrder', icon: PlusCircle },
   catalog: { href: '/catalog', label: 'nav.catalog', icon: Boxes },
+  quick: { href: '/quick-order', label: 'nav.quickOrder', icon: Zap },
   cart: { href: '/cart', label: 'nav.cart', icon: ShoppingCart, badge: 'cart' as const },
   invoices: { href: '/invoices', label: 'nav.invoices', icon: FileText },
   account: { href: '/account', label: 'nav.account', icon: Wallet },
@@ -74,11 +76,11 @@ export const NAV: Record<Role, NavGroup[]> = {
   ],
   sales: [
     { label: 'nav.groups.overview', items: [I.dash, I.myCustomers, I.follow, I.perf] },
-    { label: 'nav.groups.commerce', items: [I.newOrder, I.catalog, I.cart, I.orders] },
+    { label: 'nav.groups.commerce', items: [I.newOrder, I.quick, I.catalog, I.cart, I.orders] },
     { label: 'nav.groups.engage', items: [I.messages, I.ann, I.offers, I.ai] },
   ],
   customer: [
-    { label: 'nav.groups.overview', items: [I.dash, I.catalog, I.cart, I.orders] },
+    { label: 'nav.groups.overview', items: [I.dash, I.catalog, I.quick, I.cart, I.orders] },
     { label: 'nav.groups.commerce', items: [I.invoices, I.account] },
     { label: 'nav.groups.engage', items: [I.offers, I.ann, I.messages, I.ai] },
   ],

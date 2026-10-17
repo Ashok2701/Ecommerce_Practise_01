@@ -13,6 +13,8 @@ import { StatusBadge } from '@/components/common/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { OrderMiniList } from './AdminDashboard';
+import { VisitReportSheet } from '@/features/visits/VisitReport';
+import { useState } from 'react';
 
 export function SalesDashboard() {
   const { t } = useT();
@@ -25,6 +27,7 @@ export function SalesDashboard() {
   const follow = useQuery({ queryKey: ['followups', user.id], queryFn: () => salesService.getFollowUps(user.id) });
   const orders = useQuery({ queryKey: ['orders', { salesRepId: user.id }], queryFn: () => orderService.getOrders({ salesRepId: user.id }) });
   const visitMut = useMutation({ mutationFn: ({ id, s }: { id: string; s: any }) => salesService.setVisitStatus(id, s), onSuccess: () => { qc.invalidateQueries({ queryKey: ['visits'] }); toast.success('Visit updated'); } });
+  const [report, setReport] = useState<{ customerId: string; visitId: string; purpose: string } | null>(null);
   const cname = (id: string) => customers.data?.find((c) => c.id === id);
   const openFollow = (follow.data ?? []).filter((f) => f.status === 'open');
   const p = perf.data;
@@ -59,8 +62,10 @@ export function SalesDashboard() {
                     {v.status === 'planned' && <Button size="sm" variant="outline" className="h-9" onClick={() => visitMut.mutate({ id: v.id, s: 'checked_in' })}><LogIn className="mr-1 h-3.5 w-3.5" />Check in</Button>}
                     {v.status === 'checked_in' && <>
                       <Button size="sm" className="h-9" onClick={() => router.push(`/orders/new?customer=${v.customerId}`)}><PlusCircle className="mr-1 h-3.5 w-3.5" />Order</Button>
-                      <Button size="sm" variant="outline" className="h-9" onClick={() => visitMut.mutate({ id: v.id, s: 'completed' })}><CheckCircle2 className="mr-1 h-3.5 w-3.5" />Complete</Button>
+                      <Button size="sm" variant="outline" className="h-9" onClick={() => setReport({ customerId: v.customerId, visitId: v.id, purpose: v.purpose })} data-testid={`complete-visit-${v.id}`}><CheckCircle2 className="mr-1 h-3.5 w-3.5" />Complete &amp; report</Button>
                     </>}
+                    {v.status === 'completed' && (v.reportId ? <Button size="sm" variant="ghost" className="h-9" asChild><Link href={`/customers/${v.customerId}?tab=visits`}>View report</Link></Button>
+                      : <Button size="sm" variant="ghost" className="h-9" onClick={() => setReport({ customerId: v.customerId, visitId: v.id, purpose: v.purpose })}>Add report</Button>)}
                   </div>
                 </li>
               ); })}
@@ -81,6 +86,7 @@ export function SalesDashboard() {
           </div>
         </SectionCard>
       </div>
+      {report && <VisitReportSheet open={!!report} onOpenChange={(o) => !o && setReport(null)} customerId={report.customerId} visitId={report.visitId} purpose={report.purpose} />}
       <div className="mt-4"><SectionCard title="My recent orders" action={<Link href="/orders" className="text-xs font-medium text-primary">{t('common.viewAll')}</Link>}>{orders.data ? <OrderMiniList orders={orders.data.slice(0, 5)} /> : <div className="p-4"><LoadingState rows={3} /></div>}</SectionCard></div>
     </div>
   );

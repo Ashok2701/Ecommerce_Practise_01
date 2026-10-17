@@ -1,9 +1,10 @@
 'use client';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronLeft, PlusCircle, RotateCcw, Phone, Mail, MapPin, Wallet, CreditCard, CalendarClock, Receipt, ShieldAlert, MessageSquare } from 'lucide-react';
+import { ChevronLeft, PlusCircle, RotateCcw, Phone, Mail, MapPin, Wallet, CreditCard, CalendarClock, Receipt, ShieldAlert, MessageSquare, ClipboardList, Zap } from 'lucide-react';
+import { VisitReportSheet, VisitReportList } from '@/features/visits/VisitReport';
 import { customerService, orderService, productService, offerService, userService } from '@/lib/services';
 import { useUser } from '@/lib/auth/AuthProvider';
 import { useCart } from '@/lib/cart/CartProvider';
@@ -23,6 +24,8 @@ export default function CustomerDetailPage() {
   const router = useRouter();
   const cart = useCart();
   const reorder = useReorder();
+  const tab = useSearchParams().get('tab') ?? 'orders';
+  const [logVisit, setLogVisit] = useState(false);
   const q = useQuery({ queryKey: ['customer', id], queryFn: () => customerService.getCustomer(id) });
   const orders = useQuery({ queryKey: ['orders', { customerId: id }], queryFn: () => orderService.getOrders({ customerId: id }) });
   const products = useQuery({ queryKey: ['products', 'all'], queryFn: productService.getAll });
@@ -62,6 +65,8 @@ export default function CustomerDetailPage() {
                   <div className="flex flex-wrap gap-2">
                     {user.role === 'sales' && <><Button onClick={startOrder} disabled={c.status === 'inactive'} className="h-11 sm:h-10" data-testid="customer-create-order"><PlusCircle className="mr-2 h-4 w-4" />Create order</Button>
                       {lastOrder && <Button variant="outline" className="h-11 sm:h-10" onClick={() => reorder(lastOrder)} data-testid="customer-quick-reorder"><RotateCcw className="mr-2 h-4 w-4" />Repeat last order</Button>}</>}
+                    {user.role === 'sales' && <Button variant="outline" className="h-11 sm:h-10" onClick={() => { cart.setCustomer(c.id); router.push('/quick-order'); }} disabled={c.status === 'inactive'}><Zap className="mr-2 h-4 w-4" />Quick order</Button>}
+                    {user.role === 'sales' && <Button variant="outline" className="h-11 sm:h-10" onClick={() => setLogVisit(true)} data-testid="log-visit"><ClipboardList className="mr-2 h-4 w-4" />Log visit</Button>}
                     <Button variant="outline" className="h-11 sm:h-10" asChild><Link href="/messages"><MessageSquare className="mr-2 h-4 w-4" />Message</Link></Button>
                   </div>
                 </div>
@@ -72,8 +77,9 @@ export default function CustomerDetailPage() {
                 <KpiCard label="Last order" value={c.lastOrderAmount ? fmtMoney(c.lastOrderAmount) : '—'} icon={CalendarClock} hint={fmtDate(c.lastOrderDate)} />
                 <KpiCard label="Sales rep" value={<span className="text-base">{reps.data?.find((r) => r.id === c.salesRepId)?.name ?? '—'}</span>} icon={Receipt} hint={c.paymentTerms} />
               </div>
-              <Tabs defaultValue="orders">
-                <TabsList className="w-full justify-start overflow-x-auto sm:w-auto"><TabsTrigger value="orders">Recent orders</TabsTrigger><TabsTrigger value="purchases">Previous purchases</TabsTrigger><TabsTrigger value="pricing">Customer pricing</TabsTrigger></TabsList>
+              <Tabs defaultValue={tab}>
+                <TabsList className="w-full justify-start overflow-x-auto sm:w-auto"><TabsTrigger value="orders">Recent orders</TabsTrigger><TabsTrigger value="purchases">Previous purchases</TabsTrigger><TabsTrigger value="pricing">Customer pricing</TabsTrigger><TabsTrigger value="visits" data-testid="tab-visits">Visits</TabsTrigger></TabsList>
+                <TabsContent value="visits"><VisitReportList customerId={c.id} /></TabsContent>
                 <TabsContent value="orders"><SectionCard title={`Orders (${orders.data?.length ?? 0})`}>{orders.data ? (orders.data.length ? <OrderMiniList orders={orders.data.slice(0, 10)} /> : <div className="p-4"><EmptyState title="No orders yet" /></div>) : <div className="p-4"><LoadingState rows={3} /></div>}</SectionCard></TabsContent>
                 <TabsContent value="purchases">
                   <SectionCard title="Frequently purchased">
@@ -92,6 +98,7 @@ export default function CustomerDetailPage() {
                   </SectionCard>
                 </TabsContent>
               </Tabs>
+              {user.role === 'sales' && <VisitReportSheet open={logVisit} onOpenChange={setLogVisit} customerId={c.id} />}
             </div>
           );
         }}

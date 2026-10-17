@@ -3,7 +3,7 @@ import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { Search, SlidersHorizontal, LayoutGrid, List, ShoppingCart, Building2, Plus, Tag, X } from 'lucide-react';
+import { Search, SlidersHorizontal, LayoutGrid, List, ShoppingCart, Building2, Plus, Tag, X, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { productService, offerService } from '@/lib/services';
 import { useUser } from '@/lib/auth/AuthProvider';
@@ -112,7 +112,7 @@ function CatalogInner() {
   return (
     <div>
       <OrderContextBar step="products" />
-      <PageHeader title={t('catalog.title')} description={t('catalog.subtitle', { customer: customer?.name ?? '' })} />
+      <PageHeader title={t('catalog.title')} description={t('catalog.subtitle', { customer: customer?.name ?? '' })} actions={<Button variant="outline" asChild><Link href="/quick-order" data-testid="catalog-quick-order"><Zap className="mr-2 h-4 w-4" />Quick order</Link></Button>} />
       <div className="flex gap-6">
         <aside className="hidden w-56 shrink-0 lg:block" aria-label="Filters"><div className="sticky top-24"><Filters {...filterProps} /></div></aside>
         <div className="min-w-0 flex-1">

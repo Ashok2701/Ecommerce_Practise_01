@@ -1,6 +1,7 @@
 import { source, http } from '@/lib/api/httpClient';
 import { getDb } from '@/lib/data/mockDb';
 import type { ActivityItem, Order } from '@/types/domain';
+import { creditCheck } from '@/lib/domain/credit';
 
 const DAY = 86400000;
 const valid = (o: Order) => !['cancelled', 'rejected', 'pending_sync'].includes(o.status);
@@ -49,6 +50,7 @@ export const dashboardService = {
       pendingIssues: db.conversations.filter((c) => c.unreadBy.includes(userId)).length + db.orders.filter((o) => o.status === 'changes_requested').length,
       approvals: db.orders.filter((o) => o.status === 'pending_approval').slice(0, 5), recentOrders: db.orders.slice(0, 8), trend: salesTrend(db.orders, 14),
       activity: db.activity.slice(0, 6) as ActivityItem[],
+      creditAlerts: db.orders.filter((o) => o.status === 'pending_approval').map((o) => ({ order: o, check: creditCheck(o, db.customers.find((c) => c.id === o.customerId)!, db.orders) })).filter((x) => x.check.over || x.check.onHold),
     };
   }, () => http.get('/dashboard/manager')),
 

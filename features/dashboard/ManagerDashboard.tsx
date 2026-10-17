@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { ClipboardCheck, ShoppingCart, IndianRupee, Users, AlertCircle, TrendingUp, ChevronRight } from 'lucide-react';
+import { ClipboardCheck, ShoppingCart, IndianRupee, Users, AlertCircle, TrendingUp, ChevronRight, ShieldAlert } from 'lucide-react';
 import { dashboardService } from '@/lib/services';
 import { useUser } from '@/lib/auth/AuthProvider';
 import { useT } from '@/lib/i18n';
@@ -31,6 +31,17 @@ export function ManagerDashboard() {
               <KpiCard label="Active sales reps" value={d.activeReps} icon={Users} onClick={() => router.push('/sales-reps')} />
               <KpiCard label="Pending issues" value={d.pendingIssues} icon={AlertCircle} tone="danger" onClick={() => router.push('/messages')} hint="Messages & change requests" />
             </div>
+            {d.creditAlerts.length > 0 && (
+              <SectionCard title={<span className="flex items-center gap-2 text-rose-700"><ShieldAlert className="h-4 w-4" />Credit alerts ({d.creditAlerts.length})</span>} className="border-rose-200" action={<span className="text-xs text-muted-foreground">Pending orders above available credit</span>}>
+                <ul className="divide-y" data-testid="credit-alerts">{d.creditAlerts.map(({ order: o, check: k }) => (
+                  <li key={o.id}><Link href={`/approvals?order=${o.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-rose-50/50">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-rose-100 text-rose-700"><ShieldAlert className="h-4 w-4" /></span>
+                    <div className="min-w-0 flex-1"><div className="text-sm font-medium">{o.customerName}</div><div className="text-xs text-muted-foreground"><span className="font-mono">{o.number}</span> · {fmtMoney(o.total)} · {k.onHold ? 'account on hold' : `over by ${fmtMoney(k.exceededBy)}`} · utilisation {k.utilisationAfterPct}%</div></div>
+                    <span className="hidden text-xs font-medium text-rose-700 sm:inline">Review &amp; override</span><ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </Link></li>
+                ))}</ul>
+              </SectionCard>
+            )}
             <div className="grid gap-4 lg:grid-cols-3">
               <SectionCard title="Awaiting your approval" className="lg:col-span-2" action={<Link href="/approvals" className="text-xs font-medium text-primary">{t('common.viewAll')}</Link>}>
                 {d.approvals.length ? (

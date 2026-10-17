@@ -141,6 +141,7 @@ export interface Order {
   comments: { by: string; at: ISODate; text: string }[];
   invoiceId?: ID;
   erpRef?: string; // Sage X3 SOHNUM once accepted
+  creditOverride?: { by: string; at: ISODate; exceededBy: number; reason?: string };
 }
 
 export type InvoiceStatus = 'paid' | 'unpaid' | 'partially_paid' | 'overdue';
@@ -254,6 +255,24 @@ export interface Visit {
   date: ISODate;
   purpose: string;
   status: 'planned' | 'checked_in' | 'completed';
+  reportId?: ID;
+}
+
+export type VisitOutcome = 'order_placed' | 'quote_requested' | 'payment_collected' | 'no_order' | 'issue_reported';
+
+export interface VisitReport {
+  id: ID;
+  visitId?: ID;
+  customerId: ID;
+  salesRepId: ID;
+  salesRepName: string;
+  at: ISODate;
+  outcome: VisitOutcome;
+  contactMet: string;
+  notes: string;
+  nextSteps: string;
+  followUpDate?: ISODate;
+  photos: string[]; // compressed data URLs (mock); backend will store in object storage
 }
 
 export interface ActivityItem {
