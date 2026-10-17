@@ -200,7 +200,7 @@ function UserMenu() {
           <DropdownMenuSubTrigger><Globe className="mr-2 h-4 w-4" />{t('common.language')}</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             {LOCALES.map((l) => (
-              <DropdownMenuCheckboxItem key={l.code} checked={locale === l.code} onCheckedChange={() => { setLocale(l.code); if (!l.ready) toast.info(`${l.label} is prepared for a future release – showing English.`); }}>
+              <DropdownMenuCheckboxItem key={l.code} checked={locale === l.code} onCheckedChange={() => { setLocale(l.code); if (!l.ready) toast.info(`${l.label} is coming soon – showing English.`); }}>
                 {l.label}{!l.ready && <span className="ml-auto pl-2 text-[10px] text-muted-foreground">soon</span>}
               </DropdownMenuCheckboxItem>
             ))}

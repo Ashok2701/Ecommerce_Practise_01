@@ -1,22 +1,29 @@
 'use client';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import en, { type Dictionary } from './locales/en';
+import fr from './locales/fr';
+import de from './locales/de';
+import es from './locales/es';
+import it from './locales/it';
+import pt from './locales/pt';
 
 /**
  * Locale registry. Additional languages are lazy-loaded dictionaries that
  * fall back to English for missing keys. Arabic is flagged RTL.
  */
 export const LOCALES = [
-  { code: 'en', label: 'English', dir: 'ltr', ready: true },
-  { code: 'te', label: 'తెలుగు (Telugu)', dir: 'ltr', ready: false },
-  { code: 'hi', label: 'हिन्दी (Hindi)', dir: 'ltr', ready: false },
-  { code: 'ar', label: 'العربية (Arabic)', dir: 'rtl', ready: false },
-  { code: 'fr', label: 'Français', dir: 'ltr', ready: false },
-  { code: 'es', label: 'Español', dir: 'ltr', ready: false },
+  { code: 'en', label: 'English', short: 'EN', dir: 'ltr', ready: true },
+  { code: 'fr', label: 'Français', short: 'FR', dir: 'ltr', ready: true },
+  { code: 'de', label: 'Deutsch', short: 'DE', dir: 'ltr', ready: true },
+  { code: 'es', label: 'Español', short: 'ES', dir: 'ltr', ready: true },
+  { code: 'it', label: 'Italiano', short: 'IT', dir: 'ltr', ready: true },
+  { code: 'pt', label: 'Português', short: 'PT', dir: 'ltr', ready: true },
+  { code: 'nl', label: 'Nederlands', short: 'NL', dir: 'ltr', ready: false },
+  { code: 'ar', label: 'العربية', short: 'AR', dir: 'rtl', ready: false },
 ] as const;
 export type LocaleCode = (typeof LOCALES)[number]['code'];
 
-const dictionaries: Partial<Record<LocaleCode, Partial<Dictionary>>> = { en };
+const dictionaries: Partial<Record<LocaleCode, Dictionary>> = { en, fr, de, es, it, pt };
 
 function lookup(dict: any, path: string) {
   return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), dict);
@@ -27,8 +34,13 @@ const Ctx = createContext<I18nCtx | null>(null);
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<LocaleCode>('en');
-  useEffect(() => { const s = localStorage.getItem('nexus.locale') as LocaleCode | null; if (s) setLocaleState(s); }, []);
-  const meta = LOCALES.find((l) => l.code === locale)!;
+  useEffect(() => {
+    const s = localStorage.getItem('nexus.locale') as LocaleCode | null;
+    const nav = navigator.language?.slice(0, 2) as LocaleCode;
+    const pick = s && LOCALES.some((l) => l.code === s) ? s : LOCALES.some((l) => l.code === nav && l.ready) ? nav : null;
+    if (pick) setLocaleState(pick);
+  }, []);
+  const meta = LOCALES.find((l) => l.code === locale) ?? LOCALES[0];
   useEffect(() => { document.documentElement.lang = locale; document.documentElement.dir = meta.dir; }, [locale, meta.dir]);
   const setLocale = useCallback((l: LocaleCode) => { setLocaleState(l); localStorage.setItem('nexus.locale', l); }, []);
   const t = useCallback((key: string, vars?: Record<string, string | number>) => {

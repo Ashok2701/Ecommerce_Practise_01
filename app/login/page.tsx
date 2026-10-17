@@ -1,11 +1,12 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ShieldCheck, Building2, UserSquare2, ClipboardCheck, ArrowRight, Loader2, Lock, Mail, Eye, EyeOff, CheckCircle2, RefreshCw, Truck, KeyRound, Fingerprint, BadgeCheck, Zap } from 'lucide-react';
+import { ShieldCheck, Building2, UserSquare2, ClipboardCheck, ArrowRight, Loader2, Lock, Mail, Eye, EyeOff, CheckCircle2, RefreshCw, Truck, KeyRound, Fingerprint, BadgeCheck, Zap, Globe2, Check, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth/AuthProvider';
 import { authService, DEMO_PASSWORD } from '@/lib/services';
-import { useT } from '@/lib/i18n';
+import { useT, LOCALES } from '@/lib/i18n';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,19 +17,41 @@ import type { Role } from '@/types/domain';
 const HERO = 'https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1600&q=75';
 
 const ROLE_META: Record<Role, { icon: any; blurb: string; tone: string }> = {
-  admin: { icon: ShieldCheck, blurb: 'Users, customers & settings', tone: 'bg-slate-900 text-white' },
-  manager: { icon: ClipboardCheck, blurb: 'Approvals & team', tone: 'bg-indigo-600 text-white' },
-  sales: { icon: UserSquare2, blurb: 'Field orders & visits', tone: 'bg-emerald-600 text-white' },
-  customer: { icon: Building2, blurb: 'Catalog, orders & invoices', tone: 'bg-amber-500 text-white' },
+  admin: { icon: ShieldCheck, blurb: 'login.blurbAdmin', tone: 'bg-slate-900 text-white' },
+  manager: { icon: ClipboardCheck, blurb: 'login.blurbManager', tone: 'bg-indigo-600 text-white' },
+  sales: { icon: UserSquare2, blurb: 'login.blurbSales', tone: 'bg-emerald-600 text-white' },
+  customer: { icon: Building2, blurb: 'login.blurbCustomer', tone: 'bg-amber-500 text-white' },
 };
 
-const HIGHLIGHTS = [
-  ['Customer-specific pricing', 'Contract prices, tiers and offers resolved per account'],
-  ['Approval workflows', 'Credit checks and one-tap manager approvals'],
-  ['Works in the field', 'Offline drafts, quick order entry and barcode scanning'],
-];
+const HIGHLIGHTS = [['login.h1', 'login.h1d'], ['login.h2', 'login.h2d'], ['login.h3', 'login.h3d']];
+
+export function LanguageSwitcher({ className = '' }: { className?: string }) {
+  const { locale, setLocale, t } = useT();
+  const cur = LOCALES.find((l) => l.code === locale) ?? LOCALES[0];
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className={`h-9 gap-1.5 rounded-full bg-card px-3 shadow-sm ${className}`} data-testid="language-switcher" aria-label={t('meta.language')}>
+          <Globe2 className="h-4 w-4 text-muted-foreground" /><span className="text-xs font-semibold">{cur.short}</span><span className="hidden text-xs text-muted-foreground sm:inline">{cur.label}</span><ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuLabel className="text-xs text-muted-foreground">{t('meta.language')}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {LOCALES.map((l) => (
+          <DropdownMenuItem key={l.code} disabled={!l.ready} onSelect={() => setLocale(l.code)} data-testid={`lang-${l.code}`} className="gap-2">
+            <span className="w-6 rounded bg-muted px-1 text-center text-[10px] font-semibold">{l.short}</span>
+            <span className="flex-1">{l.label}</span>
+            {!l.ready ? <span className="text-[10px] text-muted-foreground">Soon</span> : locale === l.code ? <Check className="h-4 w-4 text-primary" /> : null}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 function HeroPanel() {
+  const { t } = useT();
   return (
     <section className="relative hidden overflow-hidden lg:sticky lg:top-0 lg:block lg:h-screen" aria-label="About Nexus B2B">
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -41,24 +64,24 @@ function HeroPanel() {
           <Logo />
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-slate-200 backdrop-blur">
             <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" /></span>
-            Sage X3 connector ready
+            {t('login.connector')}
           </span>
         </div>
 
         <div className="mt-auto grid gap-10 2xl:grid-cols-[1fr_auto] 2xl:items-end">
           <div className="max-w-xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-300">B2B Commerce · ERP Connected</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-300">{t('login.kicker')}</p>
             <h2 className="mt-4 text-4xl font-semibold leading-[1.1] tracking-tight 2xl:text-[44px]">
-              Every order, price and invoice,<br /><span className="text-sky-300">in one trusted portal.</span>
+              {t('login.heroTitle')}<br /><span className="text-sky-300">{t('login.heroAccent')}</span>
             </h2>
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-slate-300">
-              Connect your customers, field sales team and back office directly to your ERP, from the warehouse office to the customer's counter.
+              {t('login.heroText')}
             </p>
             <ul className="mt-8 space-y-3.5">
-              {HIGHLIGHTS.map(([t, d]) => (
-                <li key={t} className="flex gap-3">
+              {HIGHLIGHTS.map(([h, d]) => (
+                <li key={h} className="flex gap-3">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-sky-300" />
-                  <div><div className="text-sm font-semibold">{t}</div><div className="text-[13px] text-slate-400">{d}</div></div>
+                  <div><div className="text-sm font-semibold">{t(h)}</div><div className="text-[13px] text-slate-400">{t(d)}</div></div>
                 </li>
               ))}
             </ul>
@@ -86,8 +109,8 @@ function HeroPanel() {
         </div>
 
         <div className="mt-10 grid grid-cols-3 gap-6 border-t border-white/10 pt-6 [@media(max-height:760px)]:hidden">
-          {[['1,200+', 'SKUs with live stock'], ['4 roles', 'One unified platform'], ['99.9%', 'Order sync reliability']].map(([v, l]) => (
-            <div key={l}><div className="text-2xl font-semibold tabular-nums">{v}</div><div className="mt-0.5 text-xs text-slate-400">{l}</div></div>
+          {[['1,200+', 'login.s1'], [t('login.s2v'), 'login.s2'], ['99.9%', 'login.s3']].map(([v, l]) => (
+            <div key={l}><div className="text-2xl font-semibold tabular-nums">{v}</div><div className="mt-0.5 text-xs text-slate-400">{t(l)}</div></div>
           ))}
         </div>
       </div>
@@ -113,11 +136,11 @@ function LoginForm() {
   const submit = async (e?: React.FormEvent, creds?: { email: string; password: string }) => {
     e?.preventDefault();
     const c = creds ?? { email, password };
-    if (!creds && (!c.email || !c.password)) { setError('Enter your work email and password.'); return; }
+    if (!creds && (!c.email || !c.password)) { setError(t('login.missing')); return; }
     setError(''); setBusy(c.email);
     try {
       const u = await login(c.email, c.password);
-      toast.success(`Welcome back, ${u.name.split(' ')[0]}`);
+      toast.success(t('login.welcome', { name: u.name.split(' ')[0] }));
       router.replace(next || '/dashboard');
     } catch (err: any) { setError(err.message); setBusy(null); }
   };
@@ -136,7 +159,7 @@ function LoginForm() {
           <div className="absolute inset-0 bg-gradient-to-b from-[hsl(222_60%_8%/0.75)] to-[hsl(222_60%_8%/0.92)]" />
           <div className="relative flex h-full flex-col justify-between p-5 text-white">
             <Logo />
-            <p className="max-w-xs text-lg font-semibold leading-snug">Every order, price and invoice, <span className="text-sky-300">in one portal.</span></p>
+            <p className="max-w-xs text-lg font-semibold leading-snug">{t('login.mobileTitle')} <span className="text-sky-300">{t('login.mobileAccent')}</span></p>
           </div>
         </div>
 
@@ -144,7 +167,7 @@ function LoginForm() {
 
         <div className="relative flex flex-1 items-center justify-center px-5 py-8 sm:px-10 lg:py-12">
           <div className="w-full max-w-[420px]">
-            <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground shadow-sm"><BadgeCheck className="h-3.5 w-3.5 text-primary" />Secure partner portal</div>
+            <div className="mb-6 flex items-center justify-between gap-3"><div className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground shadow-sm"><BadgeCheck className="h-3.5 w-3.5 text-primary" />{t('login.secure')}</div><LanguageSwitcher /></div>
             <h1 className="text-[28px] font-semibold leading-tight tracking-tight">{t('login.title')}</h1>
             <p className="mt-1.5 text-sm text-muted-foreground">{t('login.subtitle')}</p>
 
@@ -152,9 +175,9 @@ function LoginForm() {
               <Button type="button" variant="outline" className="h-11 font-medium" onClick={() => sso('Microsoft')}>
                 <svg viewBox="0 0 21 21" className="mr-2 h-4 w-4" aria-hidden="true"><rect x="1" y="1" width="9" height="9" fill="#f25022" /><rect x="11" y="1" width="9" height="9" fill="#7fba00" /><rect x="1" y="11" width="9" height="9" fill="#00a4ef" /><rect x="11" y="11" width="9" height="9" fill="#ffb900" /></svg>Microsoft
               </Button>
-              <Button type="button" variant="outline" className="h-11 font-medium" onClick={() => sso('Company SSO')}><KeyRound className="mr-2 h-4 w-4" />Company SSO</Button>
+              <Button type="button" variant="outline" className="h-11 font-medium" onClick={() => sso(t('login.sso'))}><KeyRound className="mr-2 h-4 w-4" />{t('login.sso')}</Button>
             </div>
-            <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" />or continue with email<span className="h-px flex-1 bg-border" /></div>
+            <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" />{t('login.orEmail')}<span className="h-px flex-1 bg-border" /></div>
 
             <form onSubmit={submit} className="space-y-4" noValidate>
               <div className="space-y-1.5">
@@ -166,7 +189,7 @@ function LoginForm() {
                 <div className="relative"><Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input id="password" data-testid="login-password" type={show ? 'text' : 'password'} autoComplete="current-password" placeholder="••••••••" className="h-12 rounded-lg bg-card pl-10 pr-11 text-[15px] shadow-sm" value={password} onChange={(e) => setPassword(e.target.value)} required />
                   <button type="button" onClick={() => setShow((s) => !s)} className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-muted" aria-label={show ? 'Hide password' : 'Show password'}>{show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button></div>
               </div>
-              <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground"><Checkbox checked={remember} onCheckedChange={(v) => setRemember(!!v)} />Keep me signed in on this device</label>
+              <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground"><Checkbox checked={remember} onCheckedChange={(v) => setRemember(!!v)} />{t('login.remember')}</label>
               {error && <p role="alert" className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2.5 text-sm text-destructive" data-testid="login-error">{error}</p>}
               <Button type="submit" className="group h-12 w-full rounded-lg text-[15px] font-semibold shadow-md shadow-primary/20" disabled={!!busy} data-testid="login-submit">
                 {busy && busy === email ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}{t('login.signIn')}<ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-0.5" />
@@ -176,7 +199,7 @@ function LoginForm() {
             <div className="mt-8 rounded-xl border bg-muted/40 p-4">
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-foreground"><Zap className="h-3.5 w-3.5 text-primary" />{t('login.demo')}</span>
-                <span className="text-[11px] text-muted-foreground">One-click sign in</span>
+                <span className="text-[11px] text-muted-foreground">{t('login.oneClick')}</span>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {demo.map((u) => {
@@ -187,7 +210,7 @@ function LoginForm() {
                       <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${M.tone}`}>{busy === u.email ? <Loader2 className="h-4 w-4 animate-spin" /> : <M.icon className="h-4 w-4" />}</span>
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center justify-between text-[13px] font-semibold">{t(`roles.${u.role}`)}<ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground opacity-0 transition group-hover:opacity-100" /></span>
-                        <span className="block truncate text-[11px] text-muted-foreground">{M.blurb}</span>
+                        <span className="block truncate text-[11px] text-muted-foreground">{t(M.blurb)}</span>
                       </span>
                     </button>
                   );
@@ -196,8 +219,8 @@ function LoginForm() {
             </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-between gap-3 text-[11px] text-muted-foreground">
-              <span className="flex items-center gap-1.5"><Fingerprint className="h-3.5 w-3.5" />256-bit TLS · Role-based access</span>
-              <span>© 2026 Nexus B2B · <button type="button" className="hover:text-foreground hover:underline" onClick={() => toast.info('Privacy policy placeholder')}>Privacy</button> · <button type="button" className="hover:text-foreground hover:underline" onClick={() => toast.info('Terms placeholder')}>Terms</button></span>
+              <span className="flex items-center gap-1.5"><Fingerprint className="h-3.5 w-3.5" />{t('login.security')}</span>
+              <span>© 2026 Nexus B2B · <button type="button" className="hover:text-foreground hover:underline" onClick={() => toast.info('Privacy policy placeholder')}>{t('login.privacy')}</button> · <button type="button" className="hover:text-foreground hover:underline" onClick={() => toast.info('Terms placeholder')}>{t('login.terms')}</button></span>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 /** English (base) dictionary. Add new locales by copying this shape into ./<code>.ts */
 const en = {
+  meta: { language: 'Language' },
   app: { tagline: 'B2B Commerce · ERP connected' },
   nav: {
     dashboard: 'Dashboard', users: 'Users', customers: 'Customers', myCustomers: 'My Customers', approvals: 'Approvals', orders: 'Orders', newOrder: 'New Order',
@@ -28,6 +29,16 @@ const en = {
   login: {
     title: 'Sign in to your account', subtitle: 'Orders, pricing, invoices and approvals – connected to your ERP.', email: 'Work email', password: 'Password',
     signIn: 'Sign in', demo: 'Demo accounts', demoHint: 'One-click sign in as any role (password: demo123)', forgot: 'Forgot password?',
+    secure: 'Secure partner portal', sso: 'Company SSO', orEmail: 'or continue with email', remember: 'Keep me signed in on this device', oneClick: 'One-click sign in',
+    connector: 'Sage X3 connector ready', kicker: 'B2B Commerce · ERP Connected', heroTitle: 'Every order, price and invoice,', heroAccent: 'in one trusted portal.',
+    heroText: "Connect your customers, field sales team and back office directly to your ERP, from the warehouse office to the customer's counter.",
+    h1: 'Customer-specific pricing', h1d: 'Contract prices, tiers and offers resolved per account',
+    h2: 'Approval workflows', h2d: 'Credit checks and one-tap manager approvals',
+    h3: 'Works in the field', h3d: 'Offline drafts, quick order entry and barcode scanning',
+    s1: 'SKUs with live stock', s2: 'One unified platform', s3: 'Order sync reliability', s2v: '4 roles',
+    mobileTitle: 'Every order, price and invoice,', mobileAccent: 'in one portal.', security: '256-bit TLS · Role-based access', privacy: 'Privacy', terms: 'Terms',
+    blurbAdmin: 'Users, customers & settings', blurbManager: 'Approvals & team', blurbSales: 'Field orders & visits', blurbCustomer: 'Catalog, orders & invoices',
+    welcome: 'Welcome back, {name}', missing: 'Enter your work email and password.',
   },
   dashboard: {
     admin: 'Platform overview', manager: 'Operations overview', sales: 'Good day, {name}', customer: 'Welcome back, {name}',
@@ -39,5 +50,6 @@ const en = {
   offline: { banner: 'You are offline. Catalog and recent data are served from cache; new orders are saved as Pending Sync.', pending: '{count} order(s) waiting to sync', syncNow: 'Sync now' },
 };
 
-export type Dictionary = typeof en;
+type Widen<T> = { [K in keyof T]: T[K] extends string ? string : Widen<T[K]> };
+export type Dictionary = Widen<typeof en>;
 export default en;

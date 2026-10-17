@@ -1,0 +1,51 @@
+import type { Dictionary } from './en';
+
+const pt: Dictionary = {
+  meta: { language: 'Idioma' },
+  app: { tagline: 'Comércio B2B · ligado ao ERP' },
+  nav: {
+    dashboard: 'Painel', users: 'Utilizadores', customers: 'Clientes', myCustomers: 'Os meus clientes', approvals: 'Aprovações', orders: 'Encomendas', newOrder: 'Nova encomenda',
+    catalog: 'Catálogo', quickOrder: 'Encomenda rápida', cart: 'Carrinho', invoices: 'Faturas', account: 'Conta', announcements: 'Avisos', offers: 'Ofertas', messages: 'Mensagens',
+    notifications: 'Notificações', assistant: 'Assistente IA', salesReps: 'Equipa comercial', followUps: 'Acompanhamentos', performance: 'Desempenho', settings: 'Definições',
+    more: 'Mais', home: 'Início', support: 'Suporte',
+    groups: { overview: 'Visão geral', commerce: 'Comércio', operations: 'Operações', engage: 'Comunicação', admin: 'Administração' },
+  },
+  roles: { admin: 'Administrador', manager: 'Supervisor / Gestor', sales: 'Representante comercial', customer: 'Cliente B2B' },
+  common: {
+    search: 'Pesquisar', searchPlaceholder: 'Pesquisar produtos, clientes, encomendas…', all: 'Todos', status: 'Estado', save: 'Guardar', cancel: 'Cancelar', submit: 'Submeter',
+    view: 'Ver', edit: 'Editar', create: 'Criar', approve: 'Aprovar', reject: 'Rejeitar', back: 'Voltar', loading: 'A carregar…', noResults: 'Sem resultados',
+    noResultsHint: 'Ajuste a pesquisa ou os filtros.', retry: 'Tentar novamente', error: 'Ocorreu um erro', errorHint: 'Não foi possível carregar estes dados. Tente novamente.',
+    total: 'Total', subtotal: 'Subtotal', tax: 'IVA (18%)', discount: 'Desconto', quantity: 'Quantidade', unitPrice: 'Preço unitário', actions: 'Ações',
+    reply: 'Responder', send: 'Enviar', signOut: 'Terminar sessão', profile: 'Perfil', online: 'Online', offline: 'Offline', viewAll: 'Ver tudo', addToCart: 'Adicionar ao carrinho',
+    markAllRead: 'Marcar tudo como lido', language: 'Idioma', simulateOffline: 'Simular offline', resetDemo: 'Repor demonstração', previous: 'Anterior', next: 'Seguinte',
+    showing: '{from}–{to} de {total}', date: 'Data', amount: 'Valor', customer: 'Cliente', clear: 'Limpar', filters: 'Filtros', close: 'Fechar',
+  },
+  status: {
+    draft: 'Rascunho', pending_sync: 'Sincronização pendente', pending_approval: 'Aprovação pendente', changes_requested: 'Alterações pedidas', confirmed: 'Confirmada',
+    processing: 'Em processamento', packed: 'Embalada', dispatched: 'Expedida', delivered: 'Entregue', cancelled: 'Cancelada', rejected: 'Rejeitada',
+    paid: 'Paga', unpaid: 'Por pagar', partially_paid: 'Parcialmente paga', overdue: 'Vencida', active: 'Ativo', pending: 'Pendente', inactive: 'Inativo', on_hold: 'Bloqueado',
+    published: 'Publicado', scheduled: 'Agendado', expired: 'Expirado', open: 'Aberto', done: 'Concluído', in_stock: 'Em stock', low_stock: 'Stock baixo', out_of_stock: 'Esgotado',
+    planned: 'Planeada', checked_in: 'No cliente', completed: 'Concluída',
+  },
+  login: {
+    title: 'Inicie sessão na sua conta', subtitle: 'Encomendas, preços, faturas e aprovações, ligados ao seu ERP.', email: 'E-mail profissional', password: 'Palavra-passe',
+    signIn: 'Iniciar sessão', demo: 'Contas de demonstração', demoHint: 'Acesso num clique para cada perfil (palavra-passe: demo123)', forgot: 'Esqueceu a palavra-passe?',
+    secure: 'Portal seguro de parceiros', sso: 'SSO empresarial', orEmail: 'ou continue com o e-mail', remember: 'Manter sessão neste dispositivo', oneClick: 'Acesso num clique',
+    connector: 'Conector Sage X3 pronto', kicker: 'Comércio B2B · Ligado ao ERP', heroTitle: 'Cada encomenda, preço e fatura,', heroAccent: 'num único portal de confiança.',
+    heroText: 'Ligue os seus clientes, a equipa comercial e o back-office diretamente ao ERP, do armazém ao balcão do cliente.',
+    h1: 'Preços por cliente', h1d: 'Preços contratuais, escalões e ofertas por conta',
+    h2: 'Fluxos de aprovação', h2d: 'Controlo de crédito e aprovação com um toque',
+    h3: 'Feito para o terreno', h3d: 'Rascunhos offline, encomenda rápida e leitura de códigos de barras',
+    s1: 'Artigos com stock em tempo real', s2: 'Uma plataforma unificada', s3: 'Fiabilidade de sincronização', s2v: '4 perfis',
+    mobileTitle: 'Cada encomenda, preço e fatura,', mobileAccent: 'num só portal.', security: 'TLS de 256 bits · Acesso por perfil', privacy: 'Privacidade', terms: 'Termos',
+    blurbAdmin: 'Utilizadores, clientes e definições', blurbManager: 'Aprovações e equipa', blurbSales: 'Encomendas no terreno e visitas', blurbCustomer: 'Catálogo, encomendas e faturas',
+    welcome: 'Bem-vindo de volta, {name}', missing: 'Introduza o e-mail profissional e a palavra-passe.',
+  },
+  dashboard: { admin: 'Visão geral da plataforma', manager: 'Visão geral das operações', sales: 'Bom dia, {name}', customer: 'Bem-vindo de volta, {name}' },
+  catalog: { title: 'Catálogo de produtos', subtitle: 'Os preços apresentados são específicos de {customer}.', moq: 'Qtd. mín.', uom: 'Unidade', yourPrice: 'O seu preço', listPrice: 'Tabela' },
+  cart: { title: 'Carrinho', empty: 'O carrinho está vazio', emptyHint: 'Explore o catálogo para adicionar produtos.', checkout: 'Rever encomenda', deliveryInfo: 'Informação de entrega' },
+  checkout: { title: 'Rever e submeter encomenda', submit: 'Submeter encomenda', submitOffline: 'Guardar offline (sincronização pendente)', success: 'Encomenda submetida', successOffline: 'Encomenda guardada no dispositivo' },
+  assistant: { title: 'Assistente IA', preview: 'Pré-visualização', placeholder: 'Pergunte sobre encomendas, saldos, produtos…', disclaimer: 'Respostas simuladas. A versão futura usará funções de negócio com controlo de permissões através do backend.' },
+  offline: { banner: 'Está offline. O catálogo e os dados recentes vêm da cache; as novas encomendas ficam com sincronização pendente.', pending: '{count} encomenda(s) a aguardar sincronização', syncNow: 'Sincronizar agora' },
+};
+export default pt;

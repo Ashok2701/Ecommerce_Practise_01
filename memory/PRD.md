@@ -22,7 +22,7 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 
 ## Backlog
 - Connect Node.js backend APIs; real auth (JWT)
-- Real translations (Telugu/Hindi first)
+- Languages: EN, FR, DE, ES, IT, PT ready (login + nav/roles/status/common keys); NL, AR (RTL) planned; remaining page copy to move into dictionaries
 - Background sync + Web Push
 - Real AI via backend tool-calling
 
