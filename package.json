@@ -1,6 +1,6 @@
 {
-    "name": "nextjs-mongo-template",
-    "version": "0.1.0",
+    "name": "nexus-b2b-portal",
+    "version": "0.3.0",
     "private": true,
     "scripts": {
         "dev": "NODE_OPTIONS='--max-old-space-size=2048' next dev --hostname 0.0.0.0 --port 3000",
@@ -8,7 +8,8 @@
         "dev:webpack": "next dev --hostname 0.0.0.0 --port 3000",
         "build": "next build",
         "start": "next start",
-        "i18n:check": "node scripts/i18n-check.mjs"
+        "i18n:check": "node scripts/i18n-check.mjs",
+        "typecheck": "tsc --noEmit"
     },
     "dependencies": {
         "@fontsource/ibm-plex-sans": "5.3.0",
@@ -53,7 +54,6 @@
         "input-otp": "1.4.2",
         "lodash": "4.18.1",
         "lucide-react": "0.516.0",
-        "mongodb": "6.6.0",
         "next": "15.5.26",
         "next-themes": "0.4.6",
         "react": "18.3.1",
@@ -90,6 +90,5 @@
         "postcss": "8.5.28",
         "yaml": "2.8.3",
         "lodash": "4.18.1"
-    },
-    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+    }
 }

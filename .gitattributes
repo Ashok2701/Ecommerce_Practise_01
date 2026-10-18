@@ -1,0 +1,13 @@
+# Store text files with LF line endings in Git; check them out as LF on every OS.
+# This stops Windows checkouts from showing every file as modified.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary

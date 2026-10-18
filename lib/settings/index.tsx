@@ -52,7 +52,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   termsUrl: '',
 };
 
-export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '0.2.0';
+export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '0.3.0';
 
 /** "#0F5257" -> "183 69% 20%" (the HSL triplet format our CSS tokens use). */
 export function hexToHslTriplet(hex: string): string | null {
