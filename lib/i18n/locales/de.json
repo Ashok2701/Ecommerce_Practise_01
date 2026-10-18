@@ -66,16 +66,20 @@
     }
   },
   "roles": {
-    "admin": "Administrator",
-    "manager": "Supervisor / Manager",
-    "sales": "Außendienst",
-    "customer": "B2B-Kunde"
+    "ADMIN": "Administrator",
+    "SUPERVISOR": "Teamleitung",
+    "SALES_REP": "Außendienst",
+    "SUPPLIER": "Lieferant",
+    "CUSTOMER_B2B": "Geschäftskunde",
+    "CUSTOMER_B2C": "Privatkunde"
   },
   "roleBlurb": {
-    "admin": "Benutzer, Kunden und Einstellungen",
-    "manager": "Freigaben und Team",
-    "sales": "Außendienstaufträge und Besuche",
-    "customer": "Katalog, Bestellungen und Rechnungen"
+    "ADMIN": "Benutzer, Modulzugriff und Einstellungen",
+    "SUPERVISOR": "Freigaben, Team und Angebote",
+    "SALES_REP": "Kunden, Besuche und Aufträge",
+    "SUPPLIER": "Bestellungen und Abholungen",
+    "CUSTOMER_B2B": "Katalog, Aufträge und Rechnungen",
+    "CUSTOMER_B2C": "Shop, Bestellungen und Lieferungen"
   },
   "shell": {
     "skipToContent": "Zum Inhalt springen",
@@ -130,7 +134,8 @@
       "operations": "Betrieb",
       "engage": "Kommunikation",
       "admin": "Verwaltung"
-    }
+    },
+    "access": "Modulzugriff"
   },
   "common": {
     "search": "Suchen",
@@ -251,5 +256,68 @@
     "banner": "Sie sind offline. Katalog und aktuelle Daten kommen aus dem Cache; neue Bestellungen werden als „Sync ausstehend“ gespeichert.",
     "pending": "{count} Bestellung(en) warten auf Sync",
     "syncNow": "Jetzt synchronisieren"
+  },
+  "access": {
+    "title": "Modulzugriff",
+    "subtitle": "Legen Sie fest, welche Module jede Rolle nutzen darf. Menüs und Seiten folgen diesen Einstellungen sofort nach dem Speichern.",
+    "module": "Modul",
+    "role": "Rolle",
+    "alwaysOn": "Immer aktiv",
+    "save": "Änderungen speichern",
+    "discard": "Verwerfen",
+    "reset": "Standard wiederherstellen",
+    "saved": "Modulzugriff gespeichert",
+    "serverNote": "Sobald das Backend angebunden ist, prüft es dieselben Regeln bei jeder Anfrage. Ein ausgeblendetes Menü ist nie der einzige Schutz.",
+    "lockedHint": "Dashboard und Benachrichtigungen sind immer aktiv. Administratoren behalten immer Benutzer, Modulzugriff und Einstellungen.",
+    "deniedTitle": "Sie haben keinen Zugriff auf diese Seite",
+    "deniedText": "Ihre Rolle umfasst dieses Modul nicht. Wenden Sie sich bei Bedarf an Ihren Administrator.",
+    "goDashboard": "Zum Dashboard",
+    "unsaved": {
+      "one": "{count} ungespeicherte Änderung",
+      "other": "{count} ungespeicherte Änderungen"
+    },
+    "enabled": "{count} von {total} aktiv"
+  },
+  "supplierDash": {
+    "code": "Lieferantennummer {code}",
+    "comingTitle": "Der Einkauf kommt mit dem nächsten Release",
+    "comingText": "Hier sehen Sie künftig Bestellungen, erstellen Abholanfragen und verfolgen Zahlungen.",
+    "purchaseOrders": "Bestellungen",
+    "purchaseOrdersText": "Unsere Bestellungen ansehen, bestätigen und Termine zusagen.",
+    "pickups": "Abholanfragen",
+    "pickupsText": "Bestand zur Abholung anbieten; wir prüfen und erstellen eine Bestellung.",
+    "payments": "Zahlungen",
+    "paymentsText": "Rechnungen und Zahlungsstatus verfolgen.",
+    "contactTitle": "Brauchen Sie jetzt etwas?",
+    "contactText": "Schreiben Sie dem Einkauf. Antworten erscheinen hier und als Benachrichtigung.",
+    "openMessages": "Nachrichten öffnen"
+  },
+  "customerDash": {
+    "browseCatalog": "Katalog durchsuchen",
+    "reorderLast": "Letzte Bestellung wiederholen",
+    "tierTerms": "Preisstufe {tier} · {terms}",
+    "retail": "Privatkonto · online bezahlt",
+    "outstanding": "Offener Saldo",
+    "overdue": "{amount} überfällig",
+    "noOverdue": "Nichts überfällig",
+    "availableCredit": "Verfügbarer Kredit",
+    "ofLimit": "von {amount}",
+    "openOrders": "Offene Aufträge",
+    "inProgress": "In Bearbeitung",
+    "purchases12m": "Einkäufe (12 Monate)",
+    "creditUsed": "Kredit genutzt: {pct} %",
+    "recentOrders": "Letzte Aufträge",
+    "noOrders": "Noch keine Aufträge",
+    "noOrdersHint": "Durchsuchen Sie den Katalog für Ihre erste Bestellung.",
+    "orderMeta": "{date} · {items} · Lieferung {eta}",
+    "reorder": "{number} erneut bestellen",
+    "offersForYou": "Angebote für Sie",
+    "validUntil": "Gültig bis {date}",
+    "noOffers": "Zurzeit keine Angebote",
+    "read": "Lesen",
+    "items": {
+      "one": "{count} Artikel",
+      "other": "{count} Artikel"
+    }
   }
 }

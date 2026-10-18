@@ -144,7 +144,7 @@ export default function QuickOrderPage() {
   const total = priced.reduce((s, l) => s + l.total, 0);
   const addAll = () => { lines.forEach((l) => cart.add(l.productId, l.quantity)); toast.success(`${lines.length} lines added to cart`); setLines([]); router.push('/cart'); };
 
-  if (user.role === 'sales' && !customer) return (<div><OrderContextBar step="products" /><EmptyState icon={Building2} title="Select a customer first" description="Quick order uses the customer's price list and offers." action={<Button asChild><Link href="/orders/new">Select customer</Link></Button>} /></div>);
+  if (user.role === 'SALES_REP' && !customer) return (<div><OrderContextBar step="products" /><EmptyState icon={Building2} title="Select a customer first" description="Quick order uses the customer's price list and offers." action={<Button asChild><Link href="/orders/new">Select customer</Link></Button>} /></div>);
   if (products.isLoading) return <LoadingState variant="detail" />;
 
   return (

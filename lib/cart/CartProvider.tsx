@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/lib/auth/AuthProvider';
 import { productService, customerService, offerService } from '@/lib/services';
 import { buildOrderTotals } from '@/lib/domain/pricing';
+import { isCustomerRole } from '@/types/domain';
 import type { Customer, Product } from '@/types/domain';
 
 export interface CartItem { productId: string; quantity: number; }
@@ -39,7 +40,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [key, user?.customerId]);
   useEffect(() => { if (key && loadedKey === key) localStorage.setItem(key, JSON.stringify(state)); }, [state, key, loadedKey]);
 
-  const customerId = user?.role === 'customer' ? user.customerId ?? null : state.customerId;
+  const customerId = isCustomerRole(user?.role) ? user.customerId ?? null : state.customerId;
   const setCustomer = useCallback((id: string | null) => setState((s) => (s.customerId === id ? s : { customerId: id, items: [] })), []);
   const add = useCallback((productId: string, qty: number) => setState((s) => {
     const ex = s.items.find((i) => i.productId === productId);

@@ -45,7 +45,7 @@ export default function CustomerDetailPage() {
       <Link href="/customers" className="mb-4 inline-flex items-center text-sm text-muted-foreground hover:text-foreground"><ChevronLeft className="mr-1 h-4 w-4" />Customers</Link>
       <QueryView query={q} loading={<LoadingState variant="detail" />}>
         {(c) => {
-          if (user.role === 'sales' && c.salesRepId !== user.id) return <EmptyState icon={ShieldAlert} title="Not assigned to you" description="This customer belongs to another sales representative's territory." />;
+          if (user.role === 'SALES_REP' && c.salesRepId !== user.id) return <EmptyState icon={ShieldAlert} title="Not assigned to you" description="This customer belongs to another sales representative's territory." />;
           const lastOrder = orders.data?.find((o) => ['delivered', 'dispatched', 'confirmed'].includes(o.status));
           const available = Math.max(0, c.creditLimit - c.outstanding);
           const startOrder = () => { cart.setCustomer(c.id); router.push('/catalog'); };
@@ -63,10 +63,10 @@ export default function CustomerDetailPage() {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {user.role === 'sales' && <><Button onClick={startOrder} disabled={c.status === 'inactive'} className="h-11 sm:h-10" data-testid="customer-create-order"><PlusCircle className="mr-2 h-4 w-4" />Create order</Button>
+                    {user.role === 'SALES_REP' && <><Button onClick={startOrder} disabled={c.status === 'inactive'} className="h-11 sm:h-10" data-testid="customer-create-order"><PlusCircle className="mr-2 h-4 w-4" />Create order</Button>
                       {lastOrder && <Button variant="outline" className="h-11 sm:h-10" onClick={() => reorder(lastOrder)} data-testid="customer-quick-reorder"><RotateCcw className="mr-2 h-4 w-4" />Repeat last order</Button>}</>}
-                    {user.role === 'sales' && <Button variant="outline" className="h-11 sm:h-10" onClick={() => { cart.setCustomer(c.id); router.push('/quick-order'); }} disabled={c.status === 'inactive'}><Zap className="mr-2 h-4 w-4" />Quick order</Button>}
-                    {user.role === 'sales' && <Button variant="outline" className="h-11 sm:h-10" onClick={() => setLogVisit(true)} data-testid="log-visit"><ClipboardList className="mr-2 h-4 w-4" />Log visit</Button>}
+                    {user.role === 'SALES_REP' && <Button variant="outline" className="h-11 sm:h-10" onClick={() => { cart.setCustomer(c.id); router.push('/quick-order'); }} disabled={c.status === 'inactive'}><Zap className="mr-2 h-4 w-4" />Quick order</Button>}
+                    {user.role === 'SALES_REP' && <Button variant="outline" className="h-11 sm:h-10" onClick={() => setLogVisit(true)} data-testid="log-visit"><ClipboardList className="mr-2 h-4 w-4" />Log visit</Button>}
                     <Button variant="outline" className="h-11 sm:h-10" asChild><Link href="/messages"><MessageSquare className="mr-2 h-4 w-4" />Message</Link></Button>
                   </div>
                 </div>
@@ -85,7 +85,7 @@ export default function CustomerDetailPage() {
                   <SectionCard title="Frequently purchased">
                     <ul className="divide-y">{purchases.map((p) => (
                       <li key={p.productId} className="flex items-center gap-3 px-4 py-3 text-sm"><div className="min-w-0 flex-1"><Link href={`/catalog/${p.productId}`} className="font-medium hover:text-primary">{p.name}</Link><div className="font-mono text-[11px] text-muted-foreground">{p.sku}</div></div><div className="text-right text-xs text-muted-foreground"><div>{p.times}× ordered · {p.qty} {p.uom}</div><div>last {fmtDate(p.last)}</div></div>
-                        {user.role === 'sales' && <Button size="sm" variant="outline" onClick={() => { cart.setCustomer(c.id); cart.add(p.productId, Math.max(1, Math.round(p.qty / p.times))); router.push('/cart'); }}>Add</Button>}</li>
+                        {user.role === 'SALES_REP' && <Button size="sm" variant="outline" onClick={() => { cart.setCustomer(c.id); cart.add(p.productId, Math.max(1, Math.round(p.qty / p.times))); router.push('/cart'); }}>Add</Button>}</li>
                     ))}{!purchases.length && <li className="p-4"><EmptyState title="No purchases yet" /></li>}</ul>
                   </SectionCard>
                 </TabsContent>
@@ -98,7 +98,7 @@ export default function CustomerDetailPage() {
                   </SectionCard>
                 </TabsContent>
               </Tabs>
-              {user.role === 'sales' && <VisitReportSheet open={logVisit} onOpenChange={setLogVisit} customerId={c.id} />}
+              {user.role === 'SALES_REP' && <VisitReportSheet open={logVisit} onOpenChange={setLogVisit} customerId={c.id} />}
             </div>
           );
         }}

@@ -4,11 +4,13 @@ import { AdminDashboard } from '@/features/dashboard/AdminDashboard';
 import { ManagerDashboard } from '@/features/dashboard/ManagerDashboard';
 import { SalesDashboard } from '@/features/dashboard/SalesDashboard';
 import { CustomerDashboard } from '@/features/dashboard/CustomerDashboard';
+import { SupplierDashboard } from '@/features/dashboard/SupplierDashboard';
 
 export default function DashboardPage() {
   const user = useUser();
-  if (user.role === 'admin') return <AdminDashboard />;
-  if (user.role === 'manager') return <ManagerDashboard />;
-  if (user.role === 'sales') return <SalesDashboard />;
+  if (user.role === 'ADMIN') return <AdminDashboard />;
+  if (user.role === 'SUPERVISOR') return <ManagerDashboard />;
+  if (user.role === 'SALES_REP') return <SalesDashboard />;
+  if (user.role === 'SUPPLIER') return <SupplierDashboard />;
   return <CustomerDashboard />;
 }

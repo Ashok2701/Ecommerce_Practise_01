@@ -46,7 +46,7 @@ export const dashboardService = {
     return {
       pendingApprovals: db.orders.filter((o) => o.status === 'pending_approval').length, ordersToday: todays.length, salesToday: todays.reduce((s, o) => s + o.total, 0),
       salesMonth: db.orders.filter((o) => valid(o) && new Date(o.date) >= mStart).reduce((s, o) => s + o.total, 0),
-      activeReps: db.users.filter((u) => u.role === 'sales' && u.status === 'active').length,
+      activeReps: db.users.filter((u) => u.role === 'SALES_REP' && u.status === 'active').length,
       pendingIssues: db.conversations.filter((c) => c.unreadBy.includes(userId)).length + db.orders.filter((o) => o.status === 'changes_requested').length,
       approvals: db.orders.filter((o) => o.status === 'pending_approval').slice(0, 5), recentOrders: db.orders.slice(0, 8), trend: salesTrend(db.orders, 14),
       activity: db.activity.slice(0, 6) as ActivityItem[],

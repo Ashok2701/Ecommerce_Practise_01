@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useReorder } from '@/features/orders/useReorder';
 import { cn } from '@/lib/utils';
+import { isCustomerRole } from '@/types/domain';
 import type { Order } from '@/types/domain';
 
 const TABS = [
@@ -32,7 +33,7 @@ function OrdersInner() {
   const reorder = useReorder();
   const [tab, setTab] = useState(useSearchParams().get('status') ?? 'all');
   const [search, setSearch] = useState('');
-  const scope = user.role === 'customer' ? { customerId: user.customerId } : user.role === 'sales' ? { salesRepId: user.id } : {};
+  const scope = isCustomerRole(user.role) ? { customerId: user.customerId } : user.role === 'SALES_REP' ? { salesRepId: user.id } : {};
   const q = useQuery({ queryKey: ['orders', scope], queryFn: () => orderService.getOrders(scope) });
   const sync = useMutation({ mutationFn: orderService.syncPending, onSuccess: (n) => { qc.invalidateQueries(); toast.success(`${n} order(s) synced – now Pending Approval`); } });
   const all = q.data ?? [];
@@ -41,13 +42,13 @@ function OrdersInner() {
   const rows = all.filter((o) => (tab === 'all' || (tab === 'open' ? open.includes(o.status) : o.status === tab)) && (!s || [o.number, o.customerName, o.poNumber ?? '', ...o.lines.map((l) => l.name)].some((v) => v.toLowerCase().includes(s))));
   const pendingSync = all.filter((o) => o.status === 'pending_sync').length;
   const count = (k: string) => (k === 'all' ? all.length : k === 'open' ? all.filter((o) => open.includes(o.status)).length : all.filter((o) => o.status === k).length);
-  const showCustomer = user.role !== 'customer';
-  const canOrder = user.role === 'customer' || user.role === 'sales';
+  const showCustomer = !isCustomerRole(user.role);
+  const canOrder = isCustomerRole(user.role) || user.role === 'SALES_REP';
 
   return (
     <div>
-      <PageHeader title={t('nav.orders')} description={user.role === 'customer' ? 'Track every order from submission to delivery.' : user.role === 'sales' ? 'Orders for your assigned customers.' : 'All customer orders across the platform.'}
-        actions={canOrder ? <Button asChild><Link href={user.role === 'sales' ? '/orders/new' : '/catalog'}><PlusCircle className="mr-2 h-4 w-4" />New order</Link></Button> : undefined} />
+      <PageHeader title={t('nav.orders')} description={isCustomerRole(user.role) ? 'Track every order from submission to delivery.' : user.role === 'SALES_REP' ? 'Orders for your assigned customers.' : 'All customer orders across the platform.'}
+        actions={canOrder ? <Button asChild><Link href={user.role === 'SALES_REP' ? '/orders/new' : '/catalog'}><PlusCircle className="mr-2 h-4 w-4" />New order</Link></Button> : undefined} />
       {pendingSync > 0 && (
         <div className="mb-4 flex flex-col gap-2 rounded-lg border border-dashed border-amber-400 bg-amber-50 p-3 text-sm text-amber-900 sm:flex-row sm:items-center" data-testid="pending-sync-banner">
           <CloudUpload className="h-4 w-4 shrink-0" /><span className="flex-1">{t('offline.pending', { count: pendingSync })}. These are not yet confirmed.</span>

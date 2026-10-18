@@ -66,16 +66,20 @@
     }
   },
   "roles": {
-    "admin": "Administrateur",
-    "manager": "Superviseur / Responsable",
-    "sales": "Commercial terrain",
-    "customer": "Client B2B"
+    "ADMIN": "Administrateur",
+    "SUPERVISOR": "Superviseur",
+    "SALES_REP": "Commercial",
+    "SUPPLIER": "Fournisseur",
+    "CUSTOMER_B2B": "Client professionnel",
+    "CUSTOMER_B2C": "Client particulier"
   },
   "roleBlurb": {
-    "admin": "Utilisateurs, clients et paramètres",
-    "manager": "Approbations et équipe",
-    "sales": "Commandes terrain et visites",
-    "customer": "Catalogue, commandes et factures"
+    "ADMIN": "Utilisateurs, accès aux modules et paramètres",
+    "SUPERVISOR": "Validations, équipe et offres",
+    "SALES_REP": "Clients, visites et commandes",
+    "SUPPLIER": "Commandes d’achat et enlèvements",
+    "CUSTOMER_B2B": "Catalogue, commandes et factures",
+    "CUSTOMER_B2C": "Boutique, commandes et livraisons"
   },
   "shell": {
     "skipToContent": "Aller au contenu",
@@ -130,7 +134,8 @@
       "operations": "Opérations",
       "engage": "Communication",
       "admin": "Administration"
-    }
+    },
+    "access": "Accès aux modules"
   },
   "common": {
     "search": "Rechercher",
@@ -251,5 +256,68 @@
     "banner": "Vous êtes hors ligne. Le catalogue et les données récentes viennent du cache ; les nouvelles commandes sont en attente de synchro.",
     "pending": "{count} commande(s) en attente de synchro",
     "syncNow": "Synchroniser"
+  },
+  "access": {
+    "title": "Accès aux modules",
+    "subtitle": "Choisissez les modules accessibles à chaque rôle. Les menus et les pages s’adaptent dès l’enregistrement.",
+    "module": "Module",
+    "role": "Rôle",
+    "alwaysOn": "Toujours actif",
+    "save": "Enregistrer",
+    "discard": "Annuler les modifications",
+    "reset": "Rétablir les valeurs par défaut",
+    "saved": "Accès aux modules enregistré",
+    "serverNote": "Une fois le serveur connecté, il applique les mêmes règles à chaque requête : masquer un menu n’est jamais la seule protection.",
+    "lockedHint": "Le tableau de bord et les notifications sont toujours actifs. Les administrateurs conservent toujours Utilisateurs, Accès aux modules et Paramètres.",
+    "deniedTitle": "Vous n’avez pas accès à cette page",
+    "deniedText": "Votre rôle n’inclut pas ce module. Demandez-le à votre administrateur si besoin.",
+    "goDashboard": "Aller au tableau de bord",
+    "unsaved": {
+      "one": "{count} modification non enregistrée",
+      "other": "{count} modifications non enregistrées"
+    },
+    "enabled": "{count} sur {total} actifs"
+  },
+  "supplierDash": {
+    "code": "Code fournisseur {code}",
+    "comingTitle": "Les achats arrivent dans la prochaine version",
+    "comingText": "Vous verrez ici les commandes d’achat, créerez des demandes d’enlèvement et suivrez les paiements.",
+    "purchaseOrders": "Commandes d’achat",
+    "purchaseOrdersText": "Consultez et confirmez nos commandes et leurs dates.",
+    "pickups": "Demandes d’enlèvement",
+    "pickupsText": "Proposez du stock à enlever ; nous le validons et créons une commande d’achat.",
+    "payments": "Paiements",
+    "paymentsText": "Suivez les factures et l’état des paiements.",
+    "contactTitle": "Besoin d’aide maintenant ?",
+    "contactText": "Écrivez au service achats. Les réponses arrivent ici et en notification.",
+    "openMessages": "Ouvrir les messages"
+  },
+  "customerDash": {
+    "browseCatalog": "Parcourir le catalogue",
+    "reorderLast": "Recommander la dernière commande",
+    "tierTerms": "Tarif niveau {tier} · {terms}",
+    "retail": "Compte particulier · paiement en ligne",
+    "outstanding": "Encours actuel",
+    "overdue": "{amount} en retard",
+    "noOverdue": "Aucun retard",
+    "availableCredit": "Crédit disponible",
+    "ofLimit": "sur {amount}",
+    "openOrders": "Commandes en cours",
+    "inProgress": "En traitement",
+    "purchases12m": "Achats (12 mois)",
+    "creditUsed": "Crédit utilisé : {pct} %",
+    "recentOrders": "Commandes récentes",
+    "noOrders": "Aucune commande",
+    "noOrdersHint": "Parcourez le catalogue pour passer votre première commande.",
+    "orderMeta": "{date} · {items} · livraison {eta}",
+    "reorder": "Recommander {number}",
+    "offersForYou": "Offres pour vous",
+    "validUntil": "Valable jusqu’au {date}",
+    "noOffers": "Aucune offre pour le moment",
+    "read": "Lire",
+    "items": {
+      "one": "{count} article",
+      "other": "{count} articles"
+    }
   }
 }

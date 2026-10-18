@@ -66,16 +66,20 @@
     }
   },
   "roles": {
-    "admin": "Administrador",
-    "manager": "Supervisor / Gerente",
-    "sales": "Representante de ventas",
-    "customer": "Cliente B2B"
+    "ADMIN": "Administrador",
+    "SUPERVISOR": "Supervisor",
+    "SALES_REP": "Representante de ventas",
+    "SUPPLIER": "Proveedor",
+    "CUSTOMER_B2B": "Cliente empresa",
+    "CUSTOMER_B2C": "Cliente particular"
   },
   "roleBlurb": {
-    "admin": "Usuarios, clientes y ajustes",
-    "manager": "Aprobaciones y equipo",
-    "sales": "Pedidos de campo y visitas",
-    "customer": "Catálogo, pedidos y facturas"
+    "ADMIN": "Usuarios, acceso a módulos y ajustes",
+    "SUPERVISOR": "Aprobaciones, equipo y ofertas",
+    "SALES_REP": "Clientes, visitas y pedidos",
+    "SUPPLIER": "Pedidos de compra y recogidas",
+    "CUSTOMER_B2B": "Catálogo, pedidos y facturas",
+    "CUSTOMER_B2C": "Tienda, pedidos y entregas"
   },
   "shell": {
     "skipToContent": "Saltar al contenido",
@@ -130,7 +134,8 @@
       "operations": "Operaciones",
       "engage": "Comunicación",
       "admin": "Administración"
-    }
+    },
+    "access": "Acceso a módulos"
   },
   "common": {
     "search": "Buscar",
@@ -251,5 +256,68 @@
     "banner": "Está sin conexión. El catálogo y los datos recientes provienen de la caché; los nuevos pedidos quedan pendientes de sincronizar.",
     "pending": "{count} pedido(s) pendientes de sincronizar",
     "syncNow": "Sincronizar ahora"
+  },
+  "access": {
+    "title": "Acceso a módulos",
+    "subtitle": "Elige qué módulos puede usar cada rol. Los menús y las páginas se ajustan en cuanto guardas.",
+    "module": "Módulo",
+    "role": "Rol",
+    "alwaysOn": "Siempre activo",
+    "save": "Guardar cambios",
+    "discard": "Descartar",
+    "reset": "Restablecer valores predeterminados",
+    "saved": "Acceso a módulos guardado",
+    "serverNote": "Cuando el servidor esté conectado aplicará las mismas reglas en cada petición; ocultar un menú nunca es la única protección.",
+    "lockedHint": "El panel y las notificaciones siempre están activos. Los administradores siempre conservan Usuarios, Acceso a módulos y Ajustes.",
+    "deniedTitle": "No tienes acceso a esta página",
+    "deniedText": "Tu rol no incluye este módulo. Pídeselo a tu administrador si lo necesitas.",
+    "goDashboard": "Ir al panel",
+    "unsaved": {
+      "one": "{count} cambio sin guardar",
+      "other": "{count} cambios sin guardar"
+    },
+    "enabled": "{count} de {total} activos"
+  },
+  "supplierDash": {
+    "code": "Código de proveedor {code}",
+    "comingTitle": "Las compras llegan en la próxima versión",
+    "comingText": "Aquí verás pedidos de compra, crearás solicitudes de recogida y seguirás los pagos.",
+    "purchaseOrders": "Pedidos de compra",
+    "purchaseOrdersText": "Consulta y confirma nuestros pedidos y sus fechas.",
+    "pickups": "Solicitudes de recogida",
+    "pickupsText": "Ofrece stock para recoger; lo revisamos y creamos un pedido de compra.",
+    "payments": "Pagos",
+    "paymentsText": "Sigue las facturas y el estado de los pagos.",
+    "contactTitle": "¿Necesitas algo ahora?",
+    "contactText": "Escribe al equipo de compras. Las respuestas llegan aquí y como notificación.",
+    "openMessages": "Abrir mensajes"
+  },
+  "customerDash": {
+    "browseCatalog": "Ver catálogo",
+    "reorderLast": "Repetir último pedido",
+    "tierTerms": "Tarifa nivel {tier} · {terms}",
+    "retail": "Cuenta particular · pago en línea",
+    "outstanding": "Saldo pendiente",
+    "overdue": "{amount} vencido",
+    "noOverdue": "Nada vencido",
+    "availableCredit": "Crédito disponible",
+    "ofLimit": "de {amount}",
+    "openOrders": "Pedidos abiertos",
+    "inProgress": "En curso",
+    "purchases12m": "Compras (12 meses)",
+    "creditUsed": "Crédito usado: {pct} %",
+    "recentOrders": "Pedidos recientes",
+    "noOrders": "Aún no hay pedidos",
+    "noOrdersHint": "Explora el catálogo para hacer tu primer pedido.",
+    "orderMeta": "{date} · {items} · entrega {eta}",
+    "reorder": "Repetir {number}",
+    "offersForYou": "Ofertas para ti",
+    "validUntil": "Válida hasta el {date}",
+    "noOffers": "No hay ofertas ahora",
+    "read": "Leer",
+    "items": {
+      "one": "{count} artículo",
+      "other": "{count} artículos"
+    }
   }
 }

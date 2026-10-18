@@ -18,7 +18,7 @@ const STEPS = [
 export function OrderContextBar({ step }: { step: 'customer' | 'products' | 'cart' | 'review' }) {
   const user = useUser();
   const { customer } = usePricedCart();
-  if (user.role !== 'sales') return null;
+  if (user.role !== 'SALES_REP') return null;
   const idx = STEPS.findIndex((s) => s.key === step);
   return (
     <div className="mb-5 space-y-3">

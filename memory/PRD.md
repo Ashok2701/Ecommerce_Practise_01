@@ -37,3 +37,9 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - Client settings: client-config/settings.json (product/company name, logo, brand colour, languages, region, currency, demo mode, SSO, privacy/terms links), served at runtime; CLIENT_CONFIG_DIR for server installs
 - Theme: brand colour drives all tokens; petrol default; dark mode; IBM Plex Sans bundled (works offline)
 - App shell fully translated; page bodies still to be moved into translation files screen by screen
+
+## Iteration 4 – Six roles and module access (Oct 2026)
+- Roles: ADMIN, SUPERVISOR, SALES_REP, SUPPLIER, CUSTOMER_B2B, CUSTOMER_B2C (codes match the backend contract); users carry erpCode
+- Module access (YES/NO per role) drives menus, mobile bar, search, page guard; admin screen at /access; defaults and locked modules in lib/access/modules.ts; docs/ROLES_AND_ACCESS.md
+- New supplier dashboard (purchasing arrives next); customer dashboard translated, retail (B2C) variant without credit; B2C skips credit checks
+- Security headers (same-origin framing, nosniff, referrer, permissions policy); type errors fail the build; .gitattributes for LF line endings

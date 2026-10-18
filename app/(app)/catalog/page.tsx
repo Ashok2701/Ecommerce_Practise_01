@@ -103,7 +103,7 @@ function CatalogInner() {
   const allBrands = useMemo(() => productService.getBrands(), []);
   const activeFilters = (category !== 'all' ? 1 : 0) + brands.length + (stock !== 'all' ? 1 : 0);
 
-  if (user.role === 'sales' && !customer) {
+  if (user.role === 'SALES_REP' && !customer) {
     return (<div><OrderContextBar step="products" /><EmptyState icon={Building2} title="Select a customer first" description="Prices and offers are specific to each customer. Choose who you are ordering for." action={<Button asChild><Link href="/orders/new">Select customer</Link></Button>} /></div>);
   }
   const pages = q.data ? Math.max(1, Math.ceil(q.data.total / q.data.pageSize)) : 1;

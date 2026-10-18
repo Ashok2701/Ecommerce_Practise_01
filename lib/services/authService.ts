@@ -20,7 +20,7 @@ export const authService = {
   demoAccounts: () => {
     const db = getDb();
     const pickRole = (r: Role, id?: string) => db.users.find((u) => u.role === r && (!id || u.id === id))!;
-    return [pickRole('admin'), pickRole('manager', 'usr_mgr_1'), pickRole('sales', 'usr_rep_1'), pickRole('customer', 'usr_cus_1')];
+    return [pickRole('ADMIN'), pickRole('SUPERVISOR', 'usr_mgr_1'), pickRole('SALES_REP', 'usr_rep_1'), pickRole('SUPPLIER'), pickRole('CUSTOMER_B2B', 'usr_cus_1'), pickRole('CUSTOMER_B2C')];
   },
 };
 
@@ -34,5 +34,5 @@ export const userService = {
     }, () => http.get('/users', q)),
   setStatus: (id: string, status: UserStatus) =>
     source(() => { const u = getDb().users.find((x) => x.id === id)!; u.status = status; commit(); return u; }, () => http.patch(`/users/${id}`, { status })),
-  getSalesReps: () => source<User[]>(() => getDb().users.filter((u) => u.role === 'sales'), () => http.get('/users', { role: 'sales' })),
+  getSalesReps: () => source<User[]>(() => getDb().users.filter((u) => u.role === 'SALES_REP'), () => http.get('/users', { role: 'SALES_REP' })),
 };

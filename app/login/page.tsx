@@ -1,7 +1,7 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowRight, Building2, Check, ClipboardCheck, Eye, EyeOff, KeyRound, Loader2, ShieldCheck, UserSquare2 } from 'lucide-react';
+import { ArrowRight, Building2, Check, ClipboardCheck, Eye, EyeOff, KeyRound, Loader2, ShieldCheck, ShoppingBag, Truck, UserSquare2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth/AuthProvider';
 import { authService, DEMO_PASSWORD } from '@/lib/services';
@@ -17,7 +17,7 @@ import { Logo } from '@/components/brand/Logo';
 import { LanguageSwitcher, ThemeSwitcher } from '@/components/preferences/Preferences';
 import type { Role } from '@/types/domain';
 
-const ROLE_ICON: Record<Role, typeof ShieldCheck> = { admin: ShieldCheck, manager: ClipboardCheck, sales: UserSquare2, customer: Building2 };
+const ROLE_ICON: Record<Role, typeof ShieldCheck> = { ADMIN: ShieldCheck, SUPERVISOR: ClipboardCheck, SALES_REP: UserSquare2, SUPPLIER: Truck, CUSTOMER_B2B: Building2, CUSTOMER_B2C: ShoppingBag };
 
 /* ------------------------------------------------------------------ */
 /* The request slip: one sales request moving through to delivery.     */

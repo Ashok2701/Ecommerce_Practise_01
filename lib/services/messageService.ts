@@ -1,11 +1,12 @@
 import { source, http } from '@/lib/api/httpClient';
 import { getDb, commit, uid } from '@/lib/data/mockDb';
 import { pushNotification } from './notificationService';
+import { isCustomerRole } from '@/types/domain';
 import type { Conversation, User } from '@/types/domain';
 
 function visible(c: Conversation, u: User) {
-  if (u.role === 'admin' || u.role === 'manager') return true;
-  if (u.role === 'customer') return c.customerId === u.customerId;
+  if (u.role === 'ADMIN' || u.role === 'SUPERVISOR') return true;
+  if (isCustomerRole(u.role)) return c.customerId === u.customerId;
   return c.participantIds.includes(u.id);
 }
 
@@ -32,7 +33,7 @@ export const messageService = {
     source<Conversation>(() => {
       const db = getDb();
       const cust = user.customerId ? db.customers.find((c) => c.id === user.customerId) : undefined;
-      const participants = [user.id, ...(cust ? [cust.salesRepId] : []), ...db.users.filter((u) => u.role === 'manager' || u.role === 'admin').map((u) => u.id)];
+      const participants = [user.id, ...(cust ? [cust.salesRepId] : []), ...db.users.filter((u) => u.role === 'SUPERVISOR' || u.role === 'ADMIN').map((u) => u.id)];
       const now = new Date().toISOString();
       const c: Conversation = { id: uid('conv'), subject, customerId: cust?.id, participantIds: Array.from(new Set(participants)), participantNames: [user.name, 'Support'], updatedAt: now,
         unreadBy: participants.filter((p) => p !== user.id), messages: [{ id: uid('msg'), senderId: user.id, senderName: user.name, senderRole: user.role, body, at: now }] };
@@ -45,7 +46,7 @@ export const messageService = {
     const db = getDb();
     const c = db.conversations.find((x) => x.id === id);
     if (!c) return;
-    const rep = db.users.find((u) => c.participantIds.includes(u.id) && u.role === 'sales') ?? db.users.find((u) => u.role === 'manager')!;
+    const rep = db.users.find((u) => c.participantIds.includes(u.id) && u.role === 'SALES_REP') ?? db.users.find((u) => u.role === 'SUPERVISOR')!;
     const now = new Date().toISOString();
     c.messages.push({ id: uid('msg'), senderId: rep.id, senderName: rep.name, senderRole: rep.role, body: 'Thanks for reaching out – I have noted this and will update you shortly.', at: now });
     c.updatedAt = now; commit();

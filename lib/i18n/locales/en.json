@@ -66,16 +66,20 @@
     }
   },
   "roles": {
-    "admin": "Administrator",
-    "manager": "Supervisor / Manager",
-    "sales": "Sales Representative",
-    "customer": "B2B Customer"
+    "ADMIN": "Administrator",
+    "SUPERVISOR": "Supervisor",
+    "SALES_REP": "Sales representative",
+    "SUPPLIER": "Supplier",
+    "CUSTOMER_B2B": "Business customer",
+    "CUSTOMER_B2C": "Retail customer"
   },
   "roleBlurb": {
-    "admin": "Users, customers & settings",
-    "manager": "Approvals & team",
-    "sales": "Field orders & visits",
-    "customer": "Catalog, orders & invoices"
+    "ADMIN": "Users, module access and settings",
+    "SUPERVISOR": "Approvals, team and offers",
+    "SALES_REP": "Customers, visits and orders",
+    "SUPPLIER": "Purchase orders and pickups",
+    "CUSTOMER_B2B": "Catalogue, orders and invoices",
+    "CUSTOMER_B2C": "Shop, orders and deliveries"
   },
   "shell": {
     "skipToContent": "Skip to content",
@@ -130,7 +134,8 @@
       "operations": "Operations",
       "engage": "Engage",
       "admin": "Administration"
-    }
+    },
+    "access": "Module access"
   },
   "common": {
     "search": "Search",
@@ -251,5 +256,68 @@
     "banner": "You are offline. Catalog and recent data are served from cache; new orders are saved as Pending Sync.",
     "pending": "{count} order(s) waiting to sync",
     "syncNow": "Sync now"
+  },
+  "access": {
+    "title": "Module access",
+    "subtitle": "Choose which modules each role can use. Menus and pages follow these settings as soon as you save.",
+    "module": "Module",
+    "role": "Role",
+    "alwaysOn": "Always on",
+    "save": "Save changes",
+    "discard": "Discard",
+    "reset": "Restore defaults",
+    "saved": "Module access saved",
+    "serverNote": "When the backend is connected it enforces the same rules on every request, so hiding a menu is never the only protection.",
+    "lockedHint": "Dashboard and notifications are always on. Administrators always keep Users, Module access and Settings, so nobody gets locked out.",
+    "deniedTitle": "You don't have access to this page",
+    "deniedText": "Your role doesn't include this module. Ask your administrator if you need it.",
+    "goDashboard": "Go to dashboard",
+    "unsaved": {
+      "one": "{count} unsaved change",
+      "other": "{count} unsaved changes"
+    },
+    "enabled": "{count} of {total} on"
+  },
+  "supplierDash": {
+    "code": "Supplier code {code}",
+    "comingTitle": "Purchasing arrives in the next release",
+    "comingText": "You'll see purchase orders, raise pickup requests and follow payments here.",
+    "purchaseOrders": "Purchase orders",
+    "purchaseOrdersText": "View and acknowledge orders from us, and confirm dates.",
+    "pickups": "Pickup requests",
+    "pickupsText": "Offer stock for pickup; we review it and raise a purchase order.",
+    "payments": "Payments",
+    "paymentsText": "Track invoices and payment status.",
+    "contactTitle": "Need something now?",
+    "contactText": "Message the purchasing team. Replies arrive here and as notifications.",
+    "openMessages": "Open messages"
+  },
+  "customerDash": {
+    "browseCatalog": "Browse catalogue",
+    "reorderLast": "Reorder last order",
+    "tierTerms": "Tier {tier} pricing · {terms}",
+    "retail": "Retail account · paid online",
+    "outstanding": "Current outstanding",
+    "overdue": "{amount} overdue",
+    "noOverdue": "Nothing overdue",
+    "availableCredit": "Available credit",
+    "ofLimit": "of {amount}",
+    "openOrders": "Open orders",
+    "inProgress": "In progress",
+    "purchases12m": "Purchases (12 months)",
+    "creditUsed": "Credit used: {pct}%",
+    "recentOrders": "Recent orders",
+    "noOrders": "No orders yet",
+    "noOrdersHint": "Browse the catalogue to place your first order.",
+    "orderMeta": "{date} · {items} · due {eta}",
+    "reorder": "Reorder {number}",
+    "offersForYou": "Offers for you",
+    "validUntil": "Valid until {date}",
+    "noOffers": "No offers right now",
+    "read": "Read",
+    "items": {
+      "one": "{count} item",
+      "other": "{count} items"
+    }
   }
 }

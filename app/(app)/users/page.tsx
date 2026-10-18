@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import type { User } from '@/types/domain';
+import { ROLES, type User } from '@/types/domain';
 
 function UsersInner() {
   const { t } = useT();
@@ -40,7 +40,7 @@ function UsersInner() {
       <PageHeader title="User management" description="Internal users and B2B customer logins (one login per customer in V1)." actions={pendingCount ? <Button variant="outline" onClick={() => setStatus('pending')}>{pendingCount} awaiting approval</Button> : undefined} />
       <div className="mb-4 flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1 sm:max-w-sm"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input aria-label="Search users" data-testid="users-search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Name, email or title…" className="h-10 bg-card pl-9" /></div>
-        <Select value={role} onValueChange={setRole}><SelectTrigger className="h-10 bg-card sm:w-48" aria-label="Role filter"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All roles</SelectItem>{(['admin', 'manager', 'sales', 'customer'] as const).map((r) => <SelectItem key={r} value={r}>{t(`roles.${r}`)}</SelectItem>)}</SelectContent></Select>
+        <Select value={role} onValueChange={setRole}><SelectTrigger className="h-10 bg-card sm:w-48" aria-label="Role filter"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All roles</SelectItem>{ROLES.map((r) => <SelectItem key={r} value={r}>{t(`roles.${r}`)}</SelectItem>)}</SelectContent></Select>
         <Select value={status} onValueChange={setStatus}><SelectTrigger className="h-10 bg-card sm:w-40" aria-label="Status filter" data-testid="users-status-filter"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All statuses</SelectItem><SelectItem value="active">Active</SelectItem><SelectItem value="pending">Pending</SelectItem><SelectItem value="inactive">Inactive</SelectItem></SelectContent></Select>
       </div>
       <QueryView query={q}>
@@ -64,7 +64,7 @@ function UsersInner() {
           {view && <>
             <DialogHeader><DialogTitle>{view.name}</DialogTitle><DialogDescription>{view.title}</DialogDescription></DialogHeader>
             <dl className="grid grid-cols-2 gap-3 text-sm">
-              {[['Email', view.email], ['Phone', view.phone], ['Role', t(`roles.${view.role}`)], ['Region', view.region ?? '—'], ['Created', fmtDate(view.createdAt)], ['Last login', view.lastLoginAt ? timeAgo(view.lastLoginAt) : 'Never']].map(([k, v]) => <div key={k}><dt className="text-xs text-muted-foreground">{k}</dt><dd className="break-all font-medium">{v}</dd></div>)}
+              {[['Email', view.email], ['Phone', view.phone], ['Role', t(`roles.${view.role}`)], ['ERP code', view.erpCode ?? '—'], ['Region', view.region ?? '—'], ['Created', fmtDate(view.createdAt)], ['Last login', view.lastLoginAt ? timeAgo(view.lastLoginAt) : 'Never']].map(([k, v]) => <div key={k}><dt className="text-xs text-muted-foreground">{k}</dt><dd className="break-all font-medium">{v}</dd></div>)}
               <div><dt className="text-xs text-muted-foreground">Status</dt><dd><StatusBadge status={view.status} /></dd></div>
             </dl>
             <div className="mt-2 border-t pt-4"><Actions u={view} /></div>

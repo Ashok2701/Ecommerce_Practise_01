@@ -4,7 +4,12 @@
  * (which in turn maps Sage X3 entities: BPCUSTOMER, ITMMASTER, SORDER, SINVOICE ...).
  */
 
-export type Role = 'admin' | 'manager' | 'sales' | 'customer';
+/** The six portal roles. Codes match the backend contract. */
+export type Role = 'ADMIN' | 'SUPERVISOR' | 'SALES_REP' | 'SUPPLIER' | 'CUSTOMER_B2B' | 'CUSTOMER_B2C';
+export const ROLES: Role[] = ['ADMIN', 'SUPERVISOR', 'SALES_REP', 'SUPPLIER', 'CUSTOMER_B2B', 'CUSTOMER_B2C'];
+export const isCustomerRole = (r?: Role | null) => r === 'CUSTOMER_B2B' || r === 'CUSTOMER_B2C';
+/** Internal staff who manage customers, orders and approvals. */
+export const isManagerRole = (r?: Role | null) => r === 'ADMIN' || r === 'SUPERVISOR';
 export type ID = string;
 export type ISODate = string;
 
@@ -27,7 +32,9 @@ export interface User {
   status: UserStatus;
   title: string;
   region?: string;
-  customerId?: ID; // set when role === 'customer' (1 customer = 1 login in V1)
+  customerId?: ID; // set for CUSTOMER_B2B / CUSTOMER_B2C (1 customer = 1 login in V1)
+  /** ERP entity this login maps to: customer code, supplier code or rep code. Empty for ADMIN. */
+  erpCode?: string;
   monthlyTarget?: number; // sales reps
   createdAt: ISODate;
   lastLoginAt?: ISODate;
@@ -38,6 +45,8 @@ export type CustomerStatus = 'active' | 'on_hold' | 'inactive';
 export interface Customer {
   id: ID;
   code: string; // ERP business partner code
+  /** B2B: contract pricing and credit terms. B2C: list prices, paid up front, no credit limit. */
+  type: 'B2B' | 'B2C';
   name: string;
   contactName: string;
   email: string;

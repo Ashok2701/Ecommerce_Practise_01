@@ -10,7 +10,7 @@ import { useT } from '@/lib/i18n';
 import { Logo } from '@/components/brand/Logo';
 import { useTheme } from 'next-themes';
 import { useAuth, useUser } from '@/lib/auth/AuthProvider';
-import { NAV, BOTTOM_NAV, type NavItem } from '@/lib/auth/permissions';
+import { useAccess, type NavItem } from '@/lib/auth/permissions';
 import { useCart } from '@/lib/cart/CartProvider';
 import { useUI } from '@/lib/ui/UIProvider';
 import { useNotifications } from '@/lib/notifications/useNotifications';
@@ -23,14 +23,16 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { AssistantPanel } from '@/components/assistant/AssistantPanel';
+import { isCustomerRole } from '@/types/domain';
 
 export { Logo } from '@/components/brand/Logo';
 
 function useBadges() {
   const user = useUser();
   const cart = useCart();
+  const access = useAccess(user.role);
   const conv = useQuery({ queryKey: ['conversations', user.id], queryFn: () => messageService.listConversations(user), refetchInterval: 20000 });
-  const appr = useQuery({ queryKey: ['orders', { status: 'pending_approval' }], queryFn: () => orderService.getOrders({ status: 'pending_approval' }), enabled: user.role === 'manager' || user.role === 'admin' });
+  const appr = useQuery({ queryKey: ['orders', { status: 'pending_approval' }], queryFn: () => orderService.getOrders({ status: 'pending_approval' }), enabled: access.can('approvals') });
   return { cart: cart.count, messages: (conv.data ?? []).filter((c) => c.unreadBy.includes(user.id)).length, approvals: appr.data?.length ?? 0 } as Record<string, number>;
 }
 
@@ -41,11 +43,12 @@ function Sidebar() {
   const user = useUser();
   const path = usePathname();
   const badges = useBadges();
+  const access = useAccess(user.role);
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-16 flex-col border-r border-sidebar-border bg-sidebar md:flex lg:w-64" aria-label={t('shell.mainMenu')}>
       <div className="flex h-16 items-center px-4"><span className="lg:hidden"><Logo compact /></span><span className="hidden lg:block"><Logo /></span></div>
       <nav className="flex-1 space-y-5 overflow-y-auto px-2 py-3 scrollbar-none lg:px-3">
-        {NAV[user.role].map((g) => (
+        {access.nav.map((g) => (
           <div key={g.label}>
             <div className="mb-1.5 hidden px-3 text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/50 lg:block">{t(g.label)}</div>
             <ul className="space-y-0.5">
@@ -83,10 +86,11 @@ function BottomNav({ onMore }: { onMore: () => void }) {
   const user = useUser();
   const path = usePathname();
   const badges = useBadges();
+  const access = useAccess(user.role);
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 border-t bg-card/95 backdrop-blur pb-safe md:hidden" aria-label={t('shell.bottomNav')}>
       <ul className="grid grid-cols-5">
-        {BOTTOM_NAV[user.role].map((it: NavItem) => {
+        {access.bottom.map((it: NavItem) => {
           const active = isActive(path, it.href);
           const count = it.badge ? badges[it.badge] : 0;
           return (
@@ -108,13 +112,14 @@ function MoreSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: bo
   const { t } = useT();
   const user = useUser();
   const path = usePathname();
+  const access = useAccess(user.role);
   useEffect(() => onOpenChange(false), [path]); // eslint-disable-line
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-xl">
         <SheetHeader><SheetTitle className="text-left">{t('nav.more')}</SheetTitle></SheetHeader>
         <div className="mt-4 space-y-4">
-          {NAV[user.role].map((g) => (
+          {access.nav.map((g) => (
             <div key={g.label}>
               <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t(g.label)}</div>
               <div className="grid grid-cols-3 gap-2">
@@ -173,6 +178,7 @@ function UserMenu() {
   const user = useUser();
   const router = useRouter();
   const ui = useUI();
+  const access = useAccess(user.role);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -184,7 +190,7 @@ function UserMenu() {
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel className="font-normal"><div className="text-sm font-medium">{user.name}</div><div className="truncate text-xs text-muted-foreground">{user.email}</div></DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {user.role === 'customer' && <DropdownMenuItem onClick={() => router.push('/account')}><Building2 className="mr-2 h-4 w-4" />{t('shell.companyAccount')}</DropdownMenuItem>}
+        {access.can('account') && <DropdownMenuItem onClick={() => router.push('/account')}><Building2 className="mr-2 h-4 w-4" />{t('shell.companyAccount')}</DropdownMenuItem>}
         <DropdownMenuItem onClick={() => router.push('/notifications')}><UserCircle2 className="mr-2 h-4 w-4" />{t('nav.notifications')}</DropdownMenuItem>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger><Globe className="mr-2 h-4 w-4" />{t('common.language')}</DropdownMenuSubTrigger>
@@ -215,16 +221,17 @@ function GlobalSearch({ open, onOpenChange }: { open: boolean; onOpenChange: (v:
   const { t } = useT();
   const user = useUser();
   const router = useRouter();
-  const products = useQuery({ queryKey: ['products', 'all'], queryFn: productService.getAll, enabled: open && (user.role === 'customer' || user.role === 'sales') });
-  const customers = useQuery({ queryKey: ['customers', user.role === 'sales' ? user.id : 'all'], queryFn: () => customerService.getCustomers(user.role === 'sales' ? { salesRepId: user.id } : {}), enabled: open && user.role !== 'customer' });
-  const orders = useQuery({ queryKey: ['orders', 'search', user.id], queryFn: () => orderService.getOrders(user.role === 'customer' ? { customerId: user.customerId } : user.role === 'sales' ? { salesRepId: user.id } : {}), enabled: open });
+  const access = useAccess(user.role);
+  const products = useQuery({ queryKey: ['products', 'all'], queryFn: productService.getAll, enabled: open && access.can('catalog') });
+  const customers = useQuery({ queryKey: ['customers', user.role === 'SALES_REP' ? user.id : 'all'], queryFn: () => customerService.getCustomers(user.role === 'SALES_REP' ? { salesRepId: user.id } : {}), enabled: open && access.can('customers') });
+  const orders = useQuery({ queryKey: ['orders', 'search', user.id], queryFn: () => orderService.getOrders(isCustomerRole(user.role) ? { customerId: user.customerId } : user.role === 'SALES_REP' ? { salesRepId: user.id } : {}), enabled: open && access.can('orders') });
   const go = (href: string) => { onOpenChange(false); router.push(href); };
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
       <CommandInput placeholder={t('common.searchPlaceholder')} data-testid="global-search-input" />
       <CommandList>
         <CommandEmpty>{t('common.noResults')}</CommandEmpty>
-        <CommandGroup heading={t('shell.search.navigate')}>{NAV[user.role].flatMap((g) => g.items).map((it) => <CommandItem key={it.href} value={`nav ${t(it.label)}`} onSelect={() => go(it.href)}><it.icon className="mr-2 h-4 w-4" />{t(it.label)}</CommandItem>)}</CommandGroup>
+        <CommandGroup heading={t('shell.search.navigate')}>{access.nav.flatMap((g) => g.items).map((it) => <CommandItem key={it.href} value={`nav ${t(it.label)}`} onSelect={() => go(it.href)}><it.icon className="mr-2 h-4 w-4" />{t(it.label)}</CommandItem>)}</CommandGroup>
         {!!products.data?.length && <CommandGroup heading={t('shell.search.products')}>{products.data.map((p) => <CommandItem key={p.id} value={`${p.name} ${p.sku} ${p.brand}`} onSelect={() => go(`/catalog/${p.id}`)}><span className="truncate">{p.name}</span><span className="ml-auto font-mono text-[11px] text-muted-foreground">{p.sku}</span></CommandItem>)}</CommandGroup>}
         {!!customers.data?.length && <CommandGroup heading={t('shell.search.customers')}>{customers.data.map((c) => <CommandItem key={c.id} value={`${c.name} ${c.code} ${c.address.city}`} onSelect={() => go(`/customers/${c.id}`)}>{c.name}<span className="ml-auto text-[11px] text-muted-foreground">{c.address.city}</span></CommandItem>)}</CommandGroup>}
         {!!orders.data?.length && <CommandGroup heading={t('shell.search.orders')}>{orders.data.slice(0, 40).map((o) => <CommandItem key={o.id} value={`${o.number} ${o.customerName}`} onSelect={() => go(`/orders/${o.id}`)}><span className="font-mono text-xs">{o.number}</span><span className="ml-2 truncate text-muted-foreground">{o.customerName}</span></CommandItem>)}</CommandGroup>}

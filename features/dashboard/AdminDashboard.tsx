@@ -1,4 +1,7 @@
 'use client';
+import { useUser } from '@/lib/auth/AuthProvider';
+import { useAccess } from '@/lib/auth/permissions';
+import type { ModuleId } from '@/lib/access/modules';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -41,6 +44,10 @@ export function OrderMiniList({ orders }: { orders: Order[] }) {
 export function AdminDashboard() {
   const { t } = useT();
   const router = useRouter();
+  const user = useUser();
+  const access = useAccess(user.role);
+  /** Only link to pages this role can open. */
+  const go = (id: ModuleId, href: string) => (access.can(id) ? () => router.push(href) : undefined);
   const q = useQuery({ queryKey: ['dash', 'admin'], queryFn: dashboardService.getAdminDashboard });
   return (
     <div>
@@ -49,13 +56,13 @@ export function AdminDashboard() {
         {(d) => (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-              <KpiCard testId="kpi-total-customers" label="Total B2B customers" value={d.totalCustomers} icon={Building2} hint={`${d.activeCustomers} active`} onClick={() => router.push('/customers')} />
+              <KpiCard testId="kpi-total-customers" label="Total B2B customers" value={d.totalCustomers} icon={Building2} hint={`${d.activeCustomers} active`} onClick={go('customers', '/customers')} />
               <KpiCard label="Active customers" value={d.activeCustomers} icon={UserCheck} tone="success" trend={{ value: '2 this month', up: true }} />
-              <KpiCard testId="kpi-pending-approvals" label="Pending user approvals" value={d.pendingApprovals} icon={Clock} tone="warning" onClick={() => router.push('/users?status=pending')} hint="Awaiting review" />
-              <KpiCard label="Total orders" value={d.totalOrders} icon={Package} hint="All time" onClick={() => router.push('/orders')} />
-              <KpiCard label="Orders pending approval" value={d.pendingOrders} icon={Hourglass} tone="warning" onClick={() => router.push('/approvals')} />
+              <KpiCard testId="kpi-pending-approvals" label="Pending user approvals" value={d.pendingApprovals} icon={Clock} tone="warning" onClick={go('users', '/users?status=pending')} hint="Awaiting review" />
+              <KpiCard label="Total orders" value={d.totalOrders} icon={Package} hint="All time" onClick={go('orders', '/orders')} />
+              <KpiCard label="Orders pending approval" value={d.pendingOrders} icon={Hourglass} tone="warning" onClick={go('approvals', '/approvals')} />
               <KpiCard label="Sales value (30 days)" value={fmtCompactMoney(d.salesValue)} icon={IndianRupee} tone="success" trend={{ value: '8.4%', up: true }} />
-              <KpiCard label="Unread messages" value={d.unreadMessages} icon={MessageSquare} onClick={() => router.push('/messages')} />
+              <KpiCard label="Unread messages" value={d.unreadMessages} icon={MessageSquare} onClick={go('messages', '/messages')} />
               <KpiCard label="ERP sync status" value={<span className="text-base font-semibold text-emerald-600">Healthy</span>} icon={ClipboardCheck} tone="success" hint="Sage X3 · mock" />
             </div>
             <div className="grid gap-4 lg:grid-cols-3">
@@ -64,7 +71,7 @@ export function AdminDashboard() {
             </div>
             <div className="grid gap-4 lg:grid-cols-3">
               <SectionCard title="Recent activity" action={<span className="text-xs text-muted-foreground">Today</span>}><ActivityFeed items={d.activity} /></SectionCard>
-              <SectionCard title="Recent orders" action={<Link href="/orders" className="text-xs font-medium text-primary">{t('common.viewAll')}</Link>}><OrderMiniList orders={d.recentOrders} /></SectionCard>
+              {access.can('orders') && <SectionCard title="Recent orders" action={<Link href="/orders" className="text-xs font-medium text-primary">{t('common.viewAll')}</Link>}><OrderMiniList orders={d.recentOrders} /></SectionCard>}
               <SectionCard title="Sales by category" bodyClassName="p-3"><HBarChart data={d.byCategory} x="category" y="sales" height={280} /></SectionCard>
             </div>
           </div>

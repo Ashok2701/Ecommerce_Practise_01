@@ -23,9 +23,10 @@ import { cn } from '@/lib/utils';
 import type { Announcement, Audience } from '@/types/domain';
 
 const CAT_TONE = { company: 'bg-blue-50 text-blue-700', product: 'bg-violet-50 text-violet-700', notice: 'bg-amber-50 text-amber-800' };
-const AUD: Audience[] = ['all', 'customer', 'sales', 'manager'];
+const AUD: Audience[] = ['all', 'CUSTOMER_B2B', 'CUSTOMER_B2C', 'SALES_REP', 'SUPERVISOR', 'SUPPLIER'];
 
 function Editor({ value, onClose }: { value: Partial<Announcement> | null; onClose: () => void }) {
+  const { t } = useT();
   const user = useUser();
   const qc = useQueryClient();
   const [f, setF] = useState<Partial<Announcement>>(value ?? {});
@@ -45,7 +46,7 @@ function Editor({ value, onClose }: { value: Partial<Announcement> | null; onClo
           </div>
           {f.status === 'scheduled' && <div className="space-y-1.5"><Label htmlFor="a-date">Publish on</Label><Input id="a-date" type="datetime-local" value={(f.publishAt ?? '').slice(0, 16)} onChange={(e) => set('publishAt', new Date(e.target.value).toISOString())} /></div>}
           <fieldset><legend className="mb-2 text-sm font-medium">Target audience</legend><div className="flex flex-wrap gap-3">{AUD.map((a) => (
-            <label key={a} className="flex items-center gap-2 text-sm capitalize"><Checkbox checked={aud.includes(a)} onCheckedChange={(v) => set('audience', v ? (a === 'all' ? ['all'] : [...aud.filter((x) => x !== 'all'), a]) : aud.filter((x) => x !== a))} />{a === 'all' ? 'Everyone' : a === 'sales' ? 'Sales reps' : a === 'customer' ? 'Customers' : 'Managers'}</label>
+            <label key={a} className="flex items-center gap-2 text-sm capitalize"><Checkbox checked={aud.includes(a)} onCheckedChange={(v) => set('audience', v ? (a === 'all' ? ['all'] : [...aud.filter((x) => x !== 'all'), a]) : aud.filter((x) => x !== a))} />{a === 'all' ? 'Everyone' : t(`roles.${a}`)}</label>
           ))}</div></fieldset>
           <label className="flex items-center gap-2 text-sm"><Checkbox checked={!!f.pinned} onCheckedChange={(v) => set('pinned', !!v)} />Pin to top</label>
           <DialogFooter><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" disabled={m.isPending} data-testid="ann-save">Save</Button></DialogFooter>

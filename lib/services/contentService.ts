@@ -24,7 +24,7 @@ export const announcementService = {
 };
 
 function notifyAnnouncement(a: Announcement) {
-  const roles: Role[] = a.audience.includes('all') ? ['customer', 'sales', 'manager'] : (a.audience as Role[]);
+  const roles: Role[] = a.audience.includes('all') ? ['CUSTOMER_B2B', 'CUSTOMER_B2C', 'SALES_REP', 'SUPERVISOR', 'SUPPLIER'] : (a.audience as Role[]);
   pushNotification({ roles }, 'announcement', a.title, a.body.slice(0, 90), '/announcements');
 }
 
@@ -41,7 +41,7 @@ export const offerService = {
         item = { id: uid('off'), code: o.title.toUpperCase().replace(/[^A-Z0-9]+/g, '-').slice(0, 12), description: '', productIds: [], discountPct: 5, validFrom: new Date().toISOString(), validTo: new Date(Date.now() + 14 * 86400000).toISOString(), status: 'draft', audience: 'all', ...o } as Offer;
         db.offers.unshift(item);
       }
-      if (item.status === 'active') pushNotification({ roles: ['customer', 'sales'] }, 'offer', `New offer: ${item.title}`, item.description.slice(0, 90), '/offers');
+      if (item.status === 'active') pushNotification({ roles: ['CUSTOMER_B2B', 'CUSTOMER_B2C', 'SALES_REP'] }, 'offer', `New offer: ${item.title}`, item.description.slice(0, 90), '/offers');
       commit(); return item;
     }, () => (o.id ? http.patch(`/offers/${o.id}`, o) : http.post('/offers', o))),
   setStatus: (id: string, status: Offer['status']) =>

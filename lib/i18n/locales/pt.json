@@ -66,16 +66,20 @@
     }
   },
   "roles": {
-    "admin": "Administrador",
-    "manager": "Supervisor / Gestor",
-    "sales": "Representante comercial",
-    "customer": "Cliente B2B"
+    "ADMIN": "Administrador",
+    "SUPERVISOR": "Supervisor",
+    "SALES_REP": "Representante comercial",
+    "SUPPLIER": "Fornecedor",
+    "CUSTOMER_B2B": "Cliente empresarial",
+    "CUSTOMER_B2C": "Cliente particular"
   },
   "roleBlurb": {
-    "admin": "Utilizadores, clientes e definições",
-    "manager": "Aprovações e equipa",
-    "sales": "Encomendas no terreno e visitas",
-    "customer": "Catálogo, encomendas e faturas"
+    "ADMIN": "Utilizadores, acesso a módulos e definições",
+    "SUPERVISOR": "Aprovações, equipa e ofertas",
+    "SALES_REP": "Clientes, visitas e encomendas",
+    "SUPPLIER": "Encomendas de compra e recolhas",
+    "CUSTOMER_B2B": "Catálogo, encomendas e faturas",
+    "CUSTOMER_B2C": "Loja, encomendas e entregas"
   },
   "shell": {
     "skipToContent": "Saltar para o conteúdo",
@@ -130,7 +134,8 @@
       "operations": "Operações",
       "engage": "Comunicação",
       "admin": "Administração"
-    }
+    },
+    "access": "Acesso a módulos"
   },
   "common": {
     "search": "Pesquisar",
@@ -251,5 +256,68 @@
     "banner": "Está offline. O catálogo e os dados recentes vêm da cache; as novas encomendas ficam com sincronização pendente.",
     "pending": "{count} encomenda(s) a aguardar sincronização",
     "syncNow": "Sincronizar agora"
+  },
+  "access": {
+    "title": "Acesso a módulos",
+    "subtitle": "Escolha os módulos que cada função pode usar. Os menus e as páginas seguem estas definições assim que guardar.",
+    "module": "Módulo",
+    "role": "Função",
+    "alwaysOn": "Sempre ativo",
+    "save": "Guardar alterações",
+    "discard": "Descartar",
+    "reset": "Repor predefinições",
+    "saved": "Acesso a módulos guardado",
+    "serverNote": "Quando o backend estiver ligado, aplica as mesmas regras em cada pedido; ocultar um menu nunca é a única proteção.",
+    "lockedHint": "O painel e as notificações estão sempre ativos. Os administradores mantêm sempre Utilizadores, Acesso a módulos e Definições.",
+    "deniedTitle": "Não tem acesso a esta página",
+    "deniedText": "A sua função não inclui este módulo. Peça-o ao seu administrador, se precisar.",
+    "goDashboard": "Ir para o painel",
+    "unsaved": {
+      "one": "{count} alteração por guardar",
+      "other": "{count} alterações por guardar"
+    },
+    "enabled": "{count} de {total} ativos"
+  },
+  "supplierDash": {
+    "code": "Código de fornecedor {code}",
+    "comingTitle": "As compras chegam na próxima versão",
+    "comingText": "Aqui vai ver encomendas de compra, criar pedidos de recolha e acompanhar pagamentos.",
+    "purchaseOrders": "Encomendas de compra",
+    "purchaseOrdersText": "Consulte e confirme as nossas encomendas e as datas.",
+    "pickups": "Pedidos de recolha",
+    "pickupsText": "Ofereça stock para recolha; analisamos e criamos uma encomenda de compra.",
+    "payments": "Pagamentos",
+    "paymentsText": "Acompanhe faturas e o estado dos pagamentos.",
+    "contactTitle": "Precisa de algo agora?",
+    "contactText": "Escreva à equipa de compras. As respostas chegam aqui e como notificação.",
+    "openMessages": "Abrir mensagens"
+  },
+  "customerDash": {
+    "browseCatalog": "Ver catálogo",
+    "reorderLast": "Repetir última encomenda",
+    "tierTerms": "Tabela nível {tier} · {terms}",
+    "retail": "Conta particular · pago online",
+    "outstanding": "Saldo em aberto",
+    "overdue": "{amount} em atraso",
+    "noOverdue": "Nada em atraso",
+    "availableCredit": "Crédito disponível",
+    "ofLimit": "de {amount}",
+    "openOrders": "Encomendas em curso",
+    "inProgress": "Em curso",
+    "purchases12m": "Compras (12 meses)",
+    "creditUsed": "Crédito usado: {pct}%",
+    "recentOrders": "Encomendas recentes",
+    "noOrders": "Ainda sem encomendas",
+    "noOrdersHint": "Veja o catálogo para fazer a sua primeira encomenda.",
+    "orderMeta": "{date} · {items} · entrega {eta}",
+    "reorder": "Repetir {number}",
+    "offersForYou": "Ofertas para si",
+    "validUntil": "Válida até {date}",
+    "noOffers": "Sem ofertas de momento",
+    "read": "Ler",
+    "items": {
+      "one": "{count} artigo",
+      "other": "{count} artigos"
+    }
   }
 }

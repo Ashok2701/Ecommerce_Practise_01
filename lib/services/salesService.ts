@@ -30,7 +30,7 @@ function perf(rep: User): RepPerformance {
 
 export const salesService = {
   getPerformance: (repId: string) => source<RepPerformance>(() => perf(getDb().users.find((u) => u.id === repId)!), () => http.get(`/sales-reps/${repId}/performance`)),
-  getTeam: () => source<RepPerformance[]>(() => getDb().users.filter((u) => u.role === 'sales' && u.status === 'active').map(perf), () => http.get('/sales-reps/performance')),
+  getTeam: () => source<RepPerformance[]>(() => getDb().users.filter((u) => u.role === 'SALES_REP' && u.status === 'active').map(perf), () => http.get('/sales-reps/performance')),
   getFollowUps: (repId?: string) => source<FollowUp[]>(() => getDb().followUps.filter((f) => !repId || f.salesRepId === repId).sort((a, b) => a.date.localeCompare(b.date)), () => http.get('/follow-ups', { repId })),
   saveFollowUp: (f: Partial<FollowUp> & { customerId: string; salesRepId: string }) =>
     source<FollowUp>(() => {
@@ -55,7 +55,7 @@ export const salesService = {
       if (r.followUpDate) db.followUps.push({ id: uid('fu'), customerId: r.customerId, salesRepId: r.salesRepId, date: r.followUpDate, type: followUpType ?? 'call', notes: r.nextSteps || 'Follow up from visit', status: 'open' });
       const cust = db.customers.find((c) => c.id === r.customerId);
       db.activity.unshift({ id: uid('act'), at: report.at, actor: r.salesRepName, text: `logged a visit report for ${cust?.name} (${r.outcome.replace('_', ' ')})`, kind: 'customer' });
-      if (r.outcome === 'issue_reported') pushNotification({ roles: ['manager'] }, 'message', `Issue reported at ${cust?.name}`, r.notes.slice(0, 90), `/customers/${r.customerId}`);
+      if (r.outcome === 'issue_reported') pushNotification({ roles: ['SUPERVISOR'] }, 'message', `Issue reported at ${cust?.name}`, r.notes.slice(0, 90), `/customers/${r.customerId}`);
       commit();
       return report;
     }, () => http.post('/visit-reports', r)),

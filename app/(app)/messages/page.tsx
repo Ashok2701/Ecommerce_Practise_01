@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { isCustomerRole } from '@/types/domain';
 
 export default function MessagesPage() {
   const { t } = useT();
@@ -32,9 +33,9 @@ export default function MessagesPage() {
   const read = useMutation({ mutationFn: (id: string) => messageService.markRead(id, user.id), onSuccess: invalidate });
   const send = useMutation({
     mutationFn: () => messageService.send(sel!, user, draft.trim()),
-    onSuccess: (c) => { setDraft(''); invalidate(); if (user.role === 'customer') setTimeout(() => { messageService.simulateReply(c.id); invalidate(); }, 2500); },
+    onSuccess: (c) => { setDraft(''); invalidate(); if (isCustomerRole(user.role)) setTimeout(() => { messageService.simulateReply(c.id); invalidate(); }, 2500); },
   });
-  const create = useMutation({ mutationFn: () => messageService.create(user, nf.subject, nf.body), onSuccess: (c) => { invalidate(); setSel(c.id); setNewOpen(false); setNf({ subject: '', body: '' }); toast.success('Conversation started'); if (user.role === 'customer') setTimeout(() => { messageService.simulateReply(c.id); invalidate(); }, 2500); } });
+  const create = useMutation({ mutationFn: () => messageService.create(user, nf.subject, nf.body), onSuccess: (c) => { invalidate(); setSel(c.id); setNewOpen(false); setNf({ subject: '', body: '' }); toast.success('Conversation started'); if (isCustomerRole(user.role)) setTimeout(() => { messageService.simulateReply(c.id); invalidate(); }, 2500); } });
   useEffect(() => { if (conv && conv.unreadBy.includes(user.id)) read.mutate(conv.id); }, [conv?.id]); // eslint-disable-line
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [conv?.messages.length, sel]);
   const s = search.toLowerCase();
@@ -42,7 +43,7 @@ export default function MessagesPage() {
 
   return (
     <div>
-      <PageHeader title={user.role === 'customer' ? 'Messages & support' : t('nav.messages')} description={user.role === 'customer' ? 'Chat with your sales representative and our support team.' : 'Customer conversations and internal threads.'} actions={<Button onClick={() => setNewOpen(true)} data-testid="new-conversation"><Plus className="mr-2 h-4 w-4" />New conversation</Button>} />
+      <PageHeader title={isCustomerRole(user.role) ? 'Messages & support' : t('nav.messages')} description={isCustomerRole(user.role) ? 'Chat with your sales representative and our support team.' : 'Customer conversations and internal threads.'} actions={<Button onClick={() => setNewOpen(true)} data-testid="new-conversation"><Plus className="mr-2 h-4 w-4" />New conversation</Button>} />
       {q.isLoading ? <LoadingState /> : (
         <Card className="grid h-[calc(100vh-15rem)] min-h-[460px] overflow-hidden md:grid-cols-[320px_1fr]">
           <div className={cn('flex min-h-0 flex-col border-r', sel && 'hidden md:flex')}>

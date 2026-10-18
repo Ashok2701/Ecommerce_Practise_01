@@ -41,7 +41,7 @@ export const orderService = {
       const seq = db.seq.order++;
       const o: Order = {
         id: `ord_${seq}`, number: input.offline ? `DRAFT-${uid('').slice(1, 7).toUpperCase()}` : `SO-26-${String(seq).padStart(5, '0')}`,
-        customerId: cust.id, customerName: cust.name, salesRepId: cust.salesRepId, createdBy: input.actor, source: input.offline ? 'offline' : input.actor.role === 'sales' ? 'sales_app' : 'portal',
+        customerId: cust.id, customerName: cust.name, salesRepId: cust.salesRepId, createdBy: input.actor, source: input.offline ? 'offline' : input.actor.role === 'SALES_REP' ? 'sales_app' : 'portal',
         date: now, expectedDelivery: new Date(Date.now() + 5 * 86400000).toISOString(), status, ...totals, notes: input.notes, poNumber: input.poNumber,
         deliveryAddress: cust.address, billingAddress: cust.billingAddress, comments: [],
         timeline: [{ status, at: now, by: input.actor.name, note: input.offline ? 'Saved on device – will sync when online' : 'Submitted for approval' }],
@@ -51,8 +51,8 @@ export const orderService = {
         cust.lastOrderDate = now; cust.lastOrderAmount = o.total;
         db.activity.unshift({ id: uid('act'), at: now, actor: input.actor.name, text: `placed order ${o.number} for ${cust.name}`, kind: 'order' });
         const cc = creditCheck(o, cust, db.orders);
-        if (cc.over || cc.onHold) pushNotification({ roles: ['manager'] }, 'approval_required', 'Credit hold alert', `${o.number} from ${cust.name} ${cc.onHold ? 'is on an account on hold' : `exceeds available credit by ${fmtMoney(cc.exceededBy)}`}`, `/approvals?order=${o.id}`);
-        else pushNotification({ roles: ['manager'] }, 'approval_required', 'Approval required', `${o.number} from ${cust.name} – ${o.lines.length} items`, '/approvals');
+        if (cc.over || cc.onHold) pushNotification({ roles: ['SUPERVISOR'] }, 'approval_required', 'Credit hold alert', `${o.number} from ${cust.name} ${cc.onHold ? 'is on an account on hold' : `exceeds available credit by ${fmtMoney(cc.exceededBy)}`}`, `/approvals?order=${o.id}`);
+        else pushNotification({ roles: ['SUPERVISOR'] }, 'approval_required', 'Approval required', `${o.number} from ${cust.name} – ${o.lines.length} items`, '/approvals');
       }
       commit();
       return o;
@@ -66,7 +66,7 @@ export const orderService = {
         const seq = getDb().seq.order++;
         o.number = `SO-26-${String(seq).padStart(5, '0')}`;
         log(o, 'pending_approval', 'Sync service', 'Synced to server – awaiting approval');
-        pushNotification({ roles: ['manager'] }, 'approval_required', 'Approval required', `${o.number} from ${o.customerName} (synced)`, '/approvals');
+        pushNotification({ roles: ['SUPERVISOR'] }, 'approval_required', 'Approval required', `${o.number} from ${o.customerName} (synced)`, '/approvals');
       });
       commit();
       return pending.length;

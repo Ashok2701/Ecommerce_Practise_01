@@ -21,7 +21,7 @@ export default function CustomersPage() {
   const user = useUser();
   const router = useRouter();
   const cart = useCart();
-  const isRep = user.role === 'sales';
+  const isRep = user.role === 'SALES_REP';
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('all');
   const [rep, setRep] = useState('all');

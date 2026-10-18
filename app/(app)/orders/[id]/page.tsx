@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { OrderSummary } from '@/features/orders/OrderSummary';
 import { useReorder } from '@/features/orders/useReorder';
 import { cn } from '@/lib/utils';
+import { isCustomerRole } from '@/types/domain';
 import type { Order } from '@/types/domain';
 
 function Timeline({ o }: { o: Order }) {
@@ -68,8 +69,8 @@ export default function OrderDetailPage() {
       <QueryView query={q} loading={<LoadingState variant="detail" />}>
         {(o) => {
           const invoice = inv.data?.find((i) => i.id === o.invoiceId);
-          const canCancel = ['pending_approval', 'pending_sync', 'changes_requested'].includes(o.status) && (user.role === 'customer' || user.role === 'sales');
-          const canAdvance = (user.role === 'admin' || user.role === 'manager') && ['confirmed', 'processing', 'packed', 'dispatched'].includes(o.status);
+          const canCancel = ['pending_approval', 'pending_sync', 'changes_requested'].includes(o.status) && (isCustomerRole(user.role) || user.role === 'SALES_REP');
+          const canAdvance = (user.role === 'ADMIN' || user.role === 'SUPERVISOR') && ['confirmed', 'processing', 'packed', 'dispatched'].includes(o.status);
           return (
             <div className="space-y-4">
               <Card className="p-5">
@@ -79,8 +80,8 @@ export default function OrderDetailPage() {
                     <p className="mt-1 text-sm text-muted-foreground">{o.customerName} · placed {fmtDateTime(o.date)} by {o.createdBy.name} ({t(`roles.${o.createdBy.role}`)}) · via {o.source.replace('_', ' ')}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {(user.role === 'customer' || user.role === 'sales') && o.status !== 'pending_sync' && <Button variant="outline" onClick={() => reorder(o)} data-testid="order-reorder"><RotateCcw className="mr-2 h-4 w-4" />Repeat order</Button>}
-                    {user.role === 'manager' && o.status === 'pending_approval' && <Button asChild><Link href={`/approvals?order=${o.id}`}><ClipboardCheck className="mr-2 h-4 w-4" />Review approval</Link></Button>}
+                    {(isCustomerRole(user.role) || user.role === 'SALES_REP') && o.status !== 'pending_sync' && <Button variant="outline" onClick={() => reorder(o)} data-testid="order-reorder"><RotateCcw className="mr-2 h-4 w-4" />Repeat order</Button>}
+                    {user.role === 'SUPERVISOR' && o.status === 'pending_approval' && <Button asChild><Link href={`/approvals?order=${o.id}`}><ClipboardCheck className="mr-2 h-4 w-4" />Review approval</Link></Button>}
                     {canAdvance && <Button variant="outline" onClick={() => advance.mutate()} disabled={advance.isPending} data-testid="advance-status"><FastForward className="mr-2 h-4 w-4" />Simulate ERP update</Button>}
                     {canCancel && <Button variant="outline" className="text-destructive" onClick={() => setConfirmCancel(true)}><XCircle className="mr-2 h-4 w-4" />Cancel</Button>}
                   </div>

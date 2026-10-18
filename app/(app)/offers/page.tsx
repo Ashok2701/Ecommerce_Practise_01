@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { isCustomerRole } from '@/types/domain';
 import type { Offer } from '@/types/domain';
 
 function Editor({ value, onClose }: { value: Partial<Offer>; onClose: () => void }) {
@@ -60,7 +61,7 @@ export default function OffersPage() {
   const manage = canManageContent(user.role);
   const [edit, setEdit] = useState<Partial<Offer> | null>(null);
   const cust = useQuery({ queryKey: ['customer', user.customerId], queryFn: () => customerService.getCustomer(user.customerId!), enabled: !!user.customerId });
-  const q = useQuery({ queryKey: ['offers', manage ? 'manage' : user.role, cust.data?.priceTier], queryFn: () => offerService.list(manage || user.role === 'sales' ? { manage: true } : { tier: cust.data?.priceTier }), enabled: !user.customerId || !!cust.data });
+  const q = useQuery({ queryKey: ['offers', manage ? 'manage' : user.role, cust.data?.priceTier], queryFn: () => offerService.list(manage || user.role === 'SALES_REP' ? { manage: true } : { tier: cust.data?.priceTier }), enabled: !user.customerId || !!cust.data });
   const products = useQuery({ queryKey: ['products', 'all'], queryFn: productService.getAll });
   const toggle = useMutation({ mutationFn: (o: Offer) => offerService.setStatus(o.id, o.status === 'active' ? 'expired' : 'active'), onSuccess: (o) => { qc.invalidateQueries(); toast.success(o.status === 'active' ? 'Offer activated' : 'Offer deactivated'); } });
   const rows = (q.data ?? []).filter((o) => manage || o.status === 'active');
@@ -82,7 +83,7 @@ export default function OffersPage() {
                   <ul className="mt-3 space-y-2">{ps.slice(0, 3).map((p) => <li key={p.id}><Link href={manage ? '#' : `/catalog/${p.id}`} className="flex items-center gap-2 text-sm hover:text-primary"><ProductImage src={p.image} alt="" className="h-8 w-8 shrink-0 rounded" /><span className="truncate">{p.name}</span></Link></li>)}{ps.length > 3 && <li className="text-xs text-muted-foreground">+{ps.length - 3} more</li>}</ul>
                 </div>
                 {manage && <div className="flex gap-2 border-t p-3"><Button size="sm" variant="outline" onClick={() => setEdit(o)}><Pencil className="mr-1 h-3.5 w-3.5" />Edit</Button><Button size="sm" variant="outline" onClick={() => toggle.mutate(o)} data-testid={`toggle-offer-${o.id}`}><Power className="mr-1 h-3.5 w-3.5" />{o.status === 'active' ? 'Deactivate' : 'Activate'}</Button></div>}
-                {!manage && user.role === 'customer' && <div className="border-t p-3"><Button size="sm" className="w-full" asChild><Link href={`/catalog/${o.productIds[0]}`}>Shop this offer</Link></Button></div>}
+                {!manage && isCustomerRole(user.role) && <div className="border-t p-3"><Button size="sm" className="w-full" asChild><Link href={`/catalog/${o.productIds[0]}`}>Shop this offer</Link></Button></div>}
               </Card></li>
             ); })}
           </ul>
