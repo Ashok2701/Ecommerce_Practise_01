@@ -1,131 +1,111 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CheckCircle2, XCircle, MessageSquareWarning, ClipboardCheck, AlertTriangle, ChevronRight, Building2, ShieldAlert, ShieldCheck } from 'lucide-react';
-import { creditCheck } from '@/lib/domain/credit';
-import { Progress } from '@/components/ui/progress';
-import { toast } from 'sonner';
-import { orderService, customerService } from '@/lib/services';
-import { useUser } from '@/lib/auth/AuthProvider';
-import { fmtDate, fmtDateTime, fmtMoney, timeAgo } from '@/lib/format';
-import { PageHeader, QueryView, EmptyState, LoadingState } from '@/components/common';
-import { StatusBadge } from '@/components/common/StatusBadge';
-import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { useQuery } from '@tanstack/react-query';
+import { ClipboardCheck, ShieldAlert } from 'lucide-react';
+import { requestService } from '@/lib/services';
+import { useT } from '@/lib/i18n';
+import { useSettings } from '@/lib/settings';
+import { fmtMoney, timeAgo } from '@/lib/format';
 import { cn } from '@/lib/utils';
-import type { Order } from '@/types/domain';
+import { PageHeader, QueryView, EmptyState } from '@/components/common';
+import { StatusBadge } from '@/components/common/StatusBadge';
+import { Card } from '@/components/ui/card';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { ReviewPanel } from '@/features/requests/ReviewPanel';
+import { REVIEWABLE_REQUEST, type SalesRequest } from '@/types/domain';
 
-function Review({ order, onDone }: { order: Order; onDone: () => void }) {
-  const user = useUser();
-  const qc = useQueryClient();
-  const [comment, setComment] = useState('');
-  const [confirm, setConfirm] = useState<null | 'reject' | 'override'>(null);
-  const cust = useQuery({ queryKey: ['customer', order.customerId], queryFn: () => customerService.getCustomer(order.customerId) });
-  const cc = useQuery({ queryKey: ['credit', order.id, order.status], queryFn: () => orderService.getCreditCheck(order.id) });
-  const m = useMutation({
-    mutationFn: (d: 'approve' | 'reject' | 'changes' | 'override') => orderService.decide(order.id, d === 'override' ? 'approve' : d, { id: user.id, name: user.name, role: user.role }, comment || undefined, { overrideCredit: d === 'override' }),
-    onSuccess: (o) => { qc.invalidateQueries(); toast.success(o.status === 'confirmed' ? (o.creditOverride ? `${o.number} approved with credit override` : `${o.number} approved \u2013 posted to ERP`) : o.status === 'rejected' ? `${o.number} rejected` : `Changes requested on ${o.number}`); setComment(''); onDone(); },
-    onError: (e: Error) => toast.error(e.message),
-  });
-  const c = cust.data;
-  const k = cc.data;
-  const blocked = !!k && (k.over || k.onHold);
-  const editable = order.status === 'pending_approval';
+function Summary({ r }: { r: SalesRequest }) {
+  const { t } = useT();
   return (
-    <div className="space-y-4" data-testid="approval-review">
-      <div><div className="flex flex-wrap items-center gap-2"><span className="font-mono text-lg font-semibold">{order.number}</span><StatusBadge status={order.status} /></div><p className="text-sm text-muted-foreground">Submitted {fmtDateTime(order.date)} by {order.createdBy.name} · {order.source.replace('_', ' ')}</p></div>
-      <Card className="p-4">
-        <div className="flex items-center gap-2 text-sm font-semibold"><Building2 className="h-4 w-4 text-primary" />{order.customerName}</div>
-        {k ? (
-          <div className="mt-3 space-y-3" data-testid="credit-panel">
-            <dl className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
-              <div><dt className="text-muted-foreground">Credit limit</dt><dd className="font-medium tabular">{fmtMoney(k.limit)}</dd></div>
-              <div><dt className="text-muted-foreground">Outstanding</dt><dd className="font-medium tabular">{fmtMoney(k.outstanding)}</dd></div>
-              <div><dt className="text-muted-foreground">Open orders</dt><dd className="font-medium tabular">{fmtMoney(k.openOrders)}</dd></div>
-              <div><dt className="text-muted-foreground">Available</dt><dd className={cn('font-medium tabular', k.over && 'text-rose-600')}>{fmtMoney(k.available)}</dd></div>
-            </dl>
-            <div><div className="mb-1 flex justify-between text-[11px] text-muted-foreground"><span>Utilisation after this order</span><span className={cn('font-semibold', k.utilisationAfterPct > 100 ? 'text-rose-600' : k.utilisationAfterPct > 85 ? 'text-amber-600' : 'text-emerald-600')}>{k.utilisationAfterPct}%</span></div><Progress value={Math.min(100, k.utilisationAfterPct)} className="h-1.5" /></div>
-            {blocked ? (
-              <div className="flex gap-2 rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-900" role="alert" data-testid="credit-hold-alert">
-                <ShieldAlert className="h-5 w-5 shrink-0 text-rose-600" />
-                <div><div className="font-semibold">Credit hold</div><div className="text-xs">{k.onHold ? 'Customer account is on hold. ' : ''}{k.over ? `This order exceeds available credit by ${fmtMoney(k.exceededBy)}.` : ''} Approval requires a manager override.</div></div>
-              </div>
-            ) : <div className="flex items-center gap-2 text-xs text-emerald-700"><ShieldCheck className="h-4 w-4" />Within credit limit</div>}
-          </div>
-        ) : <LoadingState rows={1} />}
-      </Card>
+    <div className="space-y-3">
+      <div>
+        <div className="flex flex-wrap items-center gap-2"><Link href={`/requests/${r.id}`} className="font-mono text-lg font-semibold hover:underline">{r.number}</Link><StatusBadge status={r.status} /></div>
+        <p className="text-sm text-muted-foreground">{r.customerName} · {t('requests.detail.createdBy', { name: r.createdBy.name })} · {timeAgo(r.date)}</p>
+      </div>
       <Card className="overflow-hidden">
-        <table className="w-full text-sm"><thead className="bg-muted/50 text-xs uppercase text-muted-foreground"><tr><th className="px-3 py-2 text-left font-medium">Item</th><th className="px-3 py-2 text-right font-medium">Qty</th><th className="px-3 py-2 text-right font-medium">Amount</th></tr></thead>
-          <tbody className="divide-y">{order.lines.map((l) => <tr key={l.productId}><td className="px-3 py-2"><div className="font-medium">{l.name}</div><div className="text-[11px] text-muted-foreground">{fmtMoney(l.unitPrice, true)} / {l.uom}{l.discountPct ? ` · −${l.discountPct}%` : ''}</div></td><td className="px-3 py-2 text-right tabular">{l.quantity}</td><td className="px-3 py-2 text-right font-medium tabular">{fmtMoney(l.lineTotal)}</td></tr>)}</tbody>
-          <tfoot className="border-t bg-muted/30"><tr><td className="px-3 py-2 text-sm font-semibold" colSpan={2}>Total incl. GST</td><td className="px-3 py-2 text-right font-semibold tabular">{fmtMoney(order.total, true)}</td></tr></tfoot></table>
+        <ul className="divide-y text-sm">{r.lines.map((l) => (
+          <li key={l.productId} className="flex items-center gap-3 px-3 py-2">
+            <span className="min-w-0 flex-1 truncate">{l.name}</span>
+            <span className="tabular text-muted-foreground">{l.quantity - l.convertedQty} {l.uom}</span>
+            <span className="w-24 text-end tabular">{fmtMoney(l.lineTotal, true)}</span>
+          </li>
+        ))}</ul>
+        <div className="flex justify-between border-t bg-muted/30 px-3 py-2 text-sm font-semibold"><span>{t('common.total')}</span><span className="tabular">{fmtMoney(r.total, true)}</span></div>
       </Card>
-      {order.notes && <p className="rounded-md bg-muted/60 p-3 text-sm"><span className="text-xs font-medium text-muted-foreground">Customer notes: </span>{order.notes}</p>}
-      {!!order.comments.length && <ul className="space-y-2 text-sm">{order.comments.map((cm, i) => <li key={i}><span className="font-medium">{cm.by}</span> <span className="text-xs text-muted-foreground">{timeAgo(cm.at)}</span><p className="text-muted-foreground">{cm.text}</p></li>)}</ul>}
-      {editable ? (
-        <div className="space-y-3">
-          <div className="space-y-1.5"><Label htmlFor="ac">Comment {`(required for reject / changes)`}</Label><Textarea id="ac" data-testid="approval-comment" value={comment} onChange={(e) => setComment(e.target.value)} rows={3} placeholder="e.g. Approved – dispatch from Hyderabad DC" /></div>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-            {blocked
-              ? <Button onClick={() => setConfirm('override')} disabled={m.isPending || !k} className="h-11 bg-rose-600 hover:bg-rose-700" data-testid="override-approve-btn"><ShieldAlert className="mr-2 h-4 w-4" />Override &amp; approve</Button>
-              : <Button onClick={() => m.mutate('approve')} disabled={m.isPending || !k} className="h-11 bg-emerald-600 hover:bg-emerald-700" data-testid="approve-btn"><CheckCircle2 className="mr-2 h-4 w-4" />Approve</Button>}
-            <Button variant="outline" onClick={() => (comment.trim() ? m.mutate('changes') : toast.error('Add a comment describing the changes needed'))} disabled={m.isPending} className="h-11" data-testid="changes-btn"><MessageSquareWarning className="mr-2 h-4 w-4" />Request changes</Button>
-            <Button variant="outline" onClick={() => (comment.trim() ? setConfirm('reject') : toast.error('Add a reason for rejection'))} disabled={m.isPending} className="h-11 text-destructive" data-testid="reject-btn"><XCircle className="mr-2 h-4 w-4" />Reject</Button>
-          </div>
-        </div>
-      ) : <p className="text-sm text-muted-foreground">This order has already been processed.</p>}
-      <ConfirmDialog open={confirm === 'override'} onOpenChange={(v) => !v && setConfirm(null)} title={`Override credit hold for ${order.customerName}?`} description={`${k?.over ? `Approving will exceed available credit by ${fmtMoney(k?.exceededBy ?? 0)}. ` : ''}The override is recorded against your name${comment ? ' with your comment' : ''} and the order is posted to the ERP.`} confirmLabel="Override & approve" destructive onConfirm={() => m.mutate('override')} />
-      <ConfirmDialog open={confirm === 'reject'} onOpenChange={(v) => !v && setConfirm(null)} title={`Reject ${order.number}?`} description="The customer and sales representative will be notified with your comment." confirmLabel="Reject order" destructive onConfirm={() => m.mutate('reject')} />
+      {r.notes && <p className="rounded-md bg-muted/60 p-3 text-sm">{r.notes}</p>}
     </div>
   );
 }
 
 function ApprovalsInner() {
-  const pre = useSearchParams().get('order');
-  const [tab, setTab] = useState<'pending' | 'decided'>('pending');
+  const { t } = useT();
+  const settings = useSettings();
+  const pre = useSearchParams().get('request');
+  const [tab, setTab] = useState<'review' | 'decided'>('review');
   const [sel, setSel] = useState<string | null>(pre);
-  const [sheet, setSheet] = useState(!!pre);
-  const q = useQuery({ queryKey: ['orders', 'approvals'], queryFn: () => orderService.getOrders({}) });
-  const custs = useQuery({ queryKey: ['customers', 'all'], queryFn: () => customerService.getCustomers({}) });
-  const hold = (o: Order) => { const c = custs.data?.find((x) => x.id === o.customerId); if (!c || o.status !== 'pending_approval') return null; const k = creditCheck(o, c, q.data ?? []); return k.over || k.onHold ? k : null; };
-  const pending = (q.data ?? []).filter((o) => o.status === 'pending_approval');
-  const decided = (q.data ?? []).filter((o) => o.comments.length || ['changes_requested', 'rejected'].includes(o.status)).filter((o) => o.status !== 'pending_approval').slice(0, 20);
-  const list = tab === 'pending' ? pending : decided;
-  const selected = q.data?.find((o) => o.id === sel) ?? null;
-  useEffect(() => { if (!sel && pending[0] && typeof window !== 'undefined' && window.innerWidth >= 1024) setSel(pending[0].id); }, [pending, sel]);
-  const open = (id: string) => { setSel(id); if (window.innerWidth < 1024) setSheet(true); };
+  const [sheet, setSheet] = useState(false);
+  const q = useQuery({ queryKey: ['requests', 'approvals'], queryFn: () => requestService.list({}) });
+  const all = q.data ?? [];
+  const review = all.filter((r) => REVIEWABLE_REQUEST.includes(r.status));
+  const decided = all.filter((r) => !REVIEWABLE_REQUEST.includes(r.status) && r.status !== 'draft' && r.timeline.length > 1).slice(0, 20);
+  const rows = tab === 'review' ? review : decided;
+  const current = all.find((r) => r.id === sel) ?? null;
+  useEffect(() => { if (!sel && review[0] && window.matchMedia('(min-width: 1024px)').matches) setSel(review[0].id); }, [review.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const open = (id: string) => { setSel(id); if (!window.matchMedia('(min-width: 1024px)').matches) setSheet(true); };
+  const panel = current && (
+    <div className="space-y-4">
+      <Summary r={current} />
+      <ReviewPanel request={current} onDone={(next) => { if (!REVIEWABLE_REQUEST.includes(next.status)) { setSheet(false); setSel(review.find((x) => x.id !== next.id)?.id ?? null); } }} />
+    </div>
+  );
+
   return (
     <div>
-      <PageHeader title="Purchase approvals" description="Review submitted orders before they are posted to Sage X3." />
+      <PageHeader title={t('approvals.title')} description={t('approvals.intro', { erp: settings.erpName })} />
       <div className="mb-4 flex gap-1.5" role="tablist">
-        {(['pending', 'decided'] as const).map((k) => <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={cn('rounded-md border px-3 py-1.5 text-xs font-medium', tab === k ? 'border-primary bg-primary text-primary-foreground' : 'bg-card text-muted-foreground')} data-testid={`approvals-tab-${k}`}>{k === 'pending' ? `Pending (${pending.length})` : 'Recently reviewed'}</button>)}
+        {(['review', 'decided'] as const).map((k) => (
+          <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)} data-testid={`approvals-tab-${k}`}
+            className={cn('rounded-md border px-3 py-1.5 text-xs font-medium', tab === k ? 'border-primary bg-primary text-primary-foreground' : 'bg-card hover:bg-muted')}>
+            {t(`approvals.tabs.${k}`)} <span className="ms-1 tabular opacity-70">{(k === 'review' ? review : decided).length}</span>
+          </button>
+        ))}
       </div>
       <QueryView query={q}>
-        {() => !list.length ? <EmptyState icon={ClipboardCheck} title={tab === 'pending' ? 'No orders awaiting approval' : 'Nothing reviewed yet'} description="New submissions will appear here." /> : (
+        {() => (
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-            <ul className="space-y-2" data-testid="approvals-list">
-              {list.map((o) => (
-                <li key={o.id}><button onClick={() => open(o.id)} className={cn('flex w-full items-center gap-3 rounded-lg border bg-card p-4 text-left transition hover:border-primary/40', sel === o.id && 'border-primary ring-1 ring-primary')}>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2"><span className="font-mono text-xs font-semibold">{o.number}</span><StatusBadge status={o.status} />{hold(o) && <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2 py-0.5 text-xs font-medium text-rose-700 ring-1 ring-inset ring-rose-600/25" data-testid="credit-hold-badge"><ShieldAlert className="h-3 w-3" />Credit hold</span>}{o.creditOverride && <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">Overridden</span>}</div>
-                    <div className="mt-1 truncate text-sm font-medium">{o.customerName}</div>
-                    <div className="text-xs text-muted-foreground">{o.lines.length} items · {o.lines.reduce((s, l) => s + l.quantity, 0)} units · {o.createdBy.name} · {fmtDate(o.date)}</div>
-                  </div>
-                  <div className="text-right"><div className="font-semibold tabular">{fmtMoney(o.total)}</div><div className="text-[11px] text-muted-foreground">{timeAgo(o.date)}</div></div>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground lg:hidden" />
-                </button></li>
-              ))}
-            </ul>
-            <div className="hidden lg:block"><div className="sticky top-24">{selected ? <Card className="p-5"><Review order={selected} onDone={() => setSel(null)} /></Card> : <EmptyState title="Select an order to review" />}</div></div>
+            {rows.length ? (
+              <ul className="space-y-2" data-testid="approvals-list">{rows.map((r) => {
+                const flag = (r.credit?.over || r.credit?.onHold) && !r.creditOverride;
+                return (
+                  <li key={r.id}>
+                    <button onClick={() => open(r.id)} data-testid={`approval-item-${r.number}`}
+                      className={cn('flex w-full items-center gap-3 rounded-lg border bg-card p-4 text-start transition-colors hover:border-primary/40', sel === r.id && 'border-primary ring-1 ring-primary')}>
+                      <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-md', flag ? 'bg-destructive/10 text-destructive' : 'bg-accent text-accent-foreground')}>
+                        {flag ? <ShieldAlert className="h-4 w-4" aria-hidden="true" /> : <ClipboardCheck className="h-4 w-4" aria-hidden="true" />}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex flex-wrap items-center gap-2"><span className="font-mono text-xs font-semibold">{r.number}</span><StatusBadge status={r.status} /></span>
+                        <span className="block truncate text-sm font-medium">{r.customerName}</span>
+                        <span className="block text-xs text-muted-foreground">{t('requests.items', { count: r.lines.length })} · {r.createdBy.name} · {timeAgo(r.date)}</span>
+                      </span>
+                      <span className="text-sm font-semibold tabular">{fmtMoney(r.total)}</span>
+                    </button>
+                  </li>
+                );
+              })}</ul>
+            ) : <EmptyState icon={ClipboardCheck} title={t('approvals.empty')} description={t('approvals.emptyHint')} />}
+            <div className="hidden lg:block">{panel && <Card className="sticky top-24 p-5" data-testid="approval-review">{panel}</Card>}</div>
           </div>
         )}
       </QueryView>
-      <Sheet open={sheet && !!selected} onOpenChange={setSheet}>
-        <SheetContent side="bottom" className="max-h-[92vh] overflow-y-auto rounded-t-xl lg:hidden"><SheetHeader><SheetTitle className="text-left">Review order</SheetTitle></SheetHeader><div className="mt-3">{selected && <Review order={selected} onDone={() => setSheet(false)} />}</div></SheetContent>
+      <Sheet open={sheet} onOpenChange={setSheet}>
+        <SheetContent side="bottom" className="max-h-[92vh] overflow-y-auto rounded-t-xl">
+          <SheetHeader className="sr-only"><SheetTitle>{t('requests.review.title')}</SheetTitle></SheetHeader>
+          <div className="pt-2">{panel}</div>
+        </SheetContent>
       </Sheet>
     </div>
   );

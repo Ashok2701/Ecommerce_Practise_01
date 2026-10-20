@@ -22,7 +22,14 @@ async function request<T>(method: string, path: string, body?: unknown, query?: 
     headers: { 'Content-Type': 'application/json', ...(token() ? { Authorization: `Bearer ${token()}` } : {}), ...(getCurrentSite() ? { 'X-Site': getCurrentSite()! } : {}) },
     body: body ? JSON.stringify(body) : undefined,
   });
-  if (!res.ok) throw new ApiError(res.status, await res.text());
+  if (!res.ok) {
+    // Backend errors are { "code": "errors.requests.creditBlocked", "message": "..." }.
+    // The code is a translation key, so the user sees the message in their language.
+    const text = await res.text();
+    let code = text;
+    try { const j = JSON.parse(text); code = j.code ?? j.message ?? text; } catch {}
+    throw new ApiError(res.status, code);
+  }
   return res.json();
 }
 

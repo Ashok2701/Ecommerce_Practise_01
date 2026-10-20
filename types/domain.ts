@@ -148,6 +148,9 @@ export interface ActorRef {
 export interface Order {
   id: ID;
   number: string;
+  /** Sales request this order was converted from. */
+  requestId?: ID;
+  requestNumber?: string;
   /** Site the order ships from. */
   site?: string;
   customerId: ID;
@@ -252,6 +255,7 @@ export type NotificationType =
   | 'order_confirmed'
   | 'order_dispatched'
   | 'approval_required'
+  | 'request_update'
   | 'offer'
   | 'announcement'
   | 'message';
@@ -318,4 +322,82 @@ export interface Paginated<T> {
   total: number;
   page: number;
   pageSize: number;
+}
+
+/* ------------------------------------------------------------------ */
+/* Sales requests: every sales order starts as a request.              */
+/* ------------------------------------------------------------------ */
+
+export type RequestStatus =
+  | 'draft'              // saved, not sent (offline drafts too)
+  | 'submitted'          // waiting for review
+  | 'changes_requested'  // sent back to the requester with comments
+  | 'approved'           // approved, conversion pending
+  | 'partly_converted'   // some lines became an order, the rest stay open
+  | 'converted'          // all lines are on sales orders
+  | 'rejected'
+  | 'cancelled'
+  | 'expired';
+
+export const OPEN_REQUEST: RequestStatus[] = ['draft', 'submitted', 'changes_requested', 'approved', 'partly_converted'];
+export const REVIEWABLE_REQUEST: RequestStatus[] = ['submitted', 'approved', 'partly_converted'];
+
+export interface RequestLine extends OrderLine {
+  /** Quantity already placed on sales orders. */
+  convertedQty: number;
+}
+
+export interface RequestEvent { status: RequestStatus; at: ISODate; by: string; note?: string; }
+
+export interface SalesRequest {
+  id: ID;
+  number: string;
+  site?: string;
+  customerId: ID;
+  customerName: string;
+  salesRepId: ID;
+  createdBy: ActorRef;
+  source: 'portal' | 'sales_app' | 'offline';
+  date: ISODate;
+  status: RequestStatus;
+  lines: RequestLine[];
+  /** Indicative totals at submission. The ERP confirms the final price on conversion. */
+  subtotal: number;
+  discount: number;
+  tax: number;
+  total: number;
+  poNumber?: string;
+  notes?: string;
+  deliveryAddress: Address;
+  billingAddress: Address;
+  /** Credit position when submitted (B2B only). */
+  credit?: { over: boolean; onHold: boolean; exceededBy: number; available: number };
+  creditOverride?: { by: string; at: ISODate; reason: string };
+  /** B2C: paid online at checkout. */
+  paid?: boolean;
+  autoApproved?: boolean;
+  /** Stock is held for this request until this time (when the setting is on). */
+  holdUntil?: ISODate;
+  /** Request expires if not converted by this time (when the setting is on). */
+  expiresAt?: ISODate;
+  orderIds: ID[];
+  orderNumbers: string[];
+  timeline: RequestEvent[];
+  comments: { by: string; at: ISODate; text: string }[];
+}
+
+/** Workflow rules set by Admin or Supervisor. */
+export interface WorkflowSettings {
+  /** block: requests over the credit limit cannot be submitted. warn: they are submitted and flagged for review. */
+  creditMode: 'block' | 'warn';
+  /** Per-customer exceptions to creditMode. */
+  creditOverrides: Record<ID, 'block' | 'warn'>;
+  /** Requests within credit, up to maxTotal, become sales orders without review. */
+  autoApprove: { enabled: boolean; maxTotal: number };
+  /** Retail (B2C) requests paid online become sales orders without review. */
+  b2cAutoConvert: boolean;
+  /** Hold stock for submitted requests this many hours (0 = off). */
+  stockHoldHours: number;
+  /** Requests not converted after this many days expire (0 = never). */
+  requestExpiryDays: number;
 }

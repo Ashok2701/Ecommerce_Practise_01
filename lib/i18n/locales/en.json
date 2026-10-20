@@ -17,6 +17,17 @@
     },
     "sites": {
       "atLeastOne": "Choose at least one site."
+    },
+    "requests": {
+      "notFound": "This request doesn't exist or you can't see it.",
+      "notOpen": "This request can no longer be changed.",
+      "empty": "Add at least one product.",
+      "creditBlocked": "This request would take the account over its credit limit. Pay outstanding invoices or contact your sales representative.",
+      "accountOnHold": "This account is on hold, so new requests can't be submitted.",
+      "creditOverrideNeeded": "This request is over the credit limit. Approve it with an override.",
+      "priceChanged": "Prices changed since submission. Confirm that the requester accepted them.",
+      "commentRequired": "Add a comment first.",
+      "nothingInStock": "Nothing on this request is in stock at this site."
     }
   },
   "login": {
@@ -138,7 +149,9 @@
       "engage": "Engage",
       "admin": "Administration"
     },
-    "access": "Module access"
+    "access": "Module access",
+    "requests": "Sales requests",
+    "workflow": "Workflow rules"
   },
   "common": {
     "search": "Search",
@@ -219,7 +232,11 @@
     "out_of_stock": "Out of stock",
     "planned": "Planned",
     "checked_in": "Checked in",
-    "completed": "Completed"
+    "completed": "Completed",
+    "submitted": "Submitted",
+    "approved": "Approved",
+    "partly_converted": "Partly converted",
+    "converted": "Converted"
   },
   "dashboard": {
     "admin": "Platform overview",
@@ -243,11 +260,45 @@
     "deliveryInfo": "Delivery information"
   },
   "checkout": {
-    "title": "Review & submit order",
-    "submit": "Submit order",
-    "submitOffline": "Save offline (Pending Sync)",
-    "success": "Order submitted",
-    "successOffline": "Order saved on device"
+    "title": "Review and submit request",
+    "intro": "Your request is reviewed before it becomes a sales order. You'll be notified at each step.",
+    "introRetail": "Pay online and your order is confirmed straight away.",
+    "delivery": "Delivery address",
+    "billing": "Billing address",
+    "products": {
+      "one": "{count} product",
+      "other": "{count} products"
+    },
+    "po": "Your PO number (optional)",
+    "poPlaceholder": "e.g. PO/HYD/2741",
+    "notes": "Notes for the warehouse",
+    "notesPlaceholder": "Delivery window, contact at the gate…",
+    "back": "Back to cart",
+    "site": "Ships from {site}",
+    "submit": "Submit request",
+    "pay": "Pay {amount} and place order",
+    "payNote": "Demo: no real payment is taken.",
+    "saveOffline": "Save on this device",
+    "offlineNote": "You're offline. The request is saved on this device and sent when you reconnect. It isn't submitted until then.",
+    "placedBy": "Placed by {name} ({role})",
+    "indicative": "Prices are indicative. The ERP confirms the final price when the order is created.",
+    "blockedTitle": "This request can't be submitted",
+    "done": {
+      "submittedTitle": "Request {number} submitted",
+      "submittedText": "It's waiting for review. We'll notify you when it becomes a sales order.",
+      "convertedTitle": "Order {number} confirmed",
+      "convertedText": "Request {request} was approved automatically and is now a sales order.",
+      "draftTitle": "Request saved on this device",
+      "draftText": "It's sent automatically when you're back online. It isn't submitted until then.",
+      "reference": "Reference",
+      "total": "Total",
+      "items": "Items",
+      "viewRequest": "View request",
+      "viewOrder": "View order",
+      "allRequests": "All requests",
+      "continue": "Continue shopping"
+    },
+    "summary": "Summary"
   },
   "assistant": {
     "title": "AI Assistant",
@@ -338,5 +389,167 @@
       "saved": "Sites updated for {name}",
       "column": "Sites"
     }
+  },
+  "requests": {
+    "title": "Sales requests",
+    "introCustomer": "Every order starts as a request. Follow each one until it becomes a sales order.",
+    "introRep": "Requests for your customers.",
+    "introReviewer": "Requests from customers and sales reps at this site.",
+    "tabs": {
+      "open": "Open",
+      "review": "To review",
+      "closed": "Closed",
+      "all": "All"
+    },
+    "search": "Search number, customer, PO or product",
+    "col": {
+      "request": "Request",
+      "customer": "Customer",
+      "date": "Date",
+      "items": "Items",
+      "total": "Total",
+      "status": "Status",
+      "orders": "Orders"
+    },
+    "items": {
+      "one": "{count} item",
+      "other": "{count} items"
+    },
+    "empty": "No requests here",
+    "emptyHint": "Requests appear here after checkout.",
+    "drafts": {
+      "one": "{count} request saved on this device",
+      "other": "{count} requests saved on this device"
+    },
+    "sendDrafts": "Send now",
+    "sent": {
+      "one": "{count} request sent",
+      "other": "{count} requests sent"
+    },
+    "notSent": {
+      "one": "{count} request couldn't be sent. Open it to see why.",
+      "other": "{count} requests couldn't be sent. Open them to see why."
+    },
+    "detail": {
+      "createdBy": "Requested by {name}",
+      "source": {
+        "portal": "Portal",
+        "sales_app": "Sales app",
+        "offline": "Offline"
+      },
+      "po": "PO number",
+      "expires": "Expires",
+      "held": "Stock held until {time}",
+      "paid": "Paid online",
+      "autoApproved": "Approved automatically",
+      "lines": "Products",
+      "ordered": "On orders",
+      "qty": "Quantity",
+      "price": "Unit price",
+      "lineTotal": "Total",
+      "orders": "Sales orders",
+      "timeline": "History",
+      "comments": "Comments",
+      "addComment": "Add a comment",
+      "send": "Send",
+      "noComments": "No comments yet",
+      "edit": "Edit in cart",
+      "editDone": "Items copied to your cart. The old request was withdrawn.",
+      "replaced": "Replaced by a new request",
+      "cancel": "Cancel request",
+      "cancelTitle": "Cancel {number}?",
+      "cancelText": "The request is withdrawn and won't become an order.",
+      "cancelled": "Request cancelled",
+      "keep": "Keep request"
+    },
+    "review": {
+      "title": "Review",
+      "limit": "Credit limit",
+      "available": "Available",
+      "over": "Over the limit by {amount}",
+      "hold": "Account on hold",
+      "within": "Within credit limit",
+      "overridden": "Credit override by {name}: {reason}",
+      "priceChanged": "Prices changed since submission: {then} then, {now} now.",
+      "short": {
+        "one": "{count} product isn't fully in stock at {site}.",
+        "other": "{count} products aren't fully in stock at {site}."
+      },
+      "comment": "Comment",
+      "commentHint": "Required to request changes or reject.",
+      "approve": "Approve and create order",
+      "changes": "Request changes",
+      "reject": "Reject",
+      "rejectTitle": "Reject {number}?",
+      "rejectText": "The requester is notified with your comment.",
+      "sentBack": "Sent back for changes",
+      "rejected": "Request rejected",
+      "done": "This request has already been processed."
+    },
+    "convert": {
+      "title": "Create sales order",
+      "text": "Check these points before the order is created in {erp}.",
+      "acceptPrices": "The requester accepted the updated prices",
+      "all": "Order everything now",
+      "available": "Order what's in stock now and keep the rest open",
+      "open": "Open",
+      "stock": "In stock",
+      "override": "Approve over the credit limit",
+      "reason": "Reason for the override",
+      "confirm": "Create order",
+      "back": "Back",
+      "done": "Order {number} created"
+    }
+  },
+  "approvals": {
+    "title": "Requests to review",
+    "intro": "Approve to create the sales order in {erp}, send back for changes, or reject.",
+    "tabs": {
+      "review": "To review",
+      "decided": "Recently decided"
+    },
+    "empty": "Nothing to review",
+    "emptyHint": "New requests appear here."
+  },
+  "workflow": {
+    "title": "Workflow rules",
+    "intro": "Rules for sales requests. Administrators and supervisors can change them.",
+    "credit": {
+      "title": "Credit limit",
+      "text": "What happens when a request takes a business customer over their credit limit, or the account is on hold.",
+      "block": "Block the request",
+      "blockText": "It can't be submitted until the balance is paid.",
+      "warn": "Warn and send for review",
+      "warnText": "It's submitted and flagged; a reviewer can approve it with an override.",
+      "exceptions": "Customer exceptions",
+      "add": "Add exception",
+      "customer": "Customer",
+      "none": "No exceptions. Every customer follows the rule above.",
+      "remove": "Remove"
+    },
+    "auto": {
+      "title": "Auto-approval",
+      "text": "Requests within credit and up to this total become sales orders without review.",
+      "enabled": "Approve routine requests automatically",
+      "max": "Up to (total)"
+    },
+    "b2c": {
+      "title": "Retail customers",
+      "text": "Create the sales order as soon as an online payment succeeds.",
+      "enabled": "Convert paid retail requests automatically"
+    },
+    "hold": {
+      "title": "Stock hold",
+      "text": "Hold stock for a submitted request while it's reviewed. 0 turns this off.",
+      "hours": "Hours"
+    },
+    "expiry": {
+      "title": "Request expiry",
+      "text": "Requests not converted within this many days expire. 0 means never.",
+      "days": "Days"
+    },
+    "save": "Save rules",
+    "discard": "Discard",
+    "saved": "Workflow rules saved"
   }
 }

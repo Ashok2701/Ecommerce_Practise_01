@@ -48,3 +48,11 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - allowedSites + defaultSite per user (admin edits on Users; at least one required); site master via siteService (GET /sites)
 - Header site switcher (plain label for single-site users), remembered per user; switching refetches everything
 - Every request carries X-Site; mock scopes product stock and site price list, orders, dashboards; product detail shows stock at other allowed sites; orders tagged and filtered by site
+
+## Iteration 6 – Request-first ordering (Oct 2026)
+- Checkout, quick order, reorder and rep orders submit a Sales Request; sales orders exist only after conversion
+- Lifecycle draft → submitted → changes requested / approved → (partly) converted, or rejected / cancelled / expired; history, comments, linked orders
+- Review inbox (Approvals) and request detail share one review panel: credit position, price change since submission, stock shortage; convert dialog with price acceptance, partial conversion of in-stock lines, credit override with reason; idempotent conversion
+- Workflow rules page (/workflow, Admin and Supervisor): credit block/warn with per-customer exceptions, auto-approval up to a total, B2C auto-convert after payment, stock hold hours, request expiry days
+- Offline checkout saves a draft request that is sent automatically when back online
+- docs/API_CONTRACT.md: every endpoint, headers, error codes, data scope

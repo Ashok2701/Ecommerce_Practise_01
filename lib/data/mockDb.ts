@@ -1,13 +1,13 @@
 import { createSeed, type MockDb } from './seed';
 import { getCurrentSite } from '@/lib/sites/current';
-import type { Order, Product } from '@/types/domain';
+import type { Order, Product, SalesRequest } from '@/types/domain';
 
 /**
  * Mock repository store. Persists demo mutations to localStorage so changes
  * (approvals, new orders, replies ...) survive reloads during a demo.
  * Will be removed once services point at the Node.js backend.
  */
-const KEY = 'nexus.mockdb.v6';
+const KEY = 'nexus.mockdb.v7';
 let db: MockDb | null = null;
 
 export function getDb(): MockDb {
@@ -17,7 +17,7 @@ export function getDb(): MockDb {
       const raw = window.localStorage.getItem(KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as MockDb;
-        if (parsed.version === 6) return (db = parsed);
+        if (parsed.version === 7) return (db = parsed);
       }
     } catch {}
   }
@@ -49,4 +49,4 @@ export function atSite(p: Product, site = getCurrentSite()): Product {
 }
 
 /** Orders that belong to the current site. */
-export const inSite = (o: Order, site = getCurrentSite()) => !site || !o.site || o.site === site;
+export const inSite = (o: Pick<Order | SalesRequest, 'site'>, site = getCurrentSite()) => !site || !o.site || o.site === site;

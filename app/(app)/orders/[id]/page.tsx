@@ -76,7 +76,7 @@ export default function OrderDetailPage() {
               <Card className="p-5">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div>
-                    <div className="flex flex-wrap items-center gap-2"><h1 className="font-mono text-xl font-semibold" data-testid="order-number">{o.number}</h1><StatusBadge status={o.status} />{o.site && <span className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs text-muted-foreground" data-testid="order-site"><MapPin className="h-3 w-3" aria-hidden="true" />{t('sites.label')} {o.site}</span>}</div>
+                    <div className="flex flex-wrap items-center gap-2"><h1 className="font-mono text-xl font-semibold" data-testid="order-number">{o.number}</h1><StatusBadge status={o.status} />{o.requestId && <Link href={`/requests/${o.requestId}`} className="inline-flex items-center rounded-md border px-2 py-0.5 text-xs text-primary hover:underline" data-testid="order-request">{o.requestNumber}</Link>}{o.site && <span className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs text-muted-foreground" data-testid="order-site"><MapPin className="h-3 w-3" aria-hidden="true" />{t('sites.label')} {o.site}</span>}</div>
                     <p className="mt-1 text-sm text-muted-foreground">{o.customerName} · placed {fmtDateTime(o.date)} by {o.createdBy.name} ({t(`roles.${o.createdBy.role}`)}) · via {o.source.replace('_', ' ')}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">

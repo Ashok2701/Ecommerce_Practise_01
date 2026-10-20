@@ -17,6 +17,17 @@
     },
     "sites": {
       "atLeastOne": "Scegli almeno una sede."
+    },
+    "requests": {
+      "notFound": "Questa richiesta non esiste o non puoi vederla.",
+      "notOpen": "Questa richiesta non può più essere modificata.",
+      "empty": "Aggiungi almeno un prodotto.",
+      "creditBlocked": "Questa richiesta porterebbe il conto oltre il fido. Salda le fatture aperte o contatta il tuo agente.",
+      "accountOnHold": "Questo conto è bloccato, quindi non si possono inviare nuove richieste.",
+      "creditOverrideNeeded": "Questa richiesta supera il fido. Approvala con una deroga.",
+      "priceChanged": "I prezzi sono cambiati dall’invio. Conferma che il richiedente li ha accettati.",
+      "commentRequired": "Aggiungi prima un commento.",
+      "nothingInStock": "Nessun articolo di questa richiesta è disponibile in questa sede."
     }
   },
   "login": {
@@ -138,7 +149,9 @@
       "engage": "Comunicazione",
       "admin": "Amministrazione"
     },
-    "access": "Accesso ai moduli"
+    "access": "Accesso ai moduli",
+    "requests": "Richieste di vendita",
+    "workflow": "Regole di workflow"
   },
   "common": {
     "search": "Cerca",
@@ -219,7 +232,11 @@
     "out_of_stock": "Esaurito",
     "planned": "Pianificata",
     "checked_in": "In visita",
-    "completed": "Completata"
+    "completed": "Completata",
+    "submitted": "Inviata",
+    "approved": "Approvata",
+    "partly_converted": "Convertita in parte",
+    "converted": "Convertita"
   },
   "dashboard": {
     "admin": "Panoramica della piattaforma",
@@ -243,11 +260,45 @@
     "deliveryInfo": "Informazioni di consegna"
   },
   "checkout": {
-    "title": "Rivedi e invia l’ordine",
-    "submit": "Invia ordine",
-    "submitOffline": "Salva offline (in attesa di sincronizzazione)",
-    "success": "Ordine inviato",
-    "successOffline": "Ordine salvato sul dispositivo"
+    "title": "Controlla e invia la richiesta",
+    "intro": "La richiesta viene verificata prima di diventare un ordine di vendita. Riceverai un avviso a ogni passaggio.",
+    "introRetail": "Paga online e il tuo ordine è confermato subito.",
+    "delivery": "Indirizzo di consegna",
+    "billing": "Indirizzo di fatturazione",
+    "products": {
+      "one": "{count} prodotto",
+      "other": "{count} prodotti"
+    },
+    "po": "Il tuo numero d’ordine d’acquisto (facoltativo)",
+    "poPlaceholder": "es. PO/HYD/2741",
+    "notes": "Note per il magazzino",
+    "notesPlaceholder": "Fascia di consegna, referente all’ingresso…",
+    "back": "Torna al carrello",
+    "site": "Spedito da {site}",
+    "submit": "Invia richiesta",
+    "pay": "Paga {amount} e ordina",
+    "payNote": "Demo: non viene effettuato alcun pagamento reale.",
+    "saveOffline": "Salva su questo dispositivo",
+    "offlineNote": "Sei offline. La richiesta è salvata su questo dispositivo e inviata quando torni online. Fino ad allora non è inviata.",
+    "placedBy": "Inserita da {name} ({role})",
+    "indicative": "I prezzi sono indicativi. L’ERP conferma il prezzo finale alla creazione dell’ordine.",
+    "blockedTitle": "Questa richiesta non può essere inviata",
+    "done": {
+      "submittedTitle": "Richiesta {number} inviata",
+      "submittedText": "È in attesa di verifica. Ti avviseremo quando diventerà un ordine di vendita.",
+      "convertedTitle": "Ordine {number} confermato",
+      "convertedText": "La richiesta {request} è stata approvata automaticamente ed è ora un ordine di vendita.",
+      "draftTitle": "Richiesta salvata su questo dispositivo",
+      "draftText": "Verrà inviata automaticamente quando torni online. Fino ad allora non è inviata.",
+      "reference": "Riferimento",
+      "total": "Totale",
+      "items": "Articoli",
+      "viewRequest": "Vedi richiesta",
+      "viewOrder": "Vedi ordine",
+      "allRequests": "Tutte le richieste",
+      "continue": "Continua gli acquisti"
+    },
+    "summary": "Riepilogo"
   },
   "assistant": {
     "title": "Assistente IA",
@@ -338,5 +389,167 @@
       "saved": "Sedi aggiornate per {name}",
       "column": "Sedi"
     }
+  },
+  "requests": {
+    "title": "Richieste di vendita",
+    "introCustomer": "Ogni ordine inizia come richiesta. Seguila finché diventa un ordine di vendita.",
+    "introRep": "Richieste dei tuoi clienti.",
+    "introReviewer": "Richieste di clienti e agenti per questa sede.",
+    "tabs": {
+      "open": "Aperte",
+      "review": "Da verificare",
+      "closed": "Chiuse",
+      "all": "Tutte"
+    },
+    "search": "Cerca numero, cliente, ordine d’acquisto o prodotto",
+    "col": {
+      "request": "Richiesta",
+      "customer": "Cliente",
+      "date": "Data",
+      "items": "Articoli",
+      "total": "Totale",
+      "status": "Stato",
+      "orders": "Ordini"
+    },
+    "items": {
+      "one": "{count} articolo",
+      "other": "{count} articoli"
+    },
+    "empty": "Nessuna richiesta",
+    "emptyHint": "Le richieste compaiono qui dopo il checkout.",
+    "drafts": {
+      "one": "{count} richiesta salvata su questo dispositivo",
+      "other": "{count} richieste salvate su questo dispositivo"
+    },
+    "sendDrafts": "Invia ora",
+    "sent": {
+      "one": "{count} richiesta inviata",
+      "other": "{count} richieste inviate"
+    },
+    "notSent": {
+      "one": "{count} richiesta non è stata inviata. Aprila per vedere il motivo.",
+      "other": "{count} richieste non sono state inviate. Aprile per vedere il motivo."
+    },
+    "detail": {
+      "createdBy": "Richiesta da {name}",
+      "source": {
+        "portal": "Portale",
+        "sales_app": "App vendite",
+        "offline": "Offline"
+      },
+      "po": "Ordine d’acquisto",
+      "expires": "Scade",
+      "held": "Stock riservato fino a {time}",
+      "paid": "Pagata online",
+      "autoApproved": "Approvata automaticamente",
+      "lines": "Prodotti",
+      "ordered": "In ordine",
+      "qty": "Quantità",
+      "price": "Prezzo unitario",
+      "lineTotal": "Totale",
+      "orders": "Ordini di vendita",
+      "timeline": "Cronologia",
+      "comments": "Commenti",
+      "addComment": "Aggiungi un commento",
+      "send": "Invia",
+      "noComments": "Ancora nessun commento",
+      "edit": "Modifica nel carrello",
+      "editDone": "Articoli copiati nel carrello. La richiesta precedente è stata ritirata.",
+      "replaced": "Sostituita da una nuova richiesta",
+      "cancel": "Annulla richiesta",
+      "cancelTitle": "Annullare {number}?",
+      "cancelText": "La richiesta viene ritirata e non diventerà un ordine.",
+      "cancelled": "Richiesta annullata",
+      "keep": "Mantieni richiesta"
+    },
+    "review": {
+      "title": "Verifica",
+      "limit": "Fido",
+      "available": "Disponibile",
+      "over": "Oltre il fido di {amount}",
+      "hold": "Conto bloccato",
+      "within": "Entro il fido",
+      "overridden": "Deroga al fido di {name}: {reason}",
+      "priceChanged": "I prezzi sono cambiati dall’invio: prima {then}, ora {now}.",
+      "short": {
+        "one": "{count} prodotto non è interamente disponibile a {site}.",
+        "other": "{count} prodotti non sono interamente disponibili a {site}."
+      },
+      "comment": "Commento",
+      "commentHint": "Obbligatorio per chiedere modifiche o rifiutare.",
+      "approve": "Approva e crea ordine",
+      "changes": "Chiedi modifiche",
+      "reject": "Rifiuta",
+      "rejectTitle": "Rifiutare {number}?",
+      "rejectText": "Il richiedente riceve un avviso con il tuo commento.",
+      "sentBack": "Rinviata per modifiche",
+      "rejected": "Richiesta rifiutata",
+      "done": "Questa richiesta è già stata gestita."
+    },
+    "convert": {
+      "title": "Crea ordine di vendita",
+      "text": "Controlla questi punti prima che l’ordine venga creato in {erp}.",
+      "acceptPrices": "Il richiedente ha accettato i nuovi prezzi",
+      "all": "Ordina tutto ora",
+      "available": "Ordina ciò che è disponibile e lascia aperto il resto",
+      "open": "Aperto",
+      "stock": "Disponibile",
+      "override": "Approva oltre il fido",
+      "reason": "Motivo della deroga",
+      "confirm": "Crea ordine",
+      "back": "Indietro",
+      "done": "Ordine {number} creato"
+    }
+  },
+  "approvals": {
+    "title": "Richieste da verificare",
+    "intro": "Approva per creare l’ordine di vendita in {erp}, rinvia per modifiche o rifiuta.",
+    "tabs": {
+      "review": "Da verificare",
+      "decided": "Decise di recente"
+    },
+    "empty": "Niente da verificare",
+    "emptyHint": "Le nuove richieste compaiono qui."
+  },
+  "workflow": {
+    "title": "Regole di workflow",
+    "intro": "Regole per le richieste di vendita. Amministratori e supervisori possono modificarle.",
+    "credit": {
+      "title": "Fido",
+      "text": "Cosa succede quando una richiesta porta un cliente business oltre il fido, o il conto è bloccato.",
+      "block": "Blocca la richiesta",
+      "blockText": "Non può essere inviata finché il saldo non è pagato.",
+      "warn": "Avvisa e invia alla verifica",
+      "warnText": "Viene inviata e segnalata; chi verifica può approvarla con una deroga.",
+      "exceptions": "Eccezioni per cliente",
+      "add": "Aggiungi eccezione",
+      "customer": "Cliente",
+      "none": "Nessuna eccezione. Tutti i clienti seguono la regola sopra.",
+      "remove": "Rimuovi"
+    },
+    "auto": {
+      "title": "Approvazione automatica",
+      "text": "Le richieste entro il fido e fino a questo importo diventano ordini senza verifica.",
+      "enabled": "Approva automaticamente le richieste di routine",
+      "max": "Fino a (totale)"
+    },
+    "b2c": {
+      "title": "Clienti privati",
+      "text": "Crea l’ordine di vendita appena il pagamento online va a buon fine.",
+      "enabled": "Converti automaticamente le richieste pagate"
+    },
+    "hold": {
+      "title": "Riserva di stock",
+      "text": "Riserva lo stock di una richiesta inviata durante la verifica. 0 la disattiva.",
+      "hours": "Ore"
+    },
+    "expiry": {
+      "title": "Scadenza delle richieste",
+      "text": "Le richieste non convertite entro questi giorni scadono. 0 significa mai.",
+      "days": "Giorni"
+    },
+    "save": "Salva regole",
+    "discard": "Annulla modifiche",
+    "saved": "Regole di workflow salvate"
   }
 }

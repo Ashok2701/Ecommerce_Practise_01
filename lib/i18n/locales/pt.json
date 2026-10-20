@@ -17,6 +17,17 @@
     },
     "sites": {
       "atLeastOne": "Escolha pelo menos um local."
+    },
+    "requests": {
+      "notFound": "Este pedido não existe ou não o pode ver.",
+      "notOpen": "Este pedido já não pode ser alterado.",
+      "empty": "Adicione pelo menos um produto.",
+      "creditBlocked": "Este pedido ultrapassaria o limite de crédito da conta. Pague as faturas em aberto ou contacte o seu comercial.",
+      "accountOnHold": "Esta conta está bloqueada, por isso não é possível submeter novos pedidos.",
+      "creditOverrideNeeded": "Este pedido ultrapassa o limite de crédito. Aprove-o com uma exceção.",
+      "priceChanged": "Os preços mudaram desde a submissão. Confirme que o requerente os aceitou.",
+      "commentRequired": "Adicione primeiro um comentário.",
+      "nothingInStock": "Nenhum artigo deste pedido está em stock neste local."
     }
   },
   "login": {
@@ -138,7 +149,9 @@
       "engage": "Comunicação",
       "admin": "Administração"
     },
-    "access": "Acesso a módulos"
+    "access": "Acesso a módulos",
+    "requests": "Pedidos de venda",
+    "workflow": "Regras de fluxo"
   },
   "common": {
     "search": "Pesquisar",
@@ -219,7 +232,11 @@
     "out_of_stock": "Esgotado",
     "planned": "Planeada",
     "checked_in": "No cliente",
-    "completed": "Concluída"
+    "completed": "Concluída",
+    "submitted": "Submetido",
+    "approved": "Aprovado",
+    "partly_converted": "Convertido em parte",
+    "converted": "Convertido"
   },
   "dashboard": {
     "admin": "Visão geral da plataforma",
@@ -243,11 +260,45 @@
     "deliveryInfo": "Informação de entrega"
   },
   "checkout": {
-    "title": "Rever e submeter encomenda",
-    "submit": "Submeter encomenda",
-    "submitOffline": "Guardar offline (sincronização pendente)",
-    "success": "Encomenda submetida",
-    "successOffline": "Encomenda guardada no dispositivo"
+    "title": "Rever e submeter o pedido",
+    "intro": "O seu pedido é revisto antes de se tornar uma encomenda de venda. Será avisado em cada passo.",
+    "introRetail": "Pague online e a sua encomenda fica confirmada de imediato.",
+    "delivery": "Morada de entrega",
+    "billing": "Morada de faturação",
+    "products": {
+      "one": "{count} produto",
+      "other": "{count} produtos"
+    },
+    "po": "O seu número de encomenda (opcional)",
+    "poPlaceholder": "ex. PO/HYD/2741",
+    "notes": "Notas para o armazém",
+    "notesPlaceholder": "Janela de entrega, contacto à entrada…",
+    "back": "Voltar ao carrinho",
+    "site": "Expedido de {site}",
+    "submit": "Submeter pedido",
+    "pay": "Pagar {amount} e encomendar",
+    "payNote": "Demonstração: não é feito nenhum pagamento real.",
+    "saveOffline": "Guardar neste dispositivo",
+    "offlineNote": "Está offline. O pedido fica guardado neste dispositivo e é enviado quando voltar a ter ligação. Até lá, não está submetido.",
+    "placedBy": "Feito por {name} ({role})",
+    "indicative": "Os preços são indicativos. O ERP confirma o preço final quando a encomenda é criada.",
+    "blockedTitle": "Este pedido não pode ser submetido",
+    "done": {
+      "submittedTitle": "Pedido {number} submetido",
+      "submittedText": "Aguarda revisão. Avisamos quando se tornar uma encomenda de venda.",
+      "convertedTitle": "Encomenda {number} confirmada",
+      "convertedText": "O pedido {request} foi aprovado automaticamente e já é uma encomenda de venda.",
+      "draftTitle": "Pedido guardado neste dispositivo",
+      "draftText": "É enviado automaticamente quando voltar a estar online. Até lá, não está submetido.",
+      "reference": "Referência",
+      "total": "Total",
+      "items": "Artigos",
+      "viewRequest": "Ver pedido",
+      "viewOrder": "Ver encomenda",
+      "allRequests": "Todos os pedidos",
+      "continue": "Continuar a comprar"
+    },
+    "summary": "Resumo"
   },
   "assistant": {
     "title": "Assistente IA",
@@ -338,5 +389,167 @@
       "saved": "Locais atualizados para {name}",
       "column": "Locais"
     }
+  },
+  "requests": {
+    "title": "Pedidos de venda",
+    "introCustomer": "Cada encomenda começa como um pedido. Acompanhe-o até se tornar uma encomenda de venda.",
+    "introRep": "Pedidos dos seus clientes.",
+    "introReviewer": "Pedidos de clientes e comerciais neste local.",
+    "tabs": {
+      "open": "Em aberto",
+      "review": "Para rever",
+      "closed": "Fechados",
+      "all": "Todos"
+    },
+    "search": "Pesquisar número, cliente, encomenda ou produto",
+    "col": {
+      "request": "Pedido",
+      "customer": "Cliente",
+      "date": "Data",
+      "items": "Artigos",
+      "total": "Total",
+      "status": "Estado",
+      "orders": "Encomendas"
+    },
+    "items": {
+      "one": "{count} artigo",
+      "other": "{count} artigos"
+    },
+    "empty": "Sem pedidos",
+    "emptyHint": "Os pedidos aparecem aqui depois do checkout.",
+    "drafts": {
+      "one": "{count} pedido guardado neste dispositivo",
+      "other": "{count} pedidos guardados neste dispositivo"
+    },
+    "sendDrafts": "Enviar agora",
+    "sent": {
+      "one": "{count} pedido enviado",
+      "other": "{count} pedidos enviados"
+    },
+    "notSent": {
+      "one": "{count} pedido não pôde ser enviado. Abra-o para ver o motivo.",
+      "other": "{count} pedidos não puderam ser enviados. Abra-os para ver o motivo."
+    },
+    "detail": {
+      "createdBy": "Pedido por {name}",
+      "source": {
+        "portal": "Portal",
+        "sales_app": "App comercial",
+        "offline": "Offline"
+      },
+      "po": "Número de encomenda",
+      "expires": "Expira",
+      "held": "Stock reservado até {time}",
+      "paid": "Pago online",
+      "autoApproved": "Aprovado automaticamente",
+      "lines": "Produtos",
+      "ordered": "Em encomenda",
+      "qty": "Quantidade",
+      "price": "Preço unitário",
+      "lineTotal": "Total",
+      "orders": "Encomendas de venda",
+      "timeline": "Histórico",
+      "comments": "Comentários",
+      "addComment": "Adicionar um comentário",
+      "send": "Enviar",
+      "noComments": "Ainda sem comentários",
+      "edit": "Editar no carrinho",
+      "editDone": "Artigos copiados para o carrinho. O pedido anterior foi retirado.",
+      "replaced": "Substituído por um novo pedido",
+      "cancel": "Cancelar pedido",
+      "cancelTitle": "Cancelar {number}?",
+      "cancelText": "O pedido é retirado e não se tornará uma encomenda.",
+      "cancelled": "Pedido cancelado",
+      "keep": "Manter pedido"
+    },
+    "review": {
+      "title": "Revisão",
+      "limit": "Limite de crédito",
+      "available": "Disponível",
+      "over": "Acima do limite em {amount}",
+      "hold": "Conta bloqueada",
+      "within": "Dentro do limite de crédito",
+      "overridden": "Exceção de crédito por {name}: {reason}",
+      "priceChanged": "Os preços mudaram desde a submissão: antes {then}, agora {now}.",
+      "short": {
+        "one": "{count} produto não tem stock suficiente em {site}.",
+        "other": "{count} produtos não têm stock suficiente em {site}."
+      },
+      "comment": "Comentário",
+      "commentHint": "Obrigatório para pedir alterações ou rejeitar.",
+      "approve": "Aprovar e criar encomenda",
+      "changes": "Pedir alterações",
+      "reject": "Rejeitar",
+      "rejectTitle": "Rejeitar {number}?",
+      "rejectText": "O requerente é avisado com o seu comentário.",
+      "sentBack": "Devolvido para alterações",
+      "rejected": "Pedido rejeitado",
+      "done": "Este pedido já foi tratado."
+    },
+    "convert": {
+      "title": "Criar encomenda de venda",
+      "text": "Verifique estes pontos antes de a encomenda ser criada no {erp}.",
+      "acceptPrices": "O requerente aceitou os novos preços",
+      "all": "Encomendar tudo agora",
+      "available": "Encomendar o que há em stock e manter o resto em aberto",
+      "open": "Em aberto",
+      "stock": "Em stock",
+      "override": "Aprovar acima do limite de crédito",
+      "reason": "Motivo da exceção",
+      "confirm": "Criar encomenda",
+      "back": "Voltar",
+      "done": "Encomenda {number} criada"
+    }
+  },
+  "approvals": {
+    "title": "Pedidos para rever",
+    "intro": "Aprove para criar a encomenda de venda no {erp}, devolva para alterações ou rejeite.",
+    "tabs": {
+      "review": "Para rever",
+      "decided": "Decididos recentemente"
+    },
+    "empty": "Nada para rever",
+    "emptyHint": "Os novos pedidos aparecem aqui."
+  },
+  "workflow": {
+    "title": "Regras de fluxo",
+    "intro": "Regras dos pedidos de venda. Administradores e supervisores podem alterá-las.",
+    "credit": {
+      "title": "Limite de crédito",
+      "text": "O que acontece quando um pedido leva um cliente empresarial acima do limite de crédito ou a conta está bloqueada.",
+      "block": "Bloquear o pedido",
+      "blockText": "Não pode ser submetido até o saldo ser pago.",
+      "warn": "Avisar e enviar para revisão",
+      "warnText": "É submetido e assinalado; quem revê pode aprová-lo com uma exceção.",
+      "exceptions": "Exceções por cliente",
+      "add": "Adicionar exceção",
+      "customer": "Cliente",
+      "none": "Sem exceções. Todos os clientes seguem a regra acima.",
+      "remove": "Remover"
+    },
+    "auto": {
+      "title": "Aprovação automática",
+      "text": "Pedidos dentro do crédito e até este total tornam-se encomendas sem revisão.",
+      "enabled": "Aprovar automaticamente pedidos de rotina",
+      "max": "Até (total)"
+    },
+    "b2c": {
+      "title": "Clientes particulares",
+      "text": "Criar a encomenda de venda logo que o pagamento online seja concluído.",
+      "enabled": "Converter automaticamente pedidos pagos"
+    },
+    "hold": {
+      "title": "Reserva de stock",
+      "text": "Reservar o stock de um pedido submetido enquanto é revisto. 0 desativa.",
+      "hours": "Horas"
+    },
+    "expiry": {
+      "title": "Expiração de pedidos",
+      "text": "Pedidos não convertidos neste número de dias expiram. 0 significa nunca.",
+      "days": "Dias"
+    },
+    "save": "Guardar regras",
+    "discard": "Descartar",
+    "saved": "Regras de fluxo guardadas"
   }
 }

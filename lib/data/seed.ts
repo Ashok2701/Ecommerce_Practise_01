@@ -4,7 +4,8 @@ import type {
 import { PRODUCTS } from './catalog';
 import { buildOrderTotals } from '@/lib/domain/pricing';
 import { DEFAULT_ROLE_MODULES, type ModuleId } from '@/lib/access/modules';
-import type { Role, Site } from '@/types/domain';
+import type { Role, Site, SalesRequest, WorkflowSettings } from '@/types/domain';
+import { creditCheck } from '@/lib/domain/credit';
 
 export interface MockDb {
   version: number;
@@ -26,7 +27,10 @@ export interface MockDb {
   roleModules: Record<Role, ModuleId[]>;
   /** Site master (from the ERP). */
   sites: Site[];
-  seq: { order: number; invoice: number };
+  /** Sales requests (every sales order starts as one). */
+  requests: SalesRequest[];
+  workflow: WorkflowSettings;
+  seq: { order: number; invoice: number; request: number };
 }
 
 // deterministic PRNG so the demo looks the same for everyone
@@ -51,6 +55,10 @@ export const SITES: Site[] = [
   { code: 'BLR-BR', name: 'Bengaluru branch', city: 'Bengaluru', kind: 'branch', priceFactor: 1.03 },
 ];
 const SITE_BY_STATE: Record<string, string> = { Telangana: 'MAIN', 'Andhra Pradesh': 'MAIN', Maharashtra: 'MUM-WH', Gujarat: 'MUM-WH', 'Tamil Nadu': 'MAA-WH', Karnataka: 'BLR-BR' };
+
+export const DEFAULT_WORKFLOW: WorkflowSettings = {
+  creditMode: 'warn', creditOverrides: {}, autoApprove: { enabled: false, maxTotal: 25000 }, b2cAutoConvert: true, stockHoldHours: 0, requestExpiryDays: 14,
+};
 
 export function createSeed(): MockDb {
   const r = rng(42);
@@ -330,7 +338,45 @@ export function createSeed(): MockDb {
   }
   orders.forEach((o, k) => { o.site = o.customerId === 'cus_001' && k % 3 === 0 ? 'MUM-WH' : custSite(o.customerId); });
 
-  return { version: 6, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
+  // ---------- sales requests ----------
+  // Orders still waiting for approval become submitted requests: in the request-first flow,
+  // sales orders exist only after a request is converted.
+  let seqReq = 1040;
+  const requests: SalesRequest[] = [];
+  const toRequest = (o: Order, status: SalesRequest['status']): SalesRequest => {
+    const cust = customers.find((c) => c.id === o.customerId)!;
+    const cc = creditCheck(o, cust, orders);
+    return {
+      id: `req_${seqReq}`, number: `SR-26-${String(seqReq++).padStart(5, '0')}`, site: o.site, customerId: o.customerId, customerName: o.customerName, salesRepId: o.salesRepId,
+      createdBy: o.createdBy, source: o.source, date: o.date, status, lines: o.lines.map((l) => ({ ...l, convertedQty: status === 'converted' ? l.quantity : 0 })),
+      subtotal: o.subtotal, discount: o.discount, tax: o.tax, total: o.total, poNumber: o.poNumber, notes: o.notes, deliveryAddress: o.deliveryAddress, billingAddress: o.billingAddress,
+      credit: cust.type === 'B2B' ? { over: cc.over, onHold: cc.onHold, exceededBy: cc.exceededBy, available: cc.available } : undefined,
+      expiresAt: new Date(new Date(o.date).getTime() + 14 * DAY).toISOString(),
+      orderIds: [], orderNumbers: [], comments: [...o.comments],
+      timeline: [{ status: 'submitted', at: o.date, by: o.createdBy.name, note: 'Submitted for review' }],
+    };
+  };
+  for (const o of orders.filter((x) => x.status === 'pending_approval' || x.status === 'changes_requested')) {
+    const rq = toRequest(o, o.status === 'changes_requested' ? 'changes_requested' : 'submitted');
+    if (o.status === 'changes_requested') rq.timeline.push({ status: 'changes_requested', at: o.timeline.at(-1)!.at, by: 'Suresh Iyer', note: 'Please confirm quantities' });
+    requests.push(rq);
+  }
+  // demo: prices have moved since this request was submitted, so conversion asks for confirmation
+  { const rq = requests.find((x) => x.status === 'submitted' && !x.credit?.over && x.site === 'MAIN'); if (rq) { rq.lines.forEach((l) => { l.unitPrice = Math.round(l.unitPrice * 0.97 * 100) / 100; l.lineTotal = Math.round(l.lineTotal * 0.97 * 100) / 100; }); rq.subtotal = Math.round(rq.subtotal * 0.97); rq.tax = Math.round(rq.tax * 0.97); rq.total = Math.round(rq.total * 0.97 * 100) / 100; rq.date = ago(4); rq.timeline[0].at = rq.date; } }
+  const kept = orders.filter((x) => x.status !== 'pending_approval' && x.status !== 'changes_requested');
+  // recent orders get the converted request they came from
+  for (const o of kept.filter((x) => ['confirmed', 'processing', 'packed'].includes(x.status)).slice(0, 8)) {
+    const rq = toRequest(o, 'converted');
+    rq.credit = undefined;
+    rq.orderIds = [o.id]; rq.orderNumbers = [o.number];
+    rq.timeline.push({ status: 'approved', at: o.timeline[1]?.at ?? o.date, by: 'Suresh Iyer' }, { status: 'converted', at: o.timeline[1]?.at ?? o.date, by: 'Suresh Iyer', note: `Sales order ${o.number} created in Sage X3` });
+    o.requestId = rq.id; o.requestNumber = rq.number;
+    requests.push(rq);
+  }
+  orders.length = 0; orders.push(...kept);
+  requests.sort((a, b) => b.date.localeCompare(a.date));
+
+  return { version: 7, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), requests, workflow: structuredClone(DEFAULT_WORKFLOW), users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
     { id: 'vr_1', visitId: 'vis_1', customerId: 'cus_001', salesRepId: 'usr_rep_1', salesRepName: 'Ravi Kumar', at: ago(0, 3), outcome: 'quote_requested', contactMet: 'Venkat Rao (Purchase Head)', notes: 'Plant shutdown planned for next Monday. Needs 200 bearings (6205/6308) and 6 buckets of EP2 grease. Competitor quoted 4% lower on grease.', nextSteps: 'Send revised grease quote; confirm bearing stock with Hyderabad DC.', followUpDate: ahead(1), photos: [] },
-  ], seq: { order: seqOrder, invoice: seqInv } };
+  ], seq: { order: seqOrder, invoice: seqInv, request: seqReq } };
 }

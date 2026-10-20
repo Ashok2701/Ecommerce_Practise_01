@@ -17,6 +17,17 @@
     },
     "sites": {
       "atLeastOne": "Choisissez au moins un site."
+    },
+    "requests": {
+      "notFound": "Cette demande n’existe pas ou vous ne pouvez pas la voir.",
+      "notOpen": "Cette demande ne peut plus être modifiée.",
+      "empty": "Ajoutez au moins un produit.",
+      "creditBlocked": "Cette demande ferait dépasser la limite de crédit du compte. Réglez les factures en attente ou contactez votre commercial.",
+      "accountOnHold": "Ce compte est bloqué : aucune nouvelle demande ne peut être envoyée.",
+      "creditOverrideNeeded": "Cette demande dépasse la limite de crédit. Validez-la avec une dérogation.",
+      "priceChanged": "Les prix ont changé depuis l’envoi. Confirmez que le demandeur les a acceptés.",
+      "commentRequired": "Ajoutez d’abord un commentaire.",
+      "nothingInStock": "Aucun article de cette demande n’est en stock sur ce site."
     }
   },
   "login": {
@@ -138,7 +149,9 @@
       "engage": "Communication",
       "admin": "Administration"
     },
-    "access": "Accès aux modules"
+    "access": "Accès aux modules",
+    "requests": "Demandes de vente",
+    "workflow": "Règles de workflow"
   },
   "common": {
     "search": "Rechercher",
@@ -219,7 +232,11 @@
     "out_of_stock": "Rupture",
     "planned": "Planifiée",
     "checked_in": "Sur place",
-    "completed": "Terminée"
+    "completed": "Terminée",
+    "submitted": "Envoyée",
+    "approved": "Validée",
+    "partly_converted": "Partiellement convertie",
+    "converted": "Convertie"
   },
   "dashboard": {
     "admin": "Vue d’ensemble de la plateforme",
@@ -243,11 +260,45 @@
     "deliveryInfo": "Informations de livraison"
   },
   "checkout": {
-    "title": "Vérifier et envoyer la commande",
-    "submit": "Envoyer la commande",
-    "submitOffline": "Enregistrer hors ligne (synchro en attente)",
-    "success": "Commande envoyée",
-    "successOffline": "Commande enregistrée sur l’appareil"
+    "title": "Vérifier et envoyer la demande",
+    "intro": "Votre demande est vérifiée avant de devenir une commande de vente. Vous êtes informé à chaque étape.",
+    "introRetail": "Payez en ligne et votre commande est confirmée immédiatement.",
+    "delivery": "Adresse de livraison",
+    "billing": "Adresse de facturation",
+    "products": {
+      "one": "{count} produit",
+      "other": "{count} produits"
+    },
+    "po": "Votre numéro de bon de commande (facultatif)",
+    "poPlaceholder": "ex. PO/HYD/2741",
+    "notes": "Remarques pour l’entrepôt",
+    "notesPlaceholder": "Créneau de livraison, contact à l’accueil…",
+    "back": "Retour au panier",
+    "site": "Expédié depuis {site}",
+    "submit": "Envoyer la demande",
+    "pay": "Payer {amount} et commander",
+    "payNote": "Démo : aucun paiement réel n’est effectué.",
+    "saveOffline": "Enregistrer sur cet appareil",
+    "offlineNote": "Vous êtes hors ligne. La demande est enregistrée sur cet appareil et envoyée à la reconnexion. Elle n’est pas envoyée avant.",
+    "placedBy": "Passée par {name} ({role})",
+    "indicative": "Prix indicatifs. L’ERP confirme le prix final à la création de la commande.",
+    "blockedTitle": "Cette demande ne peut pas être envoyée",
+    "done": {
+      "submittedTitle": "Demande {number} envoyée",
+      "submittedText": "Elle attend une validation. Nous vous informerons quand elle deviendra une commande de vente.",
+      "convertedTitle": "Commande {number} confirmée",
+      "convertedText": "La demande {request} a été validée automatiquement et est devenue une commande de vente.",
+      "draftTitle": "Demande enregistrée sur cet appareil",
+      "draftText": "Elle sera envoyée automatiquement à la reconnexion. Elle n’est pas envoyée avant.",
+      "reference": "Référence",
+      "total": "Total",
+      "items": "Articles",
+      "viewRequest": "Voir la demande",
+      "viewOrder": "Voir la commande",
+      "allRequests": "Toutes les demandes",
+      "continue": "Continuer mes achats"
+    },
+    "summary": "Récapitulatif"
   },
   "assistant": {
     "title": "Assistant IA",
@@ -338,5 +389,167 @@
       "saved": "Sites mis à jour pour {name}",
       "column": "Sites"
     }
+  },
+  "requests": {
+    "title": "Demandes de vente",
+    "introCustomer": "Chaque commande commence par une demande. Suivez-la jusqu’à ce qu’elle devienne une commande de vente.",
+    "introRep": "Demandes de vos clients.",
+    "introReviewer": "Demandes des clients et des commerciaux sur ce site.",
+    "tabs": {
+      "open": "En cours",
+      "review": "À valider",
+      "closed": "Clôturées",
+      "all": "Toutes"
+    },
+    "search": "Rechercher un numéro, client, bon de commande ou produit",
+    "col": {
+      "request": "Demande",
+      "customer": "Client",
+      "date": "Date",
+      "items": "Articles",
+      "total": "Total",
+      "status": "Statut",
+      "orders": "Commandes"
+    },
+    "items": {
+      "one": "{count} article",
+      "other": "{count} articles"
+    },
+    "empty": "Aucune demande ici",
+    "emptyHint": "Les demandes apparaissent ici après la validation du panier.",
+    "drafts": {
+      "one": "{count} demande enregistrée sur cet appareil",
+      "other": "{count} demandes enregistrées sur cet appareil"
+    },
+    "sendDrafts": "Envoyer maintenant",
+    "sent": {
+      "one": "{count} demande envoyée",
+      "other": "{count} demandes envoyées"
+    },
+    "notSent": {
+      "one": "{count} demande n’a pas pu être envoyée. Ouvrez-la pour savoir pourquoi.",
+      "other": "{count} demandes n’ont pas pu être envoyées. Ouvrez-les pour savoir pourquoi."
+    },
+    "detail": {
+      "createdBy": "Demandée par {name}",
+      "source": {
+        "portal": "Portail",
+        "sales_app": "Application commerciale",
+        "offline": "Hors ligne"
+      },
+      "po": "Bon de commande",
+      "expires": "Expire le",
+      "held": "Stock réservé jusqu’à {time}",
+      "paid": "Payée en ligne",
+      "autoApproved": "Validée automatiquement",
+      "lines": "Produits",
+      "ordered": "En commande",
+      "qty": "Quantité",
+      "price": "Prix unitaire",
+      "lineTotal": "Total",
+      "orders": "Commandes de vente",
+      "timeline": "Historique",
+      "comments": "Commentaires",
+      "addComment": "Ajouter un commentaire",
+      "send": "Envoyer",
+      "noComments": "Aucun commentaire",
+      "edit": "Modifier dans le panier",
+      "editDone": "Articles copiés dans votre panier. L’ancienne demande a été retirée.",
+      "replaced": "Remplacée par une nouvelle demande",
+      "cancel": "Annuler la demande",
+      "cancelTitle": "Annuler {number} ?",
+      "cancelText": "La demande est retirée et ne deviendra pas une commande.",
+      "cancelled": "Demande annulée",
+      "keep": "Conserver la demande"
+    },
+    "review": {
+      "title": "Validation",
+      "limit": "Limite de crédit",
+      "available": "Disponible",
+      "over": "Dépassement de {amount}",
+      "hold": "Compte bloqué",
+      "within": "Dans la limite de crédit",
+      "overridden": "Dérogation de crédit par {name} : {reason}",
+      "priceChanged": "Les prix ont changé depuis l’envoi : {then} avant, {now} maintenant.",
+      "short": {
+        "one": "{count} produit n’est pas entièrement en stock à {site}.",
+        "other": "{count} produits ne sont pas entièrement en stock à {site}."
+      },
+      "comment": "Commentaire",
+      "commentHint": "Obligatoire pour demander des modifications ou refuser.",
+      "approve": "Valider et créer la commande",
+      "changes": "Demander des modifications",
+      "reject": "Refuser",
+      "rejectTitle": "Refuser {number} ?",
+      "rejectText": "Le demandeur est informé avec votre commentaire.",
+      "sentBack": "Renvoyée pour modifications",
+      "rejected": "Demande refusée",
+      "done": "Cette demande a déjà été traitée."
+    },
+    "convert": {
+      "title": "Créer la commande de vente",
+      "text": "Vérifiez ces points avant la création de la commande dans {erp}.",
+      "acceptPrices": "Le demandeur a accepté les nouveaux prix",
+      "all": "Tout commander maintenant",
+      "available": "Commander ce qui est en stock et garder le reste ouvert",
+      "open": "Ouvert",
+      "stock": "En stock",
+      "override": "Valider malgré le dépassement de crédit",
+      "reason": "Motif de la dérogation",
+      "confirm": "Créer la commande",
+      "back": "Retour",
+      "done": "Commande {number} créée"
+    }
+  },
+  "approvals": {
+    "title": "Demandes à valider",
+    "intro": "Validez pour créer la commande de vente dans {erp}, renvoyez pour modifications ou refusez.",
+    "tabs": {
+      "review": "À valider",
+      "decided": "Traitées récemment"
+    },
+    "empty": "Rien à valider",
+    "emptyHint": "Les nouvelles demandes apparaissent ici."
+  },
+  "workflow": {
+    "title": "Règles de workflow",
+    "intro": "Règles des demandes de vente. Les administrateurs et superviseurs peuvent les modifier.",
+    "credit": {
+      "title": "Limite de crédit",
+      "text": "Que se passe-t-il quand une demande fait dépasser sa limite de crédit à un client professionnel, ou que le compte est bloqué.",
+      "block": "Bloquer la demande",
+      "blockText": "Elle ne peut pas être envoyée tant que le solde n’est pas réglé.",
+      "warn": "Avertir et envoyer en validation",
+      "warnText": "Elle est envoyée et signalée ; un valideur peut l’accepter avec une dérogation.",
+      "exceptions": "Exceptions par client",
+      "add": "Ajouter une exception",
+      "customer": "Client",
+      "none": "Aucune exception. Tous les clients suivent la règle ci-dessus.",
+      "remove": "Supprimer"
+    },
+    "auto": {
+      "title": "Validation automatique",
+      "text": "Les demandes dans la limite de crédit et jusqu’à ce montant deviennent des commandes sans validation.",
+      "enabled": "Valider automatiquement les demandes courantes",
+      "max": "Jusqu’à (total)"
+    },
+    "b2c": {
+      "title": "Clients particuliers",
+      "text": "Créer la commande de vente dès que le paiement en ligne réussit.",
+      "enabled": "Convertir automatiquement les demandes payées"
+    },
+    "hold": {
+      "title": "Réservation de stock",
+      "text": "Réserver le stock d’une demande envoyée pendant sa validation. 0 désactive.",
+      "hours": "Heures"
+    },
+    "expiry": {
+      "title": "Expiration des demandes",
+      "text": "Les demandes non converties dans ce délai expirent. 0 signifie jamais.",
+      "days": "Jours"
+    },
+    "save": "Enregistrer les règles",
+    "discard": "Annuler les modifications",
+    "saved": "Règles de workflow enregistrées"
   }
 }

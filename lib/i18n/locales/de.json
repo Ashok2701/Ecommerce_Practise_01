@@ -17,6 +17,17 @@
     },
     "sites": {
       "atLeastOne": "Wählen Sie mindestens einen Standort."
+    },
+    "requests": {
+      "notFound": "Diese Anfrage existiert nicht oder Sie können sie nicht sehen.",
+      "notOpen": "Diese Anfrage kann nicht mehr geändert werden.",
+      "empty": "Fügen Sie mindestens ein Produkt hinzu.",
+      "creditBlocked": "Diese Anfrage würde das Kreditlimit des Kontos überschreiten. Begleichen Sie offene Rechnungen oder wenden Sie sich an Ihren Außendienst.",
+      "accountOnHold": "Dieses Konto ist gesperrt, daher können keine neuen Anfragen eingereicht werden.",
+      "creditOverrideNeeded": "Diese Anfrage überschreitet das Kreditlimit. Geben Sie sie mit einer Ausnahme frei.",
+      "priceChanged": "Die Preise haben sich seit dem Einreichen geändert. Bestätigen Sie, dass der Anfragende sie akzeptiert hat.",
+      "commentRequired": "Fügen Sie zuerst einen Kommentar hinzu.",
+      "nothingInStock": "Nichts aus dieser Anfrage ist an diesem Standort vorrätig."
     }
   },
   "login": {
@@ -138,7 +149,9 @@
       "engage": "Kommunikation",
       "admin": "Verwaltung"
     },
-    "access": "Modulzugriff"
+    "access": "Modulzugriff",
+    "requests": "Verkaufsanfragen",
+    "workflow": "Workflow-Regeln"
   },
   "common": {
     "search": "Suchen",
@@ -219,7 +232,11 @@
     "out_of_stock": "Nicht vorrätig",
     "planned": "Geplant",
     "checked_in": "Eingecheckt",
-    "completed": "Abgeschlossen"
+    "completed": "Abgeschlossen",
+    "submitted": "Eingereicht",
+    "approved": "Freigegeben",
+    "partly_converted": "Teilweise umgewandelt",
+    "converted": "Umgewandelt"
   },
   "dashboard": {
     "admin": "Plattformübersicht",
@@ -243,11 +260,45 @@
     "deliveryInfo": "Lieferinformationen"
   },
   "checkout": {
-    "title": "Bestellung prüfen und absenden",
-    "submit": "Bestellung absenden",
-    "submitOffline": "Offline speichern (Sync ausstehend)",
-    "success": "Bestellung übermittelt",
-    "successOffline": "Bestellung auf dem Gerät gespeichert"
+    "title": "Anfrage prüfen und senden",
+    "intro": "Ihre Anfrage wird geprüft, bevor sie zum Verkaufsauftrag wird. Sie werden bei jedem Schritt informiert.",
+    "introRetail": "Bezahlen Sie online, und Ihre Bestellung ist sofort bestätigt.",
+    "delivery": "Lieferadresse",
+    "billing": "Rechnungsadresse",
+    "products": {
+      "one": "{count} Produkt",
+      "other": "{count} Produkte"
+    },
+    "po": "Ihre Bestellnummer (optional)",
+    "poPlaceholder": "z. B. PO/HYD/2741",
+    "notes": "Hinweise für das Lager",
+    "notesPlaceholder": "Lieferfenster, Ansprechpartner am Tor…",
+    "back": "Zurück zum Warenkorb",
+    "site": "Versand ab {site}",
+    "submit": "Anfrage senden",
+    "pay": "{amount} bezahlen und bestellen",
+    "payNote": "Demo: Es wird keine echte Zahlung ausgeführt.",
+    "saveOffline": "Auf diesem Gerät speichern",
+    "offlineNote": "Sie sind offline. Die Anfrage wird auf diesem Gerät gespeichert und bei Verbindung gesendet. Bis dahin ist sie nicht eingereicht.",
+    "placedBy": "Erstellt von {name} ({role})",
+    "indicative": "Die Preise sind vorläufig. Das ERP bestätigt den endgültigen Preis beim Anlegen des Auftrags.",
+    "blockedTitle": "Diese Anfrage kann nicht eingereicht werden",
+    "done": {
+      "submittedTitle": "Anfrage {number} eingereicht",
+      "submittedText": "Sie wartet auf Prüfung. Wir benachrichtigen Sie, sobald daraus ein Verkaufsauftrag wird.",
+      "convertedTitle": "Auftrag {number} bestätigt",
+      "convertedText": "Anfrage {request} wurde automatisch freigegeben und ist jetzt ein Verkaufsauftrag.",
+      "draftTitle": "Anfrage auf diesem Gerät gespeichert",
+      "draftText": "Sie wird automatisch gesendet, sobald Sie wieder online sind. Bis dahin ist sie nicht eingereicht.",
+      "reference": "Referenz",
+      "total": "Gesamt",
+      "items": "Positionen",
+      "viewRequest": "Anfrage ansehen",
+      "viewOrder": "Auftrag ansehen",
+      "allRequests": "Alle Anfragen",
+      "continue": "Weiter einkaufen"
+    },
+    "summary": "Übersicht"
   },
   "assistant": {
     "title": "KI-Assistent",
@@ -338,5 +389,167 @@
       "saved": "Standorte für {name} aktualisiert",
       "column": "Standorte"
     }
+  },
+  "requests": {
+    "title": "Verkaufsanfragen",
+    "introCustomer": "Jede Bestellung beginnt als Anfrage. Verfolgen Sie sie, bis daraus ein Verkaufsauftrag wird.",
+    "introRep": "Anfragen Ihrer Kunden.",
+    "introReviewer": "Anfragen von Kunden und Außendienst an diesem Standort.",
+    "tabs": {
+      "open": "Offen",
+      "review": "Zu prüfen",
+      "closed": "Abgeschlossen",
+      "all": "Alle"
+    },
+    "search": "Nummer, Kunde, Bestellnummer oder Produkt suchen",
+    "col": {
+      "request": "Anfrage",
+      "customer": "Kunde",
+      "date": "Datum",
+      "items": "Positionen",
+      "total": "Gesamt",
+      "status": "Status",
+      "orders": "Aufträge"
+    },
+    "items": {
+      "one": "{count} Position",
+      "other": "{count} Positionen"
+    },
+    "empty": "Keine Anfragen",
+    "emptyHint": "Anfragen erscheinen hier nach dem Checkout.",
+    "drafts": {
+      "one": "{count} Anfrage auf diesem Gerät gespeichert",
+      "other": "{count} Anfragen auf diesem Gerät gespeichert"
+    },
+    "sendDrafts": "Jetzt senden",
+    "sent": {
+      "one": "{count} Anfrage gesendet",
+      "other": "{count} Anfragen gesendet"
+    },
+    "notSent": {
+      "one": "{count} Anfrage konnte nicht gesendet werden. Öffnen Sie sie, um den Grund zu sehen.",
+      "other": "{count} Anfragen konnten nicht gesendet werden. Öffnen Sie sie, um den Grund zu sehen."
+    },
+    "detail": {
+      "createdBy": "Angefragt von {name}",
+      "source": {
+        "portal": "Portal",
+        "sales_app": "Vertriebs-App",
+        "offline": "Offline"
+      },
+      "po": "Bestellnummer",
+      "expires": "Läuft ab",
+      "held": "Bestand reserviert bis {time}",
+      "paid": "Online bezahlt",
+      "autoApproved": "Automatisch freigegeben",
+      "lines": "Produkte",
+      "ordered": "Im Auftrag",
+      "qty": "Menge",
+      "price": "Stückpreis",
+      "lineTotal": "Gesamt",
+      "orders": "Verkaufsaufträge",
+      "timeline": "Verlauf",
+      "comments": "Kommentare",
+      "addComment": "Kommentar hinzufügen",
+      "send": "Senden",
+      "noComments": "Noch keine Kommentare",
+      "edit": "Im Warenkorb bearbeiten",
+      "editDone": "Positionen in den Warenkorb kopiert. Die alte Anfrage wurde zurückgezogen.",
+      "replaced": "Durch eine neue Anfrage ersetzt",
+      "cancel": "Anfrage stornieren",
+      "cancelTitle": "{number} stornieren?",
+      "cancelText": "Die Anfrage wird zurückgezogen und wird kein Auftrag.",
+      "cancelled": "Anfrage storniert",
+      "keep": "Anfrage behalten"
+    },
+    "review": {
+      "title": "Prüfung",
+      "limit": "Kreditlimit",
+      "available": "Verfügbar",
+      "over": "Limit um {amount} überschritten",
+      "hold": "Konto gesperrt",
+      "within": "Innerhalb des Kreditlimits",
+      "overridden": "Kreditfreigabe durch {name}: {reason}",
+      "priceChanged": "Preise haben sich seit dem Einreichen geändert: damals {then}, jetzt {now}.",
+      "short": {
+        "one": "{count} Produkt ist in {site} nicht vollständig vorrätig.",
+        "other": "{count} Produkte sind in {site} nicht vollständig vorrätig."
+      },
+      "comment": "Kommentar",
+      "commentHint": "Erforderlich, um Änderungen anzufordern oder abzulehnen.",
+      "approve": "Freigeben und Auftrag anlegen",
+      "changes": "Änderungen anfordern",
+      "reject": "Ablehnen",
+      "rejectTitle": "{number} ablehnen?",
+      "rejectText": "Der Anfragende wird mit Ihrem Kommentar benachrichtigt.",
+      "sentBack": "Zur Änderung zurückgesendet",
+      "rejected": "Anfrage abgelehnt",
+      "done": "Diese Anfrage wurde bereits bearbeitet."
+    },
+    "convert": {
+      "title": "Verkaufsauftrag anlegen",
+      "text": "Prüfen Sie diese Punkte, bevor der Auftrag in {erp} angelegt wird.",
+      "acceptPrices": "Der Anfragende hat die neuen Preise akzeptiert",
+      "all": "Alles jetzt bestellen",
+      "available": "Vorrätiges jetzt bestellen, Rest offen lassen",
+      "open": "Offen",
+      "stock": "Vorrätig",
+      "override": "Trotz Überschreitung des Kreditlimits freigeben",
+      "reason": "Grund für die Freigabe",
+      "confirm": "Auftrag anlegen",
+      "back": "Zurück",
+      "done": "Auftrag {number} angelegt"
+    }
+  },
+  "approvals": {
+    "title": "Zu prüfende Anfragen",
+    "intro": "Freigeben, um den Verkaufsauftrag in {erp} anzulegen, zur Änderung zurücksenden oder ablehnen.",
+    "tabs": {
+      "review": "Zu prüfen",
+      "decided": "Zuletzt entschieden"
+    },
+    "empty": "Nichts zu prüfen",
+    "emptyHint": "Neue Anfragen erscheinen hier."
+  },
+  "workflow": {
+    "title": "Workflow-Regeln",
+    "intro": "Regeln für Verkaufsanfragen. Administratoren und Teamleitung können sie ändern.",
+    "credit": {
+      "title": "Kreditlimit",
+      "text": "Was passiert, wenn eine Anfrage einen Geschäftskunden über sein Kreditlimit bringt oder das Konto gesperrt ist.",
+      "block": "Anfrage blockieren",
+      "blockText": "Sie kann erst eingereicht werden, wenn der Saldo beglichen ist.",
+      "warn": "Warnen und zur Prüfung senden",
+      "warnText": "Sie wird eingereicht und markiert; ein Prüfer kann sie mit einer Ausnahme freigeben.",
+      "exceptions": "Kundenausnahmen",
+      "add": "Ausnahme hinzufügen",
+      "customer": "Kunde",
+      "none": "Keine Ausnahmen. Alle Kunden folgen der Regel oben.",
+      "remove": "Entfernen"
+    },
+    "auto": {
+      "title": "Automatische Freigabe",
+      "text": "Anfragen innerhalb des Kreditlimits und bis zu diesem Betrag werden ohne Prüfung zu Aufträgen.",
+      "enabled": "Routineanfragen automatisch freigeben",
+      "max": "Bis (Gesamt)"
+    },
+    "b2c": {
+      "title": "Privatkunden",
+      "text": "Verkaufsauftrag anlegen, sobald die Online-Zahlung erfolgreich ist.",
+      "enabled": "Bezahlte Privatkunden-Anfragen automatisch umwandeln"
+    },
+    "hold": {
+      "title": "Bestandsreservierung",
+      "text": "Bestand einer eingereichten Anfrage während der Prüfung reservieren. 0 schaltet das ab.",
+      "hours": "Stunden"
+    },
+    "expiry": {
+      "title": "Ablauf von Anfragen",
+      "text": "Anfragen, die nicht innerhalb dieser Tage umgewandelt werden, laufen ab. 0 bedeutet nie.",
+      "days": "Tage"
+    },
+    "save": "Regeln speichern",
+    "discard": "Verwerfen",
+    "saved": "Workflow-Regeln gespeichert"
   }
 }

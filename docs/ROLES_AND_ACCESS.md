@@ -35,6 +35,7 @@ Defined in `lib/access/modules.ts` (`MODULES`, `DEFAULT_ROLE_MODULES`).
 | catalog | /catalog | | | ✓ | | ✓ | ✓ |
 | quick_order | /quick-order | | | ✓ | | ✓ | |
 | cart | /cart, /checkout | | | ✓ | | ✓ | ✓ |
+| requests | /requests | | ✓ | ✓ | | ✓ | ✓ |
 | orders | /orders | | ✓ | ✓ | | ✓ | ✓ |
 | invoices | /invoices | | | | | ✓ | ✓ |
 | account | /account | | | | | ✓ | ✓ |
@@ -45,6 +46,7 @@ Defined in `lib/access/modules.ts` (`MODULES`, `DEFAULT_ROLE_MODULES`).
 | notifications | /notifications | always | always | always | always | always | always |
 | users | /users | locked | | | | | |
 | access | /access | locked | | | | | |
+| workflow | /workflow | ✓ | ✓ | | | | |
 | settings | /settings | locked | | | | | |
 
 - **always**: on for every role, can't be switched off.
@@ -80,6 +82,9 @@ Sample sites in mock mode: `MAIN` (Hyderabad), `MUM-WH` (Mumbai, price list
 +2%), `MAA-WH` (Chennai), `BLR-BR` (Bengaluru, +3%).
 
 ## Backend contract
+
+The full endpoint list is in `docs/API_CONTRACT.md`.
+
 
 ```
 GET  /access/role-modules     -> { "ADMIN": ["dashboard", ...], "SUPERVISOR": [...], ... }

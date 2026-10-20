@@ -17,6 +17,17 @@
     },
     "sites": {
       "atLeastOne": "Elige al menos una sede."
+    },
+    "requests": {
+      "notFound": "Esta solicitud no existe o no puedes verla.",
+      "notOpen": "Esta solicitud ya no se puede modificar.",
+      "empty": "Añade al menos un producto.",
+      "creditBlocked": "Esta solicitud superaría el límite de crédito de la cuenta. Paga las facturas pendientes o contacta con tu comercial.",
+      "accountOnHold": "Esta cuenta está bloqueada, así que no se pueden enviar solicitudes nuevas.",
+      "creditOverrideNeeded": "Esta solicitud supera el límite de crédito. Apruébala con una excepción.",
+      "priceChanged": "Los precios han cambiado desde el envío. Confirma que el solicitante los aceptó.",
+      "commentRequired": "Añade primero un comentario.",
+      "nothingInStock": "Nada de esta solicitud está en stock en esta sede."
     }
   },
   "login": {
@@ -138,7 +149,9 @@
       "engage": "Comunicación",
       "admin": "Administración"
     },
-    "access": "Acceso a módulos"
+    "access": "Acceso a módulos",
+    "requests": "Solicitudes de venta",
+    "workflow": "Reglas de flujo"
   },
   "common": {
     "search": "Buscar",
@@ -219,7 +232,11 @@
     "out_of_stock": "Agotado",
     "planned": "Planificada",
     "checked_in": "En visita",
-    "completed": "Completada"
+    "completed": "Completada",
+    "submitted": "Enviada",
+    "approved": "Aprobada",
+    "partly_converted": "Convertida en parte",
+    "converted": "Convertida"
   },
   "dashboard": {
     "admin": "Resumen de la plataforma",
@@ -243,11 +260,45 @@
     "deliveryInfo": "Información de entrega"
   },
   "checkout": {
-    "title": "Revisar y enviar pedido",
-    "submit": "Enviar pedido",
-    "submitOffline": "Guardar sin conexión (pendiente de sincronizar)",
-    "success": "Pedido enviado",
-    "successOffline": "Pedido guardado en el dispositivo"
+    "title": "Revisar y enviar la solicitud",
+    "intro": "Tu solicitud se revisa antes de convertirse en pedido de venta. Te avisaremos en cada paso.",
+    "introRetail": "Paga en línea y tu pedido se confirma al momento.",
+    "delivery": "Dirección de entrega",
+    "billing": "Dirección de facturación",
+    "products": {
+      "one": "{count} producto",
+      "other": "{count} productos"
+    },
+    "po": "Tu número de orden de compra (opcional)",
+    "poPlaceholder": "p. ej. PO/HYD/2741",
+    "notes": "Notas para el almacén",
+    "notesPlaceholder": "Franja de entrega, contacto en la entrada…",
+    "back": "Volver al carrito",
+    "site": "Se envía desde {site}",
+    "submit": "Enviar solicitud",
+    "pay": "Pagar {amount} y hacer el pedido",
+    "payNote": "Demo: no se realiza ningún pago real.",
+    "saveOffline": "Guardar en este dispositivo",
+    "offlineNote": "Estás sin conexión. La solicitud se guarda en este dispositivo y se envía al reconectar. Hasta entonces no está enviada.",
+    "placedBy": "Realizado por {name} ({role})",
+    "indicative": "Los precios son orientativos. El ERP confirma el precio final al crear el pedido.",
+    "blockedTitle": "Esta solicitud no se puede enviar",
+    "done": {
+      "submittedTitle": "Solicitud {number} enviada",
+      "submittedText": "Está pendiente de revisión. Te avisaremos cuando se convierta en pedido de venta.",
+      "convertedTitle": "Pedido {number} confirmado",
+      "convertedText": "La solicitud {request} se aprobó automáticamente y ya es un pedido de venta.",
+      "draftTitle": "Solicitud guardada en este dispositivo",
+      "draftText": "Se enviará automáticamente cuando vuelvas a tener conexión. Hasta entonces no está enviada.",
+      "reference": "Referencia",
+      "total": "Total",
+      "items": "Artículos",
+      "viewRequest": "Ver solicitud",
+      "viewOrder": "Ver pedido",
+      "allRequests": "Todas las solicitudes",
+      "continue": "Seguir comprando"
+    },
+    "summary": "Resumen"
   },
   "assistant": {
     "title": "Asistente IA",
@@ -338,5 +389,167 @@
       "saved": "Sedes actualizadas para {name}",
       "column": "Sedes"
     }
+  },
+  "requests": {
+    "title": "Solicitudes de venta",
+    "introCustomer": "Cada pedido empieza como solicitud. Síguela hasta que se convierta en pedido de venta.",
+    "introRep": "Solicitudes de tus clientes.",
+    "introReviewer": "Solicitudes de clientes y comerciales de esta sede.",
+    "tabs": {
+      "open": "Abiertas",
+      "review": "Por revisar",
+      "closed": "Cerradas",
+      "all": "Todas"
+    },
+    "search": "Buscar número, cliente, orden de compra o producto",
+    "col": {
+      "request": "Solicitud",
+      "customer": "Cliente",
+      "date": "Fecha",
+      "items": "Artículos",
+      "total": "Total",
+      "status": "Estado",
+      "orders": "Pedidos"
+    },
+    "items": {
+      "one": "{count} artículo",
+      "other": "{count} artículos"
+    },
+    "empty": "No hay solicitudes",
+    "emptyHint": "Las solicitudes aparecen aquí después del pago.",
+    "drafts": {
+      "one": "{count} solicitud guardada en este dispositivo",
+      "other": "{count} solicitudes guardadas en este dispositivo"
+    },
+    "sendDrafts": "Enviar ahora",
+    "sent": {
+      "one": "{count} solicitud enviada",
+      "other": "{count} solicitudes enviadas"
+    },
+    "notSent": {
+      "one": "{count} solicitud no se pudo enviar. Ábrela para ver el motivo.",
+      "other": "{count} solicitudes no se pudieron enviar. Ábrelas para ver el motivo."
+    },
+    "detail": {
+      "createdBy": "Solicitada por {name}",
+      "source": {
+        "portal": "Portal",
+        "sales_app": "App comercial",
+        "offline": "Sin conexión"
+      },
+      "po": "Orden de compra",
+      "expires": "Caduca",
+      "held": "Stock reservado hasta {time}",
+      "paid": "Pagada en línea",
+      "autoApproved": "Aprobada automáticamente",
+      "lines": "Productos",
+      "ordered": "En pedidos",
+      "qty": "Cantidad",
+      "price": "Precio unitario",
+      "lineTotal": "Total",
+      "orders": "Pedidos de venta",
+      "timeline": "Historial",
+      "comments": "Comentarios",
+      "addComment": "Añadir un comentario",
+      "send": "Enviar",
+      "noComments": "Aún no hay comentarios",
+      "edit": "Editar en el carrito",
+      "editDone": "Artículos copiados al carrito. La solicitud anterior se ha retirado.",
+      "replaced": "Sustituida por una nueva solicitud",
+      "cancel": "Cancelar solicitud",
+      "cancelTitle": "¿Cancelar {number}?",
+      "cancelText": "La solicitud se retira y no se convertirá en pedido.",
+      "cancelled": "Solicitud cancelada",
+      "keep": "Mantener solicitud"
+    },
+    "review": {
+      "title": "Revisión",
+      "limit": "Límite de crédito",
+      "available": "Disponible",
+      "over": "Supera el límite en {amount}",
+      "hold": "Cuenta bloqueada",
+      "within": "Dentro del límite de crédito",
+      "overridden": "Excepción de crédito de {name}: {reason}",
+      "priceChanged": "Los precios han cambiado desde el envío: antes {then}, ahora {now}.",
+      "short": {
+        "one": "{count} producto no tiene stock suficiente en {site}.",
+        "other": "{count} productos no tienen stock suficiente en {site}."
+      },
+      "comment": "Comentario",
+      "commentHint": "Obligatorio para pedir cambios o rechazar.",
+      "approve": "Aprobar y crear pedido",
+      "changes": "Pedir cambios",
+      "reject": "Rechazar",
+      "rejectTitle": "¿Rechazar {number}?",
+      "rejectText": "Se avisará al solicitante con tu comentario.",
+      "sentBack": "Devuelta para cambios",
+      "rejected": "Solicitud rechazada",
+      "done": "Esta solicitud ya se ha tramitado."
+    },
+    "convert": {
+      "title": "Crear pedido de venta",
+      "text": "Comprueba estos puntos antes de crear el pedido en {erp}.",
+      "acceptPrices": "El solicitante aceptó los nuevos precios",
+      "all": "Pedir todo ahora",
+      "available": "Pedir lo que hay en stock y dejar el resto abierto",
+      "open": "Pendiente",
+      "stock": "En stock",
+      "override": "Aprobar pese a superar el límite de crédito",
+      "reason": "Motivo de la excepción",
+      "confirm": "Crear pedido",
+      "back": "Volver",
+      "done": "Pedido {number} creado"
+    }
+  },
+  "approvals": {
+    "title": "Solicitudes por revisar",
+    "intro": "Aprueba para crear el pedido de venta en {erp}, devuelve para cambios o rechaza.",
+    "tabs": {
+      "review": "Por revisar",
+      "decided": "Decididas recientemente"
+    },
+    "empty": "Nada que revisar",
+    "emptyHint": "Las nuevas solicitudes aparecen aquí."
+  },
+  "workflow": {
+    "title": "Reglas de flujo",
+    "intro": "Reglas de las solicitudes de venta. Los administradores y supervisores pueden cambiarlas.",
+    "credit": {
+      "title": "Límite de crédito",
+      "text": "Qué pasa cuando una solicitud hace que un cliente empresa supere su límite de crédito o la cuenta está bloqueada.",
+      "block": "Bloquear la solicitud",
+      "blockText": "No se puede enviar hasta que se pague el saldo.",
+      "warn": "Avisar y enviar a revisión",
+      "warnText": "Se envía marcada; un revisor puede aprobarla con una excepción.",
+      "exceptions": "Excepciones por cliente",
+      "add": "Añadir excepción",
+      "customer": "Cliente",
+      "none": "Sin excepciones. Todos los clientes siguen la regla anterior.",
+      "remove": "Quitar"
+    },
+    "auto": {
+      "title": "Aprobación automática",
+      "text": "Las solicitudes dentro del crédito y hasta este importe se convierten en pedidos sin revisión.",
+      "enabled": "Aprobar automáticamente las solicitudes habituales",
+      "max": "Hasta (total)"
+    },
+    "b2c": {
+      "title": "Clientes particulares",
+      "text": "Crear el pedido de venta en cuanto el pago en línea se completa.",
+      "enabled": "Convertir automáticamente las solicitudes pagadas"
+    },
+    "hold": {
+      "title": "Reserva de stock",
+      "text": "Reservar el stock de una solicitud enviada mientras se revisa. 0 lo desactiva.",
+      "hours": "Horas"
+    },
+    "expiry": {
+      "title": "Caducidad de solicitudes",
+      "text": "Las solicitudes no convertidas en estos días caducan. 0 significa nunca.",
+      "days": "Días"
+    },
+    "save": "Guardar reglas",
+    "discard": "Descartar",
+    "saved": "Reglas de flujo guardadas"
   }
 }

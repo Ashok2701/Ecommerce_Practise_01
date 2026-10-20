@@ -1,6 +1,6 @@
 import { source, http } from '@/lib/api/httpClient';
 import { getDb, inSite } from '@/lib/data/mockDb';
-import type { ActivityItem, Order } from '@/types/domain';
+import { REVIEWABLE_REQUEST, type ActivityItem, type Order } from '@/types/domain';
 import { creditCheck } from '@/lib/domain/credit';
 
 const DAY = 86400000;
@@ -32,7 +32,7 @@ export const dashboardService = {
     return {
       totalCustomers: db.customers.length, activeCustomers: db.customers.filter((c) => c.status === 'active').length,
       pendingApprovals: db.users.filter((u) => u.status === 'pending').length, totalOrders: orders.length,
-      pendingOrders: orders.filter((o) => o.status === 'pending_approval').length, salesValue: last30.filter(valid).reduce((s, o) => s + o.total, 0),
+      pendingOrders: db.requests.filter((r) => inSite(r) && REVIEWABLE_REQUEST.includes(r.status)).length, salesValue: last30.filter(valid).reduce((s, o) => s + o.total, 0),
       unreadMessages: db.conversations.filter((c) => c.unreadBy.includes('usr_admin_1')).length,
       trend: salesTrend(orders), byStatus: statusBreakdown(last30), byCategory: categorySales(last30),
       activity: db.activity.slice(0, 8) as ActivityItem[], recentOrders: orders.slice(0, 6),
@@ -41,16 +41,17 @@ export const dashboardService = {
 
   getManagerDashboard: (userId: string) => source(() => {
     const db = getDb(); const orders = db.orders.filter((o) => inSite(o));
+    const review = db.requests.filter((r) => inSite(r) && REVIEWABLE_REQUEST.includes(r.status));
     const todays = orders.filter((o) => today(o.date) && valid(o));
     const mStart = new Date(); mStart.setDate(1);
     return {
-      pendingApprovals: orders.filter((o) => o.status === 'pending_approval').length, ordersToday: todays.length, salesToday: todays.reduce((s, o) => s + o.total, 0),
+      pendingApprovals: review.length, ordersToday: todays.length, salesToday: todays.reduce((s, o) => s + o.total, 0),
       salesMonth: orders.filter((o) => valid(o) && new Date(o.date) >= mStart).reduce((s, o) => s + o.total, 0),
       activeReps: db.users.filter((u) => u.role === 'SALES_REP' && u.status === 'active').length,
       pendingIssues: db.conversations.filter((c) => c.unreadBy.includes(userId)).length + orders.filter((o) => o.status === 'changes_requested').length,
-      approvals: orders.filter((o) => o.status === 'pending_approval').slice(0, 5), recentOrders: orders.slice(0, 8), trend: salesTrend(orders, 14),
+      approvals: review.slice(0, 5), recentOrders: orders.slice(0, 8), trend: salesTrend(orders, 14),
       activity: db.activity.slice(0, 6) as ActivityItem[],
-      creditAlerts: orders.filter((o) => o.status === 'pending_approval').map((o) => ({ order: o, check: creditCheck(o, db.customers.find((c) => c.id === o.customerId)!, orders) })).filter((x) => x.check.over || x.check.onHold),
+      creditAlerts: review.filter((r) => (r.credit?.over || r.credit?.onHold) && !r.creditOverride).map((r) => ({ order: r, check: creditCheck({ id: r.id, total: r.total }, db.customers.find((c) => c.id === r.customerId)!, db.orders) })),
     };
   }, () => http.get('/dashboard/manager')),
 

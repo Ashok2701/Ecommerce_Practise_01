@@ -34,7 +34,7 @@ export function ManagerDashboard() {
             {d.creditAlerts.length > 0 && (
               <SectionCard title={<span className="flex items-center gap-2 text-rose-700"><ShieldAlert className="h-4 w-4" />Credit alerts ({d.creditAlerts.length})</span>} className="border-rose-200" action={<span className="text-xs text-muted-foreground">Pending orders above available credit</span>}>
                 <ul className="divide-y" data-testid="credit-alerts">{d.creditAlerts.map(({ order: o, check: k }) => (
-                  <li key={o.id}><Link href={`/approvals?order=${o.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-rose-50/50">
+                  <li key={o.id}><Link href={`/approvals?request=${o.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-rose-50/50">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-rose-100 text-rose-700"><ShieldAlert className="h-4 w-4" /></span>
                     <div className="min-w-0 flex-1"><div className="text-sm font-medium">{o.customerName}</div><div className="text-xs text-muted-foreground"><span className="font-mono">{o.number}</span> · {fmtMoney(o.total)} · {k.onHold ? 'account on hold' : `over by ${fmtMoney(k.exceededBy)}`} · utilisation {k.utilisationAfterPct}%</div></div>
                     <span className="hidden text-xs font-medium text-rose-700 sm:inline">Review &amp; override</span><ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -46,7 +46,7 @@ export function ManagerDashboard() {
               <SectionCard title="Awaiting your approval" className="lg:col-span-2" action={<Link href="/approvals" className="text-xs font-medium text-primary">{t('common.viewAll')}</Link>}>
                 {d.approvals.length ? (
                   <ul className="divide-y">{d.approvals.map((o) => (
-                    <li key={o.id}><Link href={`/approvals?order=${o.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/40">
+                    <li key={o.id}><Link href={`/approvals?request=${o.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/40">
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-amber-100 text-amber-700"><ClipboardCheck className="h-4 w-4" /></span>
                       <div className="min-w-0 flex-1"><div className="text-sm font-medium">{o.customerName}</div><div className="text-xs text-muted-foreground"><span className="font-mono">{o.number}</span> · {o.lines.length} items · by {o.createdBy.name} · {timeAgo(o.date)}</div></div>
                       <span className="text-sm font-semibold tabular">{fmtMoney(o.total)}</span><ChevronRight className="h-4 w-4 text-muted-foreground" />

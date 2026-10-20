@@ -1,4 +1,5 @@
 import { orderService } from './orderService';
+import { requestService } from './requestService';
 import { invoiceService } from './invoiceService';
 import { customerService } from './customerService';
 import { fmtDate, fmtMoney } from '@/lib/format';
@@ -17,8 +18,8 @@ export const ASSISTANT_SUGGESTIONS: Record<string, string[]> = {
   CUSTOMER_B2C: ['What are my recent orders?', 'When is my order expected?', 'Show products I usually buy'],
   CUSTOMER_B2B: ['What are my recent orders?', 'What is my outstanding balance?', 'When is my order expected?', 'Show products I usually buy', 'Create the same order as last month'],
   SALES_REP: ['Which customers have overdue payments?', 'What are my recent orders?', 'Show my sales this month'],
-  SUPERVISOR: ['How many orders need approval?', 'What are the recent orders?', 'Which customers have overdue payments?'],
-  ADMIN: ['How many orders need approval?', 'What are the recent orders?', 'Which customers have overdue payments?'],
+  SUPERVISOR: ['How many requests need review?', 'What are the recent orders?', 'Which customers have overdue payments?'],
+  ADMIN: ['How many requests need review?', 'What are the recent orders?', 'Which customers have overdue payments?'],
 };
 
 export const assistantService = {
@@ -40,9 +41,9 @@ export const assistantService = {
       const custs = (await customerService.getCustomers(user.role === 'SALES_REP' ? { salesRepId: user.id } : {})).filter((c) => c.outstanding > 0).sort((a, b) => b.outstanding - a.outstanding).slice(0, 5);
       return { tool: 'customerService.getCustomers', text: `${custs.length} customers in your scope have outstanding balances:`, bullets: custs.map((c) => `${c.name} – ${fmtMoney(c.outstanding)}`), actions: [{ label: 'View customers', href: '/customers' }] };
     }
-    if (/(approv)/.test(s) && (user.role === 'ADMIN' || user.role === 'SUPERVISOR')) {
-      const p = orders.filter((o) => o.status === 'pending_approval');
-      return { tool: 'orderService.getOrders', text: `${p.length} orders are waiting for approval.`, bullets: p.slice(0, 5).map((o) => `${o.number} · ${o.customerName} · ${fmtMoney(o.total)}`), actions: user.role === 'SUPERVISOR' ? [{ label: 'Open approvals', href: '/approvals' }] : [{ label: 'Open orders', href: '/orders' }] };
+    if (/(approv|review)/.test(s) && (user.role === 'ADMIN' || user.role === 'SUPERVISOR')) {
+      const p = await requestService.list({ view: 'review' });
+      return { tool: 'requestService.list', text: `${p.length} sales requests are waiting for review.`, bullets: p.slice(0, 5).map((o) => `${o.number} · ${o.customerName} · ${fmtMoney(o.total)}`), actions: user.role === 'SUPERVISOR' ? [{ label: 'Open approvals', href: '/approvals' }] : [{ label: 'Open orders', href: '/orders' }] };
     }
     if (/(expected|deliver|when|track)/.test(s)) {
       const open = orders.filter((o) => ['confirmed', 'processing', 'packed', 'dispatched', 'pending_approval'].includes(o.status)).slice(0, 4);

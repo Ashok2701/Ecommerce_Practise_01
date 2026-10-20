@@ -60,7 +60,7 @@ export function AdminDashboard() {
               <KpiCard label="Active customers" value={d.activeCustomers} icon={UserCheck} tone="success" trend={{ value: '2 this month', up: true }} />
               <KpiCard testId="kpi-pending-approvals" label="Pending user approvals" value={d.pendingApprovals} icon={Clock} tone="warning" onClick={go('users', '/users?status=pending')} hint="Awaiting review" />
               <KpiCard label="Total orders" value={d.totalOrders} icon={Package} hint="All time" onClick={go('orders', '/orders')} />
-              <KpiCard label="Orders pending approval" value={d.pendingOrders} icon={Hourglass} tone="warning" onClick={go('approvals', '/approvals')} />
+              <KpiCard label="Requests to review" value={d.pendingOrders} icon={Hourglass} tone="warning" onClick={go('approvals', '/approvals')} />
               <KpiCard label="Sales value (30 days)" value={fmtCompactMoney(d.salesValue)} icon={IndianRupee} tone="success" trend={{ value: '8.4%', up: true }} />
               <KpiCard label="Unread messages" value={d.unreadMessages} icon={MessageSquare} onClick={go('messages', '/messages')} />
               <KpiCard label="ERP sync status" value={<span className="text-base font-semibold text-emerald-600">Healthy</span>} icon={ClipboardCheck} tone="success" hint="Sage X3 · mock" />

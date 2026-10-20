@@ -15,7 +15,7 @@ import { useAccess, type NavItem } from '@/lib/auth/permissions';
 import { useCart } from '@/lib/cart/CartProvider';
 import { useUI } from '@/lib/ui/UIProvider';
 import { useNotifications } from '@/lib/notifications/useNotifications';
-import { messageService, orderService, productService, customerService } from '@/lib/services';
+import { messageService, orderService, productService, customerService, requestService } from '@/lib/services';
 import { resetDb } from '@/lib/data/mockDb';
 import { initials, timeAgo } from '@/lib/format';
 import { Button } from '@/components/ui/button';
@@ -33,7 +33,7 @@ function useBadges() {
   const cart = useCart();
   const access = useAccess(user.role);
   const conv = useQuery({ queryKey: ['conversations', user.id], queryFn: () => messageService.listConversations(user), refetchInterval: 20000 });
-  const appr = useQuery({ queryKey: ['orders', { status: 'pending_approval' }], queryFn: () => orderService.getOrders({ status: 'pending_approval' }), enabled: access.can('approvals') });
+  const appr = useQuery({ queryKey: ['requests', 'review'], queryFn: () => requestService.list({ view: 'review' }), enabled: access.can('approvals') });
   return { cart: cart.count, messages: (conv.data ?? []).filter((c) => c.unreadBy.includes(user.id)).length, approvals: appr.data?.length ?? 0 } as Record<string, number>;
 }
 
