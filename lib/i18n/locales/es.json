@@ -14,6 +14,9 @@
       "invalidCredentials": "El correo o la contraseña no son correctos.",
       "pendingApproval": "Tu cuenta está pendiente de aprobación por un administrador.",
       "inactive": "Tu cuenta ha sido desactivada. Contacta con tu administrador."
+    },
+    "sites": {
+      "atLeastOne": "Elige al menos una sede."
     }
   },
   "login": {
@@ -318,6 +321,22 @@
     "items": {
       "one": "{count} artículo",
       "other": "{count} artículos"
+    }
+  },
+  "sites": {
+    "label": "Sede",
+    "choose": "Elegir sede",
+    "switched": "Ahora trabajas en {site}. Stock y precios actualizados.",
+    "alsoAt": "También en stock en"
+  },
+  "users": {
+    "sites": {
+      "title": "Sedes",
+      "hint": "El usuario solo puede trabajar en estas sedes. El stock, los precios y los pedidos siguen la sede elegida.",
+      "default": "Sede predeterminada",
+      "save": "Guardar sedes",
+      "saved": "Sedes actualizadas para {name}",
+      "column": "Sedes"
     }
   }
 }

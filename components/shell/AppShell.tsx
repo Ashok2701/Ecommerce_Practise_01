@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useT } from '@/lib/i18n';
 import { Logo } from '@/components/brand/Logo';
+import { SiteSwitcher } from '@/components/preferences/SiteSwitcher';
 import { useTheme } from 'next-themes';
 import { useAuth, useUser } from '@/lib/auth/AuthProvider';
 import { useAccess, type NavItem } from '@/lib/auth/permissions';
@@ -284,6 +285,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <kbd className="ml-auto hidden rounded border bg-muted px-1.5 text-[10px] font-medium lg:inline">{t('shell.searchShortcut')}</kbd>
             </button>
             <div className="ml-auto flex items-center gap-1 sm:gap-2">
+              <SiteSwitcher />
               <ConnectivityPill />
               <NotificationBell />
               <UserMenu />

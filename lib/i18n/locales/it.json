@@ -14,6 +14,9 @@
       "invalidCredentials": "Email o password non corretti.",
       "pendingApproval": "Il tuo account è in attesa di approvazione da parte di un amministratore.",
       "inactive": "Il tuo account è stato disattivato. Contatta il tuo amministratore."
+    },
+    "sites": {
+      "atLeastOne": "Scegli almeno una sede."
     }
   },
   "login": {
@@ -318,6 +321,22 @@
     "items": {
       "one": "{count} articolo",
       "other": "{count} articoli"
+    }
+  },
+  "sites": {
+    "label": "Sede",
+    "choose": "Scegli la sede",
+    "switched": "Ora lavori su {site}. Stock e prezzi aggiornati.",
+    "alsoAt": "Disponibile anche a"
+  },
+  "users": {
+    "sites": {
+      "title": "Sedi",
+      "hint": "L’utente può lavorare solo in queste sedi. Stock, prezzi e ordini seguono la sede scelta.",
+      "default": "Sede predefinita",
+      "save": "Salva sedi",
+      "saved": "Sedi aggiornate per {name}",
+      "column": "Sedi"
     }
   }
 }

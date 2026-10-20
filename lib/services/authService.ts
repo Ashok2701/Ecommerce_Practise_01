@@ -1,5 +1,5 @@
 import { source, http } from '@/lib/api/httpClient';
-import { getDb, commit } from '@/lib/data/mockDb';
+import { getDb, commit, uid } from '@/lib/data/mockDb';
 import type { User, Role, UserStatus } from '@/types/domain';
 
 export interface Session { user: User; token: string; }
@@ -34,5 +34,20 @@ export const userService = {
     }, () => http.get('/users', q)),
   setStatus: (id: string, status: UserStatus) =>
     source(() => { const u = getDb().users.find((x) => x.id === id)!; u.status = status; commit(); return u; }, () => http.patch(`/users/${id}`, { status })),
+  /**
+   * Set which sites a user may work in. Backend: PUT /users/:id/sites { allowedSites, defaultSite } (ADMIN only, audited).
+   * The backend must reject an empty list and a default outside the list.
+   */
+  setSites: (id: string, allowedSites: string[], defaultSite: string, actor: Pick<User, 'name'>) =>
+    source<User>(() => {
+      if (!allowedSites.length) throw new Error('errors.sites.atLeastOne');
+      const db = getDb();
+      const u = db.users.find((x) => x.id === id)!;
+      u.allowedSites = [...allowedSites];
+      u.defaultSite = allowedSites.includes(defaultSite) ? defaultSite : allowedSites[0];
+      db.activity.unshift({ id: uid('act'), at: new Date().toISOString(), actor: actor.name, text: `set sites for ${u.name}: ${u.allowedSites.join(', ')}`, kind: 'user' });
+      commit();
+      return u;
+    }, () => http.put(`/users/${id}/sites`, { allowedSites, defaultSite })),
   getSalesReps: () => source<User[]>(() => getDb().users.filter((u) => u.role === 'SALES_REP'), () => http.get('/users', { role: 'SALES_REP' })),
 };

@@ -14,6 +14,9 @@
       "invalidCredentials": "Email or password is incorrect.",
       "pendingApproval": "Your account is waiting for administrator approval.",
       "inactive": "Your account has been deactivated. Contact your administrator."
+    },
+    "sites": {
+      "atLeastOne": "Choose at least one site."
     }
   },
   "login": {
@@ -318,6 +321,22 @@
     "items": {
       "one": "{count} item",
       "other": "{count} items"
+    }
+  },
+  "sites": {
+    "label": "Site",
+    "choose": "Choose site",
+    "switched": "Now working in {site}. Stock and prices are updated.",
+    "alsoAt": "Also in stock at"
+  },
+  "users": {
+    "sites": {
+      "title": "Sites",
+      "hint": "The user can only work in these sites. Stock, prices and orders follow the site they choose.",
+      "default": "Default site",
+      "save": "Save sites",
+      "saved": "Sites updated for {name}",
+      "column": "Sites"
     }
   }
 }

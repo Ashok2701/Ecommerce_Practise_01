@@ -9,6 +9,7 @@ import { CartProvider } from '@/lib/cart/CartProvider';
 import { UIProvider } from '@/lib/ui/UIProvider';
 import { I18nProvider } from '@/lib/i18n';
 import { SettingsProvider } from '@/lib/settings';
+import { SiteProvider } from '@/lib/sites/SiteProvider';
 import { ThemeProvider } from 'next-themes';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -23,12 +24,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange storageKey="nexus.theme">
       <I18nProvider>
         <AuthProvider>
+          <SiteProvider>
           <UIProvider>
             <CartProvider>
               {children}
               <ThemedToaster />
             </CartProvider>
           </UIProvider>
+          </SiteProvider>
         </AuthProvider>
       </I18nProvider>
       </ThemeProvider>

@@ -55,13 +55,41 @@ Defined in `lib/access/modules.ts` (`MODULES`, `DEFAULT_ROLE_MODULES`).
 - `SALES_REP` sees and orders only for customers assigned to them.
 - `CUSTOMER_B2B` / `CUSTOMER_B2C` see only their own customer's data.
 - `SUPPLIER` sees no sales data (orders, customers, invoices of customers).
-- Site access (`allowed_sites`) is the next step and applies on top of modules.
+- Site access (`allowed_sites`, below) applies on top of modules.
+
+## Sites
+
+Every user has `allowedSites` (for example `["MAIN","MUM-WH"]`) and a
+`defaultSite`. Admins set both on **Administration → Users** (at least one site
+is required). The user picks the working site in the header; one site shows as
+a plain label.
+
+The selected site is a working context. Every request carries it in the
+**`X-Site`** header, and the backend must:
+
+- reject a site that isn't in the user's `allowedSites` (403),
+- return **stock for that site** in `product.stock`,
+- apply **that site's price list** to `basePrice` (contract prices may stay fixed),
+- tag new orders and requests with the site,
+- return only that site's documents in lists and dashboards.
+
+Product detail also returns `otherSites: [{ site, stock }]` for the user's other
+allowed sites, so a multi-site buyer can see where else an item is available.
+
+Sample sites in mock mode: `MAIN` (Hyderabad), `MUM-WH` (Mumbai, price list
++2%), `MAA-WH` (Chennai), `BLR-BR` (Bengaluru, +3%).
 
 ## Backend contract
 
 ```
 GET  /access/role-modules     -> { "ADMIN": ["dashboard", ...], "SUPERVISOR": [...], ... }
 PUT  /access/role-modules     body: same shape, partial allowed. ADMIN only. Write an audit entry.
+
+GET  /sites                   -> [{ code, name, city, kind }]          (ERP site master)
+PUT  /users/:id/sites         body: { allowedSites: string[], defaultSite: string }   ADMIN only, audited;
+                              reject an empty list and a default outside the list.
+
+All business requests:        header X-Site: <site code>  (validated against allowedSites)
 ```
 
 The backend should re-apply the always-on and locked modules on save, the same

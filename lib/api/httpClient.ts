@@ -1,4 +1,5 @@
 import { appConfig } from '@/lib/config';
+import { getCurrentSite } from '@/lib/sites/current';
 
 /**
  * Thin HTTP client for the future Node.js backend.
@@ -18,7 +19,7 @@ async function request<T>(method: string, path: string, body?: unknown, query?: 
   const qs = query ? '?' + new URLSearchParams(Object.entries(query).filter(([, v]) => v !== undefined && v !== '').map(([k, v]) => [k, String(v)])).toString() : '';
   const res = await fetch(`${appConfig.apiBaseUrl}${path}${qs}`, {
     method,
-    headers: { 'Content-Type': 'application/json', ...(token() ? { Authorization: `Bearer ${token()}` } : {}) },
+    headers: { 'Content-Type': 'application/json', ...(token() ? { Authorization: `Bearer ${token()}` } : {}), ...(getCurrentSite() ? { 'X-Site': getCurrentSite()! } : {}) },
     body: body ? JSON.stringify(body) : undefined,
   });
   if (!res.ok) throw new ApiError(res.status, await res.text());

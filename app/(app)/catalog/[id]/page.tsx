@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, Truck, PackageCheck, ShieldCheck, ShoppingCart, Tag } from 'lucide-react';
 import { toast } from 'sonner';
 import { productService, offerService } from '@/lib/services';
+import { useT } from '@/lib/i18n';
 import { useCart, usePricedCart } from '@/lib/cart/CartProvider';
 import { customerUnitPrice, offerFor, stockStatus } from '@/lib/domain/pricing';
 import { fmtDate, fmtMoney, fmtNumber } from '@/lib/format';
@@ -17,6 +18,7 @@ import { Card } from '@/components/ui/card';
 import { OrderContextBar } from '@/features/orders/OrderContextBar';
 
 export default function ProductDetailPage() {
+  const { t } = useT();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const cart = useCart();
@@ -58,7 +60,7 @@ export default function ProductDetailPage() {
                   <dl className="mt-4 grid grid-cols-3 gap-3 text-sm">
                     <div className="rounded-md bg-muted/60 p-2.5"><dt className="text-xs text-muted-foreground">UOM</dt><dd className="font-semibold">{p.uom}</dd></div>
                     <div className="rounded-md bg-muted/60 p-2.5"><dt className="text-xs text-muted-foreground">MOQ</dt><dd className="font-semibold">{p.moq}</dd></div>
-                    <div className="rounded-md bg-muted/60 p-2.5"><dt className="text-xs text-muted-foreground">Available</dt><dd className="font-semibold tabular">{fmtNumber(p.stock)}</dd></div>
+                    <div className="rounded-md bg-muted/60 p-2.5"><dt className="text-xs text-muted-foreground">Available</dt><dd className="font-semibold tabular">{fmtNumber(p.stock)}</dd>{!!p.otherSites?.length && <dd className="mt-1 text-[11px] text-muted-foreground" data-testid="pdp-other-sites">{t('sites.alsoAt')}: {p.otherSites.map((o) => `${o.site} ${fmtNumber(o.stock)}`).join(' · ')}</dd>}</div>
                   </dl>
                   <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                     <QtyStepper value={quantity} onChange={setQty} step={p.moq} min={p.moq} />

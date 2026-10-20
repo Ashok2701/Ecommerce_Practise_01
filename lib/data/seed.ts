@@ -4,7 +4,7 @@ import type {
 import { PRODUCTS } from './catalog';
 import { buildOrderTotals } from '@/lib/domain/pricing';
 import { DEFAULT_ROLE_MODULES, type ModuleId } from '@/lib/access/modules';
-import type { Role } from '@/types/domain';
+import type { Role, Site } from '@/types/domain';
 
 export interface MockDb {
   version: number;
@@ -24,6 +24,8 @@ export interface MockDb {
   visitReports: VisitReport[];
   /** Module access per role (YES/NO), edited on the Module access screen. */
   roleModules: Record<Role, ModuleId[]>;
+  /** Site master (from the ERP). */
+  sites: Site[];
   seq: { order: number; invoice: number };
 }
 
@@ -40,6 +42,15 @@ const ago = (days: number, hours = 0) => new Date(Date.now() - days * DAY - hour
 const ahead = (days: number) => new Date(Date.now() + days * DAY).toISOString();
 
 const addr = (line1: string, city: string, state: string, postalCode: string) => ({ line1, city, state, postalCode, country: 'India' });
+
+/** Sample site master. In production this list comes from the ERP. */
+export const SITES: Site[] = [
+  { code: 'MAIN', name: 'Hyderabad distribution centre', city: 'Hyderabad', kind: 'warehouse', priceFactor: 1 },
+  { code: 'MUM-WH', name: 'Mumbai warehouse', city: 'Bhiwandi', kind: 'warehouse', priceFactor: 1.02 },
+  { code: 'MAA-WH', name: 'Chennai warehouse', city: 'Chennai', kind: 'warehouse', priceFactor: 1 },
+  { code: 'BLR-BR', name: 'Bengaluru branch', city: 'Bengaluru', kind: 'branch', priceFactor: 1.03 },
+];
+const SITE_BY_STATE: Record<string, string> = { Telangana: 'MAIN', 'Andhra Pradesh': 'MAIN', Maharashtra: 'MUM-WH', Gujarat: 'MUM-WH', 'Tamil Nadu': 'MAA-WH', Karnataka: 'BLR-BR' };
 
 export function createSeed(): MockDb {
   const r = rng(42);
@@ -299,7 +310,27 @@ export function createSeed(): MockDb {
     { id: 'act_7', at: ago(1, 1), actor: 'Meera Nair', text: 'created order for Metro Industrial Supplies', kind: 'order' },
   ];
 
-  return { version: 5, roleModules: structuredClone(DEFAULT_ROLE_MODULES), users, customers, products: PRODUCTS, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
+  // ---------- sites ----------
+  // Stock split across sites (some items out of stock at some sites).
+  const products: Product[] = PRODUCTS.map((p) => {
+    const w = [0.45, 0.25, 0.15, 0.15].map((x) => x * (0.6 + r() * 0.8));
+    const stockBySite = Object.fromEntries(SITES.map((st, k) => [st.code, r() < 0.12 ? 0 : Math.round(p.stock * w[k])]));
+    return { ...p, stockBySite, stock: Object.values(stockBySite).reduce((a, b) => a + b, 0) };
+  });
+  const custSite = (id: string) => { const c = customers.find((x) => x.id === id); return (c && SITE_BY_STATE[c.address.state]) || 'MAIN'; };
+  const all = SITES.map((x) => x.code);
+  const siteFor: Record<string, string[]> = {
+    usr_admin_1: all, usr_mgr_1: all, usr_mgr_2: ['MAIN'], usr_rep_1: ['MAIN'], usr_rep_2: ['MUM-WH'], usr_rep_3: ['BLR-BR', 'MAIN'], usr_rep_4: ['MAA-WH'],
+    usr_rep_5: ['MUM-WH'], usr_sup_1: ['MAIN', 'MUM-WH'], usr_b2c_1: ['MAIN'],
+    usr_cus_1: ['MAIN', 'MUM-WH'], // ABC Distributors buys from two sites
+  };
+  for (const u of users) {
+    u.allowedSites = siteFor[u.id] ?? (u.customerId ? [custSite(u.customerId)] : ['MAIN']);
+    u.defaultSite = u.allowedSites[0];
+  }
+  orders.forEach((o, k) => { o.site = o.customerId === 'cus_001' && k % 3 === 0 ? 'MUM-WH' : custSite(o.customerId); });
+
+  return { version: 6, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
     { id: 'vr_1', visitId: 'vis_1', customerId: 'cus_001', salesRepId: 'usr_rep_1', salesRepName: 'Ravi Kumar', at: ago(0, 3), outcome: 'quote_requested', contactMet: 'Venkat Rao (Purchase Head)', notes: 'Plant shutdown planned for next Monday. Needs 200 bearings (6205/6308) and 6 buckets of EP2 grease. Competitor quoted 4% lower on grease.', nextSteps: 'Send revised grease quote; confirm bearing stock with Hyderabad DC.', followUpDate: ahead(1), photos: [] },
   ], seq: { order: seqOrder, invoice: seqInv } };
 }

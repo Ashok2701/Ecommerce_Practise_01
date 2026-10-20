@@ -1,5 +1,5 @@
 import { source, http } from '@/lib/api/httpClient';
-import { getDb } from '@/lib/data/mockDb';
+import { getDb, inSite } from '@/lib/data/mockDb';
 import type { ActivityItem, Order } from '@/types/domain';
 import { creditCheck } from '@/lib/domain/credit';
 
@@ -27,37 +27,37 @@ function categorySales(orders: Order[]) {
 
 export const dashboardService = {
   getAdminDashboard: () => source(() => {
-    const db = getDb();
-    const last30 = db.orders.filter((o) => Date.now() - new Date(o.date).getTime() < 30 * DAY);
+    const db = getDb(); const orders = db.orders.filter((o) => inSite(o));
+    const last30 = orders.filter((o) => Date.now() - new Date(o.date).getTime() < 30 * DAY);
     return {
       totalCustomers: db.customers.length, activeCustomers: db.customers.filter((c) => c.status === 'active').length,
-      pendingApprovals: db.users.filter((u) => u.status === 'pending').length, totalOrders: db.orders.length,
-      pendingOrders: db.orders.filter((o) => o.status === 'pending_approval').length, salesValue: last30.filter(valid).reduce((s, o) => s + o.total, 0),
+      pendingApprovals: db.users.filter((u) => u.status === 'pending').length, totalOrders: orders.length,
+      pendingOrders: orders.filter((o) => o.status === 'pending_approval').length, salesValue: last30.filter(valid).reduce((s, o) => s + o.total, 0),
       unreadMessages: db.conversations.filter((c) => c.unreadBy.includes('usr_admin_1')).length,
-      trend: salesTrend(db.orders), byStatus: statusBreakdown(last30), byCategory: categorySales(last30),
-      activity: db.activity.slice(0, 8) as ActivityItem[], recentOrders: db.orders.slice(0, 6),
+      trend: salesTrend(orders), byStatus: statusBreakdown(last30), byCategory: categorySales(last30),
+      activity: db.activity.slice(0, 8) as ActivityItem[], recentOrders: orders.slice(0, 6),
     };
   }, () => http.get('/dashboard/admin')),
 
   getManagerDashboard: (userId: string) => source(() => {
-    const db = getDb();
-    const todays = db.orders.filter((o) => today(o.date) && valid(o));
+    const db = getDb(); const orders = db.orders.filter((o) => inSite(o));
+    const todays = orders.filter((o) => today(o.date) && valid(o));
     const mStart = new Date(); mStart.setDate(1);
     return {
-      pendingApprovals: db.orders.filter((o) => o.status === 'pending_approval').length, ordersToday: todays.length, salesToday: todays.reduce((s, o) => s + o.total, 0),
-      salesMonth: db.orders.filter((o) => valid(o) && new Date(o.date) >= mStart).reduce((s, o) => s + o.total, 0),
+      pendingApprovals: orders.filter((o) => o.status === 'pending_approval').length, ordersToday: todays.length, salesToday: todays.reduce((s, o) => s + o.total, 0),
+      salesMonth: orders.filter((o) => valid(o) && new Date(o.date) >= mStart).reduce((s, o) => s + o.total, 0),
       activeReps: db.users.filter((u) => u.role === 'SALES_REP' && u.status === 'active').length,
-      pendingIssues: db.conversations.filter((c) => c.unreadBy.includes(userId)).length + db.orders.filter((o) => o.status === 'changes_requested').length,
-      approvals: db.orders.filter((o) => o.status === 'pending_approval').slice(0, 5), recentOrders: db.orders.slice(0, 8), trend: salesTrend(db.orders, 14),
+      pendingIssues: db.conversations.filter((c) => c.unreadBy.includes(userId)).length + orders.filter((o) => o.status === 'changes_requested').length,
+      approvals: orders.filter((o) => o.status === 'pending_approval').slice(0, 5), recentOrders: orders.slice(0, 8), trend: salesTrend(orders, 14),
       activity: db.activity.slice(0, 6) as ActivityItem[],
-      creditAlerts: db.orders.filter((o) => o.status === 'pending_approval').map((o) => ({ order: o, check: creditCheck(o, db.customers.find((c) => c.id === o.customerId)!, db.orders) })).filter((x) => x.check.over || x.check.onHold),
+      creditAlerts: orders.filter((o) => o.status === 'pending_approval').map((o) => ({ order: o, check: creditCheck(o, db.customers.find((c) => c.id === o.customerId)!, orders) })).filter((x) => x.check.over || x.check.onHold),
     };
   }, () => http.get('/dashboard/manager')),
 
   getCustomerDashboard: (customerId: string) => source(() => {
     const db = getDb();
     const c = db.customers.find((x) => x.id === customerId)!;
-    const orders = db.orders.filter((o) => o.customerId === customerId);
+    const orders = db.orders.filter((o) => inSite(o) && o.customerId === customerId);
     return {
       customer: c, outstanding: c.outstanding, creditLimit: c.creditLimit, available: Math.max(0, c.creditLimit - c.outstanding),
       overdue: db.invoices.filter((i) => i.customerId === customerId && i.status === 'overdue').reduce((s, i) => s + i.amount - i.paid, 0),

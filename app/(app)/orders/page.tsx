@@ -69,7 +69,7 @@ function OrdersInner() {
         {() => (
           <DataTable<Order> testId="orders-table" rows={rows} rowKey={(o) => o.id} onRowClick={(o) => router.push(`/orders/${o.id}`)} empty={<EmptyState title="No orders found" />}
             columns={[
-              { key: 'n', header: 'Order', cell: (o) => <div><div className="font-mono text-xs font-semibold">{o.number}</div>{o.poNumber && <div className="text-[11px] text-muted-foreground">{o.poNumber}</div>}</div> },
+              { key: 'n', header: 'Order', cell: (o) => <div><div className="font-mono text-xs font-semibold">{o.number}{o.site && <span className="ms-2 rounded bg-muted px-1.5 py-0.5 font-sans text-[10px] font-medium text-muted-foreground" title={t('sites.label')}>{o.site}</span>}</div>{o.poNumber && <div className="text-[11px] text-muted-foreground">{o.poNumber}</div>}</div> },
               { key: 'd', header: t('common.date'), cell: (o) => fmtDate(o.date), className: 'whitespace-nowrap' },
               ...(showCustomer ? [{ key: 'c', header: t('common.customer'), cell: (o: Order) => <div><div className="font-medium">{o.customerName}</div><div className="text-[11px] text-muted-foreground">by {o.createdBy.name}</div></div> }] : []),
               { key: 'i', header: 'Items', cell: (o) => o.lines.length, align: 'center' },

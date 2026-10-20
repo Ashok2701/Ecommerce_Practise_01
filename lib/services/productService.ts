@@ -1,5 +1,6 @@
 import { source, http } from '@/lib/api/httpClient';
-import { getDb } from '@/lib/data/mockDb';
+import { getDb, atSite } from '@/lib/data/mockDb';
+import { getCurrentSite } from '@/lib/sites/current';
 import { stockStatus } from '@/lib/domain/pricing';
 import { CATEGORIES } from '@/lib/data/catalog';
 import type { Paginated, Product } from '@/types/domain';
@@ -14,11 +15,16 @@ export interface ProductQuery {
   pageSize?: number;
 }
 
+/** Mock: the signed-in user's allowed sites (the backend knows this from the session). */
+function allowedSites(): string[] {
+  try { return JSON.parse(localStorage.getItem('nexus.session') || 'null')?.user?.allowedSites ?? []; } catch { return []; }
+}
+
 export const productService = {
   getProducts: (q: ProductQuery = {}) =>
     source<Paginated<Product>>(() => {
       const s = q.search?.trim().toLowerCase() ?? '';
-      let items = getDb().products.filter((p) =>
+      let items = getDb().products.map((p) => atSite(p)).filter((p) =>
         (!s || [p.name, p.sku, p.brand, p.description, p.category].some((v) => v.toLowerCase().includes(s))) &&
         (!q.category || q.category === 'all' || p.category === q.category) &&
         (!q.brands?.length || q.brands.includes(p.brand)) &&
@@ -30,8 +36,16 @@ export const productService = {
       return { items: items.slice((page - 1) * pageSize, page * pageSize), total: items.length, page, pageSize };
     }, () => http.get('/products', { ...q, brands: q.brands?.join(',') })),
   getProduct: (id: string) =>
-    source<Product>(() => { const p = getDb().products.find((x) => x.id === id); if (!p) throw new Error('Product not found'); return p; }, () => http.get(`/products/${id}`)),
-  getAll: () => source<Product[]>(() => getDb().products, () => http.get('/products', { pageSize: 1000 }).then((r: any) => r.items)),
+    source<Product>(() => {
+      const raw = getDb().products.find((x) => x.id === id);
+      if (!raw) throw new Error('Product not found');
+      const p = atSite(raw);
+      // stock at the user's other sites, so a multi-site buyer can see where else it is available
+      const allowed = allowedSites();
+      p.otherSites = Object.entries(raw.stockBySite ?? {}).filter(([code]) => code !== getCurrentSite() && allowed.includes(code)).map(([site, stock]) => ({ site, stock }));
+      return p;
+    }, () => http.get(`/products/${id}`)),
+  getAll: () => source<Product[]>(() => getDb().products.map((p) => atSite(p)), () => http.get('/products', { pageSize: 1000 }).then((r: any) => r.items)),
   getCategories: () => [...CATEGORIES],
   getBrands: () => [...new Set(getDb().products.map((p) => p.brand))].sort(),
 };

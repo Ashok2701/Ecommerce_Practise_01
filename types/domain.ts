@@ -35,6 +35,10 @@ export interface User {
   customerId?: ID; // set for CUSTOMER_B2B / CUSTOMER_B2C (1 customer = 1 login in V1)
   /** ERP entity this login maps to: customer code, supplier code or rep code. Empty for ADMIN. */
   erpCode?: string;
+  /** Site codes this user may work in, e.g. ["MAIN","MUM-WH"]. */
+  allowedSites?: string[];
+  /** Site selected when the user signs in; must be one of allowedSites. */
+  defaultSite?: string;
   monthlyTarget?: number; // sales reps
   createdAt: ISODate;
   lastLoginAt?: ISODate;
@@ -69,6 +73,16 @@ export interface Customer {
 
 export type StockStatus = 'in_stock' | 'low_stock' | 'out_of_stock';
 
+/** A warehouse, distribution centre or branch from the ERP site master. */
+export interface Site {
+  code: string;
+  name: string;
+  city: string;
+  kind: 'warehouse' | 'branch';
+  /** Mock only: stands in for the site's ERP price list (1 = same as the main list). */
+  priceFactor?: number;
+}
+
 export interface Product {
   id: ID;
   sku: string;
@@ -81,7 +95,12 @@ export interface Product {
   uom: string;
   packSize: string;
   moq: number;
+  /** Stock at the site the request was made for. */
   stock: number;
+  /** Mock only: stock per site code. The backend returns `stock` for the requested site instead. */
+  stockBySite?: Record<string, number>;
+  /** Stock at the user's other allowed sites (product detail only). */
+  otherSites?: { site: string; stock: number }[];
   leadTimeDays: number;
   taxRatePct: number;
   specs: Record<string, string>;
@@ -129,6 +148,8 @@ export interface ActorRef {
 export interface Order {
   id: ID;
   number: string;
+  /** Site the order ships from. */
+  site?: string;
   customerId: ID;
   customerName: string;
   salesRepId: ID;

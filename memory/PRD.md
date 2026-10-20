@@ -43,3 +43,8 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - Module access (YES/NO per role) drives menus, mobile bar, search, page guard; admin screen at /access; defaults and locked modules in lib/access/modules.ts; docs/ROLES_AND_ACCESS.md
 - New supplier dashboard (purchasing arrives next); customer dashboard translated, retail (B2C) variant without credit; B2C skips credit checks
 - Security headers (same-origin framing, nosniff, referrer, permissions policy); type errors fail the build; .gitattributes for LF line endings
+
+## Iteration 5 – Sites (Oct 2026)
+- allowedSites + defaultSite per user (admin edits on Users; at least one required); site master via siteService (GET /sites)
+- Header site switcher (plain label for single-site users), remembered per user; switching refetches everything
+- Every request carries X-Site; mock scopes product stock and site price list, orders, dashboards; product detail shows stock at other allowed sites; orders tagged and filtered by site

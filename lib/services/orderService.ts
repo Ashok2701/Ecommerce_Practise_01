@@ -1,5 +1,6 @@
 import { source, http } from '@/lib/api/httpClient';
-import { getDb, commit, uid } from '@/lib/data/mockDb';
+import { getDb, atSite, inSite, commit, uid } from '@/lib/data/mockDb';
+import { getCurrentSite } from '@/lib/sites/current';
 import { buildOrderTotals } from '@/lib/domain/pricing';
 import { creditCheck } from '@/lib/domain/credit';
 import { fmtMoney } from '@/lib/format';
@@ -20,7 +21,7 @@ export const orderService = {
   getOrders: (q: OrderQuery = {}) =>
     source<Order[]>(() => {
       const s = q.search?.toLowerCase() ?? '';
-      return getDb().orders.filter((o) =>
+      return getDb().orders.filter((o) => inSite(o) &&
         (!q.customerId || o.customerId === q.customerId) && (!q.salesRepId || o.salesRepId === q.salesRepId) &&
         (!q.status || q.status === 'all' || (q.status === 'open' ? OPEN.includes(o.status) : o.status === q.status)) &&
         (!s || [o.number, o.customerName, o.poNumber ?? '', ...o.lines.map((l) => l.name)].some((v) => v.toLowerCase().includes(s))));
@@ -33,14 +34,14 @@ export const orderService = {
     source<Order>(() => {
       const db = getDb();
       const cust = db.customers.find((c) => c.id === input.customerId)!;
-      const items = input.items.map((i) => ({ product: db.products.find((p) => p.id === i.productId)!, quantity: i.quantity })).filter((i) => i.product && i.quantity > 0);
+      const items = input.items.map((i) => ({ product: db.products.find((p) => p.id === i.productId)!, quantity: i.quantity })).filter((i) => i.product && i.quantity > 0).map((i) => ({ ...i, product: atSite(i.product) }));
       if (!items.length) throw new Error('Order has no items');
       const totals = buildOrderTotals(items, cust, db.offers);
       const now = new Date().toISOString();
       const status: OrderStatus = input.offline ? 'pending_sync' : 'pending_approval';
       const seq = db.seq.order++;
       const o: Order = {
-        id: `ord_${seq}`, number: input.offline ? `DRAFT-${uid('').slice(1, 7).toUpperCase()}` : `SO-26-${String(seq).padStart(5, '0')}`,
+        id: `ord_${seq}`, site: getCurrentSite() ?? undefined, number: input.offline ? `DRAFT-${uid('').slice(1, 7).toUpperCase()}` : `SO-26-${String(seq).padStart(5, '0')}`,
         customerId: cust.id, customerName: cust.name, salesRepId: cust.salesRepId, createdBy: input.actor, source: input.offline ? 'offline' : input.actor.role === 'SALES_REP' ? 'sales_app' : 'portal',
         date: now, expectedDelivery: new Date(Date.now() + 5 * 86400000).toISOString(), status, ...totals, notes: input.notes, poNumber: input.poNumber,
         deliveryAddress: cust.address, billingAddress: cust.billingAddress, comments: [],

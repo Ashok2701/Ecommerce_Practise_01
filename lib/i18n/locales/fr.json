@@ -14,6 +14,9 @@
       "invalidCredentials": "E-mail ou mot de passe incorrect.",
       "pendingApproval": "Votre compte attend la validation d’un administrateur.",
       "inactive": "Votre compte a été désactivé. Contactez votre administrateur."
+    },
+    "sites": {
+      "atLeastOne": "Choisissez au moins un site."
     }
   },
   "login": {
@@ -318,6 +321,22 @@
     "items": {
       "one": "{count} article",
       "other": "{count} articles"
+    }
+  },
+  "sites": {
+    "label": "Site",
+    "choose": "Choisir un site",
+    "switched": "Vous travaillez maintenant sur {site}. Stock et prix mis à jour.",
+    "alsoAt": "Aussi en stock à"
+  },
+  "users": {
+    "sites": {
+      "title": "Sites",
+      "hint": "L’utilisateur ne peut travailler que sur ces sites. Stock, prix et commandes suivent le site choisi.",
+      "default": "Site par défaut",
+      "save": "Enregistrer les sites",
+      "saved": "Sites mis à jour pour {name}",
+      "column": "Sites"
     }
   }
 }

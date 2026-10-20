@@ -14,6 +14,9 @@
       "invalidCredentials": "E-Mail oder Passwort ist falsch.",
       "pendingApproval": "Ihr Konto wartet auf die Freigabe durch einen Administrator.",
       "inactive": "Ihr Konto wurde deaktiviert. Wenden Sie sich an Ihren Administrator."
+    },
+    "sites": {
+      "atLeastOne": "Wählen Sie mindestens einen Standort."
     }
   },
   "login": {
@@ -318,6 +321,22 @@
     "items": {
       "one": "{count} Artikel",
       "other": "{count} Artikel"
+    }
+  },
+  "sites": {
+    "label": "Standort",
+    "choose": "Standort wählen",
+    "switched": "Sie arbeiten jetzt in {site}. Bestand und Preise sind aktualisiert.",
+    "alsoAt": "Auch vorrätig in"
+  },
+  "users": {
+    "sites": {
+      "title": "Standorte",
+      "hint": "Der Benutzer kann nur an diesen Standorten arbeiten. Bestand, Preise und Aufträge folgen dem gewählten Standort.",
+      "default": "Standardstandort",
+      "save": "Standorte speichern",
+      "saved": "Standorte für {name} aktualisiert",
+      "column": "Standorte"
     }
   }
 }

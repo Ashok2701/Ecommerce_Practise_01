@@ -14,6 +14,9 @@
       "invalidCredentials": "E-mail ou palavra-passe incorretos.",
       "pendingApproval": "A sua conta aguarda aprovação de um administrador.",
       "inactive": "A sua conta foi desativada. Contacte o seu administrador."
+    },
+    "sites": {
+      "atLeastOne": "Escolha pelo menos um local."
     }
   },
   "login": {
@@ -318,6 +321,22 @@
     "items": {
       "one": "{count} artigo",
       "other": "{count} artigos"
+    }
+  },
+  "sites": {
+    "label": "Local",
+    "choose": "Escolher local",
+    "switched": "Está agora a trabalhar em {site}. Stock e preços atualizados.",
+    "alsoAt": "Também em stock em"
+  },
+  "users": {
+    "sites": {
+      "title": "Locais",
+      "hint": "O utilizador só pode trabalhar nestes locais. O stock, os preços e as encomendas seguem o local escolhido.",
+      "default": "Local predefinido",
+      "save": "Guardar locais",
+      "saved": "Locais atualizados para {name}",
+      "column": "Locais"
     }
   }
 }
