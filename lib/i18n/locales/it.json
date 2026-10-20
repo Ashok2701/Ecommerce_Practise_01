@@ -35,6 +35,21 @@
       "empty": "Aggiungi almeno un prodotto con una quantità.",
       "pickupDetails": "Inserisci la data di ritiro e il veicolo.",
       "nothingToReceive": "Inserisci una quantità da ricevere."
+    },
+    "forbidden": "Non hai l'autorizzazione per farlo.",
+    "consignment": {
+      "notFound": "Questo conto deposito non esiste o non puoi vederlo.",
+      "notEnough": "Più dello stock in conto deposito disponibile",
+      "empty": "Inserisci una quantità per almeno un prodotto.",
+      "noFreeStock": "Lo stock libero di questa sede non basta per il rifornimento."
+    },
+    "transfers": {
+      "notFound": "Questo trasferimento non esiste o non puoi vederlo.",
+      "notOpen": "Questo trasferimento non può più essere modificato.",
+      "sameSite": "Scegli due sedi diverse.",
+      "empty": "Aggiungi almeno un prodotto con una quantità.",
+      "reasonRequired": "Indica perché serve lo stock.",
+      "noStock": "Lo stock libero della sede di origine non basta."
     }
   },
   "login": {
@@ -155,14 +170,18 @@
       "operations": "Operazioni",
       "engage": "Comunicazione",
       "admin": "Amministrazione",
-      "purchasing": "Acquisti"
+      "purchasing": "Acquisti",
+      "inventory": "Magazzino"
     },
     "access": "Accesso ai moduli",
     "requests": "Richieste di vendita",
     "workflow": "Regole di workflow",
     "supplierCatalog": "I miei prodotti",
     "purchaseRequests": "Richieste d’acquisto",
-    "purchaseOrders": "Ordini d’acquisto"
+    "purchaseOrders": "Ordini d’acquisto",
+    "inventory": "Magazzino",
+    "consignment": "Stock in conto deposito",
+    "transfers": "Trasferimenti di stock"
   },
   "common": {
     "search": "Cerca",
@@ -253,7 +272,9 @@
     "pickup_confirmed": "Ritiro confermato",
     "in_transit": "In transito",
     "partly_received": "Ricevuto in parte",
-    "received": "Ricevuto"
+    "received": "Ricevuto",
+    "initiated": "Trasferimento avviato",
+    "transferred": "Trasferito"
   },
   "dashboard": {
     "admin": "Panoramica della piattaforma",
@@ -672,5 +693,155 @@
     "reason": "Motivo",
     "cancelledMsg": "Ordine annullato",
     "open": "Aperto"
+  },
+  "inventory": {
+    "title": "Magazzino",
+    "intro": "Stock a {site}: giacenza, riservato, disponibile e in arrivo.",
+    "search": "Cerca per prodotto, codice o marca",
+    "category": "Categoria",
+    "allCategories": "Tutte le categorie",
+    "filterLabel": "Mostra",
+    "filter": {
+      "all": "Tutto",
+      "low": "Scarso",
+      "reserved": "Riservato",
+      "incoming": "In arrivo",
+      "consignment": "Conto deposito"
+    },
+    "kpi": {
+      "low": "Prodotti con stock scarso",
+      "reserved": "Unità riservate",
+      "reservedHint": "{held} trattenute per richieste",
+      "incoming": "Unità in arrivo",
+      "consignment": "Unità in conto deposito"
+    },
+    "col": {
+      "product": "Prodotto",
+      "onHand": "Giacenza",
+      "allocated": "Assegnato",
+      "held": "Trattenuto",
+      "available": "Disponibile",
+      "incoming": "In arrivo",
+      "consignment": "Conto deposito"
+    },
+    "low": "Scarso",
+    "empty": "Nessun prodotto corrisponde",
+    "legend": "Assegnato: su ordini di vendita non ancora spediti. Trattenuto: tenuto per richieste inviate finché la trattenuta di stock è attiva. Disponibile = giacenza − assegnato − trattenuto. Lo stock in conto deposito appartiene agli accordi con i clienti e non è incluso.",
+    "detail": {
+      "allocated": "Assegnato a ordini di vendita",
+      "held": "Trattenuto per richieste",
+      "incoming": "In arrivo",
+      "consignment": "Conto deposito clienti",
+      "otherSites": "Disponibile in altre sedi",
+      "none": "Nessuno",
+      "until": "fino al {date}",
+      "fromSite": "da {site}",
+      "requestTransfer": "Richiedi un trasferimento"
+    }
+  },
+  "transfers": {
+    "title": "Trasferimenti di stock",
+    "intro": "Stock in entrata e in uscita da {site}.",
+    "new": "Richiedi trasferimento",
+    "newTitle": "Richiedi un trasferimento di stock",
+    "newIntro": "Chiedi a un'altra sede di inviare stock. Un supervisore lo approva, la sede di origine lo spedisce e questa sede lo riceve.",
+    "col": {
+      "number": "Trasferimento",
+      "route": "Da → a",
+      "items": "Prodotti",
+      "by": "Richiesto da",
+      "date": "Data",
+      "status": "Stato"
+    },
+    "direction": {
+      "label": "Direzione",
+      "both": "In entrata e in uscita",
+      "in": "In entrata",
+      "out": "In uscita"
+    },
+    "empty": "Nessun trasferimento",
+    "emptyHint": "Qui compaiono i trasferimenti tra sedi.",
+    "from": "Sede di origine",
+    "to": "Sede di destinazione",
+    "chooseSite": "Scegli una sede",
+    "availableAt": "Libero a {site}",
+    "reason": "Motivo",
+    "reasonPlaceholder": "Ordine cliente, ribilanciamento, carenza…",
+    "neededBy": "Necessario entro",
+    "neededByDate": "necessario entro il {date}",
+    "overWarning": "Alcune quantità superano lo stock libero di {site} oggi. Puoi comunque richiederle; il trasferimento sarà spedito solo quando lo stock è disponibile.",
+    "submit": "Invia richiesta di trasferimento",
+    "created": "Trasferimento {number} richiesto",
+    "requested": "Richiesto",
+    "received": "Ricevuto",
+    "approve": "Approva",
+    "reject": "Rifiuta",
+    "cancel": "Annulla richiesta",
+    "rejectTitle": "Rifiutare {number}?",
+    "rejectText": "Il richiedente vedrà il tuo commento.",
+    "initiate": "Spedisci da {site}",
+    "receive": "Ricevi a {site}",
+    "receiveText": "Inserisci ciò che è arrivato. Eventuali mancanze vengono registrate sul trasferimento per la verifica.",
+    "receiveConfirm": "Conferma ricevimento",
+    "sent": "{qty} {uom} spediti",
+    "complete": "Chiudi e registra",
+    "hint": {
+      "pending": "In attesa dell'approvazione di un supervisore.",
+      "approved": "Approvato. Ora lo spedisce {from}.",
+      "initiated": "In viaggio da {from} a {to}.",
+      "transferred": "Ricevuto a {to}. Controlla e chiudi il trasferimento."
+    },
+    "msg": {
+      "approved": "Trasferimento approvato",
+      "rejected": "Trasferimento rifiutato",
+      "initiated": "Stock spedito",
+      "received": "Ricevimento registrato",
+      "completed": "Trasferimento chiuso",
+      "cancelled": "Trasferimento annullato",
+      "commented": "Commento aggiunto"
+    }
+  },
+  "consignment": {
+    "title": "Stock in conto deposito",
+    "introCustomer": "Lo stock che teniamo per te nel nostro magazzino. Preleva ciò che ti serve e lo consegniamo.",
+    "introStaff": "Stock in conto deposito dei clienti tenuto a {site}.",
+    "products": "Prodotti",
+    "units": "Unità",
+    "openCallOffs": "Prelievi aperti",
+    "belowMin": {
+      "one": "{count} prodotto sotto il minimo concordato",
+      "other": "{count} prodotti sotto il minimo concordato"
+    },
+    "belowMinShort": "Sotto il minimo",
+    "empty": "Nessuno stock in conto deposito",
+    "emptyCustomer": "Chiedi al tuo commerciale di tenere stock per te nel nostro magazzino.",
+    "heldAt": "Tenuto a {site}, ubicazione {location}",
+    "callOffIntro": "Inserisci le quantità che ti servono e invia un prelievo. Diventa una richiesta di vendita come ogni altro ordine.",
+    "staffIntro": "I prelievi di questo cliente compaiono come richieste di vendita. Rifornisci quando lo stock scende sotto il minimo concordato.",
+    "col": {
+      "atLocation": "All'ubicazione",
+      "reserved": "Su prelievi aperti",
+      "available": "Disponibile",
+      "min": "Minimo",
+      "callOff": "Preleva"
+    },
+    "callOff": "Preleva stock",
+    "callOffText": "Viene creata una richiesta di vendita sul tuo stock in conto deposito.",
+    "callOffSubmit": "Invia prelievo",
+    "calledOff": "Prelievo {number} inviato",
+    "calledOffConverted": "Prelievo confermato come ordine {number}",
+    "callOffChip": "Prelievo da conto deposito",
+    "noCallOffs": "Nessun prelievo aperto",
+    "movements": "Movimenti",
+    "kind": {
+      "top_up": "Rifornimento",
+      "call_off": "Prelievo",
+      "adjustment": "Rettifica"
+    },
+    "topUp": "Rifornisci",
+    "topUpText": "Sposta stock libero di {site} nell'ubicazione {location}.",
+    "nowMin": "Ora {now} · minimo {min}",
+    "topUpConfirm": "Registra rifornimento",
+    "toppedUp": "Conto deposito rifornito"
   }
 }

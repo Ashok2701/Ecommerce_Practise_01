@@ -7,7 +7,7 @@ import type { Order, Product, SalesRequest } from '@/types/domain';
  * (approvals, new orders, replies ...) survive reloads during a demo.
  * Will be removed once services point at the Node.js backend.
  */
-const KEY = 'nexus.mockdb.v8';
+const KEY = 'nexus.mockdb.v9';
 let db: MockDb | null = null;
 
 export function getDb(): MockDb {
@@ -17,7 +17,7 @@ export function getDb(): MockDb {
       const raw = window.localStorage.getItem(KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as MockDb;
-        if (parsed.version === 8) return (db = parsed);
+        if (parsed.version === 9) return (db = parsed);
       }
     } catch {}
   }

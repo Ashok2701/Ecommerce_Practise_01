@@ -4,7 +4,7 @@ import type {
 import { PRODUCTS } from './catalog';
 import { buildOrderTotals } from '@/lib/domain/pricing';
 import { DEFAULT_ROLE_MODULES, type ModuleId } from '@/lib/access/modules';
-import type { Role, Site, SalesRequest, WorkflowSettings, Supplier, PurchaseRequest, PurchaseOrder, PurchaseLine } from '@/types/domain';
+import type { Role, Site, SalesRequest, WorkflowSettings, Supplier, PurchaseRequest, PurchaseOrder, PurchaseLine, Consignment, ConsignmentLine, StockTransfer, TransferLine, TransferStatus } from '@/types/domain';
 import { creditCheck } from '@/lib/domain/credit';
 
 export interface MockDb {
@@ -33,7 +33,11 @@ export interface MockDb {
   suppliers: Supplier[];
   purchaseRequests: PurchaseRequest[];
   purchaseOrders: PurchaseOrder[];
-  seq: { order: number; invoice: number; request: number; pr: number; po: number; grn: number };
+  /** Customer consignment stock held at our warehouse locations. */
+  consignments: Consignment[];
+  /** Stock transfers between sites. */
+  transfers: StockTransfer[];
+  seq: { order: number; invoice: number; request: number; pr: number; po: number; grn: number; transfer: number };
 }
 
 // deterministic PRNG so the demo looks the same for everyone
@@ -425,7 +429,51 @@ export function createSeed(): MockDb {
     po(suppliers[1], [pline(l[2], 30)], 'received', 12, 'MAIN'),
   ];
 
-  return { version: 8, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), requests, workflow: structuredClone(DEFAULT_WORKFLOW), suppliers, purchaseRequests, purchaseOrders, users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
+  // ---------- consignment stock ----------
+  const cline = (pid: string, quantity: number, minQty: number): ConsignmentLine => {
+    const x = products.find((y) => y.id === pid)!;
+    return { productId: pid, sku: x.sku, name: x.name, uom: x.uom, quantity, minQty };
+  };
+  const consignments: Consignment[] = [
+    { id: 'cons_1', number: 'CONS-0001', customerId: 'cus_001', customerName: 'ABC Distributors', site: 'MAIN', location: 'CONS-ABC',
+      lines: [cline(b[0], 180, 100), cline(b[1], 60, 80), cline(l[0], 24, 10), cline(f[0], 900, 500)],
+      movements: [
+        { id: 'cm_1', at: ago(20), by: 'Warehouse – Hyderabad DC', kind: 'top_up', productId: b[0], quantity: 200 },
+        { id: 'cm_2', at: ago(20), by: 'Warehouse – Hyderabad DC', kind: 'top_up', productId: b[1], quantity: 120 },
+        { id: 'cm_3', at: ago(9), by: 'Venkat Rao', kind: 'call_off', productId: b[1], quantity: -60, ref: 'SO-26-04150' },
+        { id: 'cm_4', at: ago(6), by: 'Venkat Rao', kind: 'call_off', productId: b[0], quantity: -20, ref: 'SO-26-04171' },
+      ] },
+    { id: 'cons_2', number: 'CONS-0002', customerId: 'cus_004', customerName: 'National Wholesale', site: 'MUM-WH', location: 'CONS-NWS',
+      lines: [cline(b[2], 300, 150), cline(byCat('Safety & PPE')[0], 120, 60)],
+      movements: [{ id: 'cm_5', at: ago(15), by: 'Warehouse – Mumbai', kind: 'top_up', productId: b[2], quantity: 300 }] },
+  ];
+
+  // ---------- stock transfers ----------
+  let seqTr = 2210;
+  const tline = (pid: string, quantity: number, received = 0): TransferLine => {
+    const x = products.find((y) => y.id === pid)!;
+    return { productId: pid, sku: x.sku, name: x.name, uom: x.uom, quantity, receivedQty: received };
+  };
+  const tr = (from: string, to: string, status: TransferStatus, lines: TransferLine[], days: number, reason: string, by: { id: string; name: string; role: Role }): StockTransfer => {
+    const flow: TransferStatus[] = ['pending', 'approved', 'initiated', 'transferred', 'completed'];
+    const n = seqTr++;
+    const steps = status === 'rejected' ? ['pending', 'rejected'] as TransferStatus[] : flow.slice(0, flow.indexOf(status) + 1);
+    return {
+      id: `tr_${n}`, number: `TR-26-${String(n).padStart(5, '0')}`, fromSite: from, toSite: to, status, lines, reason, createdBy: by, date: ago(days), neededBy: ahead(3),
+      erpRef: flow.indexOf(status) >= 2 ? `STR${520000 + n}` : undefined, comments: [],
+      timeline: steps.map((st, k) => ({ status: st, at: ago(days - k * 0.7), by: k === 0 ? by.name : 'Suresh Iyer', note: st === 'rejected' ? 'Stock needed for the Diwali dispatches at MAIN' : undefined })),
+    };
+  };
+  const ravi = { id: 'usr_rep_1', name: 'Ravi Kumar', role: 'SALES_REP' as const };
+  const transfers: StockTransfer[] = [
+    tr('MUM-WH', 'MAIN', 'pending', [tline(b[2], 120), tline(l[1], 20)], 0.4, 'ABC Distributors plant shutdown – short at MAIN', ravi),
+    tr('MAA-WH', 'MAIN', 'initiated', [tline(f[1], 300)], 2, 'Rebalance fasteners before month end', suresh),
+    tr('MAIN', 'BLR-BR', 'approved', [tline(b[0], 80)], 1, 'Bharat Machinery Mart standing order', { id: 'usr_rep_3', name: 'Arjun Reddy', role: 'SALES_REP' }),
+    tr('MAIN', 'MAA-WH', 'completed', [tline(l[2], 40, 40)], 10, 'Chennai out of stock', suresh),
+    tr('BLR-BR', 'MAIN', 'rejected', [tline(b[3], 50)], 5, 'Return slow movers', { id: 'usr_rep_3', name: 'Arjun Reddy', role: 'SALES_REP' }),
+  ];
+
+  return { version: 9, consignments, transfers, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), requests, workflow: structuredClone(DEFAULT_WORKFLOW), suppliers, purchaseRequests, purchaseOrders, users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
     { id: 'vr_1', visitId: 'vis_1', customerId: 'cus_001', salesRepId: 'usr_rep_1', salesRepName: 'Ravi Kumar', at: ago(0, 3), outcome: 'quote_requested', contactMet: 'Venkat Rao (Purchase Head)', notes: 'Plant shutdown planned for next Monday. Needs 200 bearings (6205/6308) and 6 buckets of EP2 grease. Competitor quoted 4% lower on grease.', nextSteps: 'Send revised grease quote; confirm bearing stock with Hyderabad DC.', followUpDate: ahead(1), photos: [] },
-  ], seq: { order: seqOrder, invoice: seqInv, request: seqReq, pr: seqPr, po: seqPo, grn: seqGrn } };
+  ], seq: { order: seqOrder, invoice: seqInv, request: seqReq, pr: seqPr, po: seqPo, grn: seqGrn, transfer: seqTr } };
 }

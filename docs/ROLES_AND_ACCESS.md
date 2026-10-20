@@ -50,6 +50,9 @@ Defined in `lib/access/modules.ts` (`MODULES`, `DEFAULT_ROLE_MODULES`).
 | supplier_catalog | /supplier-catalog | | | | ✓ | | |
 | purchase_requests | /purchase-requests | | ✓ | | ✓ | | |
 | purchase_orders | /purchase-orders | | ✓ | | ✓ | | |
+| inventory | /inventory | | ✓ | ✓ | | | |
+| consignment | /consignment | | ✓ | ✓ | | ✓ | |
+| transfers | /transfers | | ✓ | ✓ | | | |
 | settings | /settings | locked | | | | | |
 
 - **always**: on for every role, can't be switched off.
@@ -60,6 +63,8 @@ Defined in `lib/access/modules.ts` (`MODULES`, `DEFAULT_ROLE_MODULES`).
 - `SALES_REP` sees and orders only for customers assigned to them.
 - `CUSTOMER_B2B` / `CUSTOMER_B2C` see only their own customer's data.
 - `SUPPLIER` sees no sales data (orders, customers, invoices of customers), and only purchase requests and orders for their own `supplier_id`. Suppliers may acknowledge, confirm pickup, dispatch and cancel their own open pickup requests; only buyers convert, receive and cancel purchase orders.
+- Customers see only their own consignment; sales reps only their customers' consignments.
+- Transfers: anyone with the module can request one; only supervisors approve, reject, ship, receive and complete.
 - Site access (`allowed_sites`, below) applies on top of modules.
 
 ## Sites

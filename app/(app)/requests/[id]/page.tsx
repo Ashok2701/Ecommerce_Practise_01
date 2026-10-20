@@ -75,6 +75,7 @@ function Detail({ r }: { r: SalesRequest }) {
       </div>
 
       <div className="flex flex-wrap gap-2 text-xs">
+        {r.consignmentId && <Link href={`/consignment/${r.consignmentId}`} className="rounded-md bg-primary/10 px-2 py-1 font-medium text-primary hover:underline" data-testid="request-consignment">{t('consignment.callOffChip')}</Link>}
         {r.poNumber && <span className="rounded-md bg-muted px-2 py-1">{t('requests.detail.po')}: {r.poNumber}</span>}
         {r.paid && <span className="inline-flex items-center gap-1 rounded-md bg-accent px-2 py-1 text-accent-foreground"><CreditCard className="h-3 w-3" aria-hidden="true" />{t('requests.detail.paid')}</span>}
         {r.autoApproved && <span className="inline-flex items-center gap-1 rounded-md bg-accent px-2 py-1 text-accent-foreground"><Sparkles className="h-3 w-3" aria-hidden="true" />{t('requests.detail.autoApproved')}</span>}

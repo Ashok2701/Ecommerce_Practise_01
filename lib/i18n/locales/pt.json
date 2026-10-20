@@ -35,6 +35,21 @@
       "empty": "Adicione pelo menos um produto com quantidade.",
       "pickupDetails": "Introduza a data de recolha e o veículo.",
       "nothingToReceive": "Introduza uma quantidade a receber."
+    },
+    "forbidden": "Não tem permissão para fazer isto.",
+    "consignment": {
+      "notFound": "Esta consignação não existe ou não a pode ver.",
+      "notEnough": "Mais do que o stock em consignação disponível",
+      "empty": "Indique uma quantidade para pelo menos um produto.",
+      "noFreeStock": "Não há stock livre suficiente neste local para a reposição."
+    },
+    "transfers": {
+      "notFound": "Esta transferência não existe ou não a pode ver.",
+      "notOpen": "Esta transferência já não pode ser alterada.",
+      "sameSite": "Escolha dois locais diferentes.",
+      "empty": "Adicione pelo menos um produto com quantidade.",
+      "reasonRequired": "Indique para que é necessário o stock.",
+      "noStock": "Não há stock livre suficiente no local de origem."
     }
   },
   "login": {
@@ -155,14 +170,18 @@
       "operations": "Operações",
       "engage": "Comunicação",
       "admin": "Administração",
-      "purchasing": "Compras"
+      "purchasing": "Compras",
+      "inventory": "Inventário"
     },
     "access": "Acesso a módulos",
     "requests": "Pedidos de venda",
     "workflow": "Regras de fluxo",
     "supplierCatalog": "Os meus produtos",
     "purchaseRequests": "Requisições de compra",
-    "purchaseOrders": "Encomendas de compra"
+    "purchaseOrders": "Encomendas de compra",
+    "inventory": "Inventário",
+    "consignment": "Stock em consignação",
+    "transfers": "Transferências de stock"
   },
   "common": {
     "search": "Pesquisar",
@@ -253,7 +272,9 @@
     "pickup_confirmed": "Recolha confirmada",
     "in_transit": "Em trânsito",
     "partly_received": "Recebida em parte",
-    "received": "Recebida"
+    "received": "Recebida",
+    "initiated": "Transferência iniciada",
+    "transferred": "Transferido"
   },
   "dashboard": {
     "admin": "Visão geral da plataforma",
@@ -672,5 +693,155 @@
     "reason": "Motivo",
     "cancelledMsg": "Encomenda cancelada",
     "open": "Em aberto"
+  },
+  "inventory": {
+    "title": "Inventário",
+    "intro": "Stock em {site}: existências, reservado, disponível para prometer e a caminho.",
+    "search": "Pesquisar por produto, referência ou marca",
+    "category": "Categoria",
+    "allCategories": "Todas as categorias",
+    "filterLabel": "Mostrar",
+    "filter": {
+      "all": "Tudo",
+      "low": "Baixo",
+      "reserved": "Reservado",
+      "incoming": "A receber",
+      "consignment": "Consignação"
+    },
+    "kpi": {
+      "low": "Produtos com stock baixo",
+      "reserved": "Unidades reservadas",
+      "reservedHint": "{held} retidas para pedidos",
+      "incoming": "Unidades a receber",
+      "consignment": "Unidades em consignação"
+    },
+    "col": {
+      "product": "Produto",
+      "onHand": "Existências",
+      "allocated": "Afetado",
+      "held": "Retido",
+      "available": "Disponível",
+      "incoming": "A receber",
+      "consignment": "Consignação"
+    },
+    "low": "Baixo",
+    "empty": "Nenhum produto corresponde",
+    "legend": "Afetado: em encomendas de venda ainda não expedidas. Retido: guardado para pedidos submetidos enquanto a retenção de stock está ativa. Disponível = existências − afetado − retido. O stock em consignação pertence a acordos com clientes e não está incluído.",
+    "detail": {
+      "allocated": "Afetado a encomendas de venda",
+      "held": "Retido para pedidos",
+      "incoming": "A caminho",
+      "consignment": "Consignação de clientes",
+      "otherSites": "Disponível noutros locais",
+      "none": "Nenhum",
+      "until": "até {date}",
+      "fromSite": "de {site}",
+      "requestTransfer": "Pedir uma transferência"
+    }
+  },
+  "transfers": {
+    "title": "Transferências de stock",
+    "intro": "Stock a entrar e a sair de {site}.",
+    "new": "Pedir transferência",
+    "newTitle": "Pedir uma transferência de stock",
+    "newIntro": "Peça a outro local que envie stock. Um supervisor aprova, o local de origem expede e este local recebe.",
+    "col": {
+      "number": "Transferência",
+      "route": "De → para",
+      "items": "Produtos",
+      "by": "Pedido por",
+      "date": "Data",
+      "status": "Estado"
+    },
+    "direction": {
+      "label": "Sentido",
+      "both": "Entradas e saídas",
+      "in": "Entradas",
+      "out": "Saídas"
+    },
+    "empty": "Sem transferências",
+    "emptyHint": "As transferências entre locais aparecem aqui.",
+    "from": "Local de origem",
+    "to": "Local de destino",
+    "chooseSite": "Escolha um local",
+    "availableAt": "Livre em {site}",
+    "reason": "Motivo",
+    "reasonPlaceholder": "Encomenda de cliente, reequilíbrio, rutura…",
+    "neededBy": "Necessário até",
+    "neededByDate": "necessário até {date}",
+    "overWarning": "Algumas quantidades excedem o stock livre de {site} hoje. Pode pedir na mesma; a transferência só é expedida quando houver stock.",
+    "submit": "Enviar pedido de transferência",
+    "created": "Transferência {number} pedida",
+    "requested": "Pedido",
+    "received": "Recebido",
+    "approve": "Aprovar",
+    "reject": "Rejeitar",
+    "cancel": "Cancelar pedido",
+    "rejectTitle": "Rejeitar {number}?",
+    "rejectText": "O requerente verá o seu comentário.",
+    "initiate": "Expedir de {site}",
+    "receive": "Receber em {site}",
+    "receiveText": "Indique o que chegou. Qualquer falta fica registada na transferência para análise.",
+    "receiveConfirm": "Confirmar receção",
+    "sent": "{qty} {uom} enviados",
+    "complete": "Concluir e lançar",
+    "hint": {
+      "pending": "A aguardar aprovação de um supervisor.",
+      "approved": "Aprovado. {from} expede a seguir.",
+      "initiated": "A caminho de {from} para {to}.",
+      "transferred": "Recebido em {to}. Verifique e conclua a transferência."
+    },
+    "msg": {
+      "approved": "Transferência aprovada",
+      "rejected": "Transferência rejeitada",
+      "initiated": "Stock expedido",
+      "received": "Receção registada",
+      "completed": "Transferência concluída",
+      "cancelled": "Transferência cancelada",
+      "commented": "Comentário adicionado"
+    }
+  },
+  "consignment": {
+    "title": "Stock em consignação",
+    "introCustomer": "Stock que guardamos para si no nosso armazém. Levante o que precisa e nós entregamos.",
+    "introStaff": "Stock em consignação de clientes guardado em {site}.",
+    "products": "Produtos",
+    "units": "Unidades",
+    "openCallOffs": "Levantamentos em aberto",
+    "belowMin": {
+      "one": "{count} produto abaixo do mínimo acordado",
+      "other": "{count} produtos abaixo do mínimo acordado"
+    },
+    "belowMinShort": "Abaixo do mínimo",
+    "empty": "Sem stock em consignação",
+    "emptyCustomer": "Pergunte ao seu comercial se podemos guardar stock para si no nosso armazém.",
+    "heldAt": "Guardado em {site}, localização {location}",
+    "callOffIntro": "Indique as quantidades de que precisa e envie um levantamento. Torna-se um pedido de venda como qualquer outra encomenda.",
+    "staffIntro": "Os levantamentos deste cliente aparecem como pedidos de venda. Reponha quando o stock ficar abaixo do mínimo acordado.",
+    "col": {
+      "atLocation": "Na localização",
+      "reserved": "Em levantamentos em aberto",
+      "available": "Disponível",
+      "min": "Mínimo",
+      "callOff": "Levantar"
+    },
+    "callOff": "Levantar stock",
+    "callOffText": "Isto cria um pedido de venda sobre o seu stock em consignação.",
+    "callOffSubmit": "Enviar levantamento",
+    "calledOff": "Levantamento {number} enviado",
+    "calledOffConverted": "Levantamento confirmado como encomenda {number}",
+    "callOffChip": "Levantamento de consignação",
+    "noCallOffs": "Sem levantamentos em aberto",
+    "movements": "Movimentos",
+    "kind": {
+      "top_up": "Reposição",
+      "call_off": "Levantamento",
+      "adjustment": "Ajuste"
+    },
+    "topUp": "Repor",
+    "topUpText": "Mover stock livre de {site} para a localização {location}.",
+    "nowMin": "Atual {now} · mínimo {min}",
+    "topUpConfirm": "Lançar reposição",
+    "toppedUp": "Consignação reposta"
   }
 }

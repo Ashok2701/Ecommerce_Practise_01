@@ -186,7 +186,56 @@ PO flow: `issued → acknowledged → pickup_confirmed → in_transit → (partl
 Errors: `errors.purchasing.notFound | notOpen | empty | pickupDetails | nothingToReceive`.
 Every transition notifies the other party (`purchase_update`).
 
+## Inventory
+
+Stock comes from the ERP per site (`X-Site`). The portal never adjusts stock
+itself: every movement (transfer, consignment top-up, call-off) is a document
+the ERP posts.
+
+Definitions per product and site:
+- **on hand** = physically at the site (free + allocated)
+- **allocated** = on open sales orders not yet shipped
+- **held** = open sales requests while the stock-hold workflow setting applies (`holdUntil` in the future)
+- **available** = on hand − allocated − held (free to promise)
+- **incoming** = purchase orders `in_transit` / `partly_received` + transfers `initiated` towards the site
+- **consignment** = customer stock at consignment locations of the site (not part of on hand)
+
+| Method | Path | Who | Body / query | Returns |
+| --- | --- | --- | --- | --- |
+| GET | `/inventory` | staff | `search?`, `category?`, `filter=all\|low\|reserved\|incoming\|consignment` | `StockPosition[]` |
+| GET | `/inventory/{productId}` | staff | | `{position: StockPosition, detail: StockDetail}` (which orders, requests, POs, transfers and consignments make up the numbers; available at other sites) |
+| GET | `/inventory/availability` | staff | `sites=A,B` | `{[productId]: {[site]: available}}` |
+
+### Consignment stock
+
+| Method | Path | Who | Body / query | Returns |
+| --- | --- | --- | --- | --- |
+| GET | `/consignments` | staff (site), customer (own only), rep (own customers) | `customerId?` | `ConsignmentView[]` (lines with `reserved` on open call-offs, `available`, `low` below `minQty`; open call-offs) |
+| GET | `/consignments/{id}` | same scope | | `ConsignmentView` with movements |
+| POST | `/consignments/{id}/call-offs` | customer, rep | `{items[{productId, quantity}], poNumber?, notes?}` | `SalesRequest` with `consignmentId`. Quantities may not exceed `available` (`errors.consignment.notEnough`). Goes through the normal request workflow; converting it takes stock from the consignment location, not free stock. No stock hold is applied |
+| POST | `/consignments/{id}/top-ups` | supervisor | `{items[{productId, quantity}]}` | Moves free stock into the location (`errors.consignment.noFreeStock`) |
+
+### Stock transfers
+
+Flow: `pending → approved → initiated → transferred → completed`, or `rejected` / `cancelled`.
+
+| Method | Path | Who | Body | Effect |
+| --- | --- | --- | --- | --- |
+| GET | `/transfers` | staff | `view?`, `direction=in\|out?` | Transfers into or out of the current site |
+| GET | `/transfers/{id}` | staff | | `StockTransfer` |
+| POST | `/transfers` | rep, supervisor | `{fromSite, toSite, items, reason, neededBy?}` | `pending`; reason required, sites must differ |
+| POST | `/transfers/{id}/approve` | supervisor | | `approved` |
+| POST | `/transfers/{id}/reject` | supervisor | `{comment}` (required) | `rejected` |
+| POST | `/transfers/{id}/initiate` | supervisor / source warehouse | | ERP transfer created (`erpRef`), stock leaves the source; `errors.transfers.noStock` if free stock is short |
+| POST | `/transfers/{id}/receive` | supervisor / destination warehouse | `{lines[{productId, quantity}]}` | Stock added at destination; short lines recorded |
+| POST | `/transfers/{id}/complete` | supervisor | | `completed` |
+| POST | `/transfers/{id}/cancel` | creator, supervisor | | only `pending` / `approved` |
+| POST | `/transfers/{id}/comments` | | `{text}` | |
+
+Errors: `errors.transfers.notFound | notOpen | sameSite | empty | reasonRequired | noStock`, `errors.forbidden`.
+Notifications use type `stock_update`.
+
 ## Not yet in the contract
 
-The five inventory areas, quotes, deliveries, payments and the offer
+Quotes, deliveries, payments and the offer
 engine are added with phase 2 of the frontend.

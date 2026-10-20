@@ -22,6 +22,8 @@ export interface SubmitInput {
   poNumber?: string;
   actor: ActorRef;
   offline?: boolean;
+  /** Call-off from this customer consignment (stock comes from the consignment location). */
+  consignmentId?: string;
 }
 export interface RequestQuery { customerId?: string; salesRepId?: string; view?: 'open' | 'review' | 'closed' | 'all'; search?: string; }
 export interface ConvertOptions {
@@ -87,7 +89,8 @@ function preview(r: SalesRequest): ConversionPreview {
   const now_ = priceNow(r);
   const lines = r.lines.filter((l) => l.quantity > l.convertedQty).map((l) => {
     const raw = db.products.find((p) => p.id === l.productId)!;
-    const stock = r.site && raw.stockBySite ? raw.stockBySite[r.site] ?? 0 : raw.stock;
+    const cons = r.consignmentId ? db.consignments.find((c) => c.id === r.consignmentId) : undefined;
+    const stock = cons ? cons.lines.find((x) => x.productId === l.productId)?.quantity ?? 0 : r.site && raw.stockBySite ? raw.stockBySite[r.site] ?? 0 : raw.stock;
     const priceNowLine = now_.lines.find((x) => x.productId === l.productId);
     return { productId: l.productId, name: l.name, sku: l.sku, uom: l.uom, open: l.quantity - l.convertedQty, stock, priceThen: l.unitPrice, priceNow: priceNowLine?.unitPrice ?? l.unitPrice };
   });
@@ -128,8 +131,14 @@ function convertNow(r: SalesRequest, actor: ActorRef, opts: Omit<ConvertOptions,
     erpRef: `SOH${260000 + seq}`,
   };
   db.orders.unshift(order);
-  // stock leaves the site
-  take.forEach((l) => { const raw = db.products.find((x) => x.id === l.productId)!; if (r.site && raw.stockBySite) raw.stockBySite[r.site] = Math.max(0, (raw.stockBySite[r.site] ?? 0) - l.qty); });
+  // stock leaves the site – or the customer's consignment location for a call-off
+  const cons = r.consignmentId ? db.consignments.find((c) => c.id === r.consignmentId) : undefined;
+  if (cons) take.forEach((l) => {
+    const cl = cons.lines.find((x) => x.productId === l.productId);
+    if (cl) cl.quantity = Math.max(0, cl.quantity - l.qty);
+    cons.movements.unshift({ id: uid('cm'), at: now(), by: actor.name, kind: 'call_off', productId: l.productId, quantity: -l.qty, ref: order.number });
+  });
+  else take.forEach((l) => { const raw = db.products.find((x) => x.id === l.productId)!; if (r.site && raw.stockBySite) raw.stockBySite[r.site] = Math.max(0, (raw.stockBySite[r.site] ?? 0) - l.qty); });
   take.forEach((l) => { const line = r.lines.find((x) => x.productId === l.productId)!; line.convertedQty += l.qty; });
   r.orderIds.push(order.id); r.orderNumbers.push(order.number);
   r.holdUntil = undefined;
@@ -151,7 +160,8 @@ function submitDraft(r: SalesRequest, actor: ActorRef) {
   if (r.number.startsWith('DRAFT')) r.number = `SR-26-${String(db.seq.request++).padStart(5, '0')}`;
   const at = Date.now();
   r.expiresAt = w.requestExpiryDays ? new Date(at + w.requestExpiryDays * DAY).toISOString() : undefined;
-  r.holdUntil = w.stockHoldHours ? new Date(at + w.stockHoldHours * 3600000).toISOString() : undefined;
+  // consignment stock is already set aside for the customer, so no hold is needed
+  r.holdUntil = w.stockHoldHours && !r.consignmentId ? new Date(at + w.stockHoldHours * 3600000).toISOString() : undefined;
   log(r, 'submitted', actor.name, r.source === 'offline' ? 'Synced from device' : 'Submitted for review');
 
   const auto = cust.type === 'B2C' ? w.b2cAutoConvert && r.paid
@@ -184,14 +194,25 @@ export const requestService = {
     source<SalesRequest>(() => {
       const db = getDb();
       const cust = db.customers.find((c) => c.id === input.customerId)!;
+      const cons = input.consignmentId ? db.consignments.find((c) => c.id === input.consignmentId && c.customerId === cust.id) : undefined;
+      if (input.consignmentId && !cons) throw new Error('errors.consignment.notFound');
+      const site = cons?.site ?? getCurrentSite() ?? undefined;
       const items = input.items.map((i) => ({ product: db.products.find((p) => p.id === i.productId)!, quantity: i.quantity }))
-        .filter((i) => i.product && i.quantity > 0).map((i) => ({ ...i, product: atSite(i.product) }));
+        .filter((i) => i.product && i.quantity > 0).map((i) => ({ ...i, product: atSite(i.product, site) }));
       if (!items.length) throw new Error('errors.requests.empty');
+      if (cons) {
+        const reserved = (pid: string) => db.requests.filter((x) => x.consignmentId === cons.id && ['submitted', 'changes_requested', 'approved', 'partly_converted'].includes(x.status))
+          .reduce((s, x) => s + x.lines.filter((l) => l.productId === pid).reduce((a, l) => a + l.quantity - l.convertedQty, 0), 0);
+        for (const i of items) {
+          const line = cons.lines.find((l) => l.productId === i.product.id);
+          if (!line || line.quantity - reserved(i.product.id) < i.quantity) throw new Error('errors.consignment.notEnough');
+        }
+      }
       const totals = buildOrderTotals(items, cust, db.offers);
       const at = now();
       const r: SalesRequest = {
         id: `req_${uid('').slice(1)}`, number: input.offline ? `DRAFT-${uid('').slice(1, 7).toUpperCase()}` : `SR-26-${String(db.seq.request++).padStart(5, '0')}`,
-        site: getCurrentSite() ?? undefined, customerId: cust.id, customerName: cust.name, salesRepId: cust.salesRepId, createdBy: input.actor,
+        site, consignmentId: cons?.id, customerId: cust.id, customerName: cust.name, salesRepId: cust.salesRepId, createdBy: input.actor,
         source: input.offline ? 'offline' : input.actor.role === 'SALES_REP' ? 'sales_app' : 'portal', date: at, status: 'draft',
         lines: totals.lines.map((l) => ({ ...l, convertedQty: 0 })), subtotal: totals.subtotal, discount: totals.discount, tax: totals.tax, total: totals.total,
         poNumber: input.poNumber, notes: input.notes, deliveryAddress: cust.address, billingAddress: cust.billingAddress,

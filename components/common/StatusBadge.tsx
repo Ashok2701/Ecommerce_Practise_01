@@ -13,7 +13,7 @@ const TONES: Record<string, string> = {
   confirmed: 'bg-blue-50 text-blue-700 ring-blue-600/25', scheduled: 'bg-blue-50 text-blue-700 ring-blue-600/25', open: 'bg-blue-50 text-blue-700 ring-blue-600/25', planned: 'bg-blue-50 text-blue-700 ring-blue-600/25',
   processing: 'bg-indigo-50 text-indigo-700 ring-indigo-600/25', checked_in: 'bg-indigo-50 text-indigo-700 ring-indigo-600/25',
   packed: 'bg-violet-50 text-violet-700 ring-violet-600/25',
-  dispatched: 'bg-sky-50 text-sky-700 ring-sky-600/25', in_transit: 'bg-sky-50 text-sky-700 ring-sky-600/25',
+  dispatched: 'bg-sky-50 text-sky-700 ring-sky-600/25', in_transit: 'bg-sky-50 text-sky-700 ring-sky-600/25', initiated: 'bg-sky-50 text-sky-700 ring-sky-600/25', transferred: 'bg-violet-50 text-violet-700 ring-violet-600/25',
   issued: 'bg-amber-50 text-amber-800 ring-amber-600/25', acknowledged: 'bg-blue-50 text-blue-700 ring-blue-600/25', pickup_confirmed: 'bg-indigo-50 text-indigo-700 ring-indigo-600/25',
   partly_received: 'bg-violet-50 text-violet-700 ring-violet-600/25', received: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25',
   delivered: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25', paid: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25', active: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25',

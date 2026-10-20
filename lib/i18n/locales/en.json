@@ -35,6 +35,21 @@
       "empty": "Add at least one product with a quantity.",
       "pickupDetails": "Enter the pickup date and the vehicle.",
       "nothingToReceive": "Enter a quantity to receive."
+    },
+    "forbidden": "You don't have permission to do this.",
+    "consignment": {
+      "notFound": "This consignment doesn't exist or you can't see it.",
+      "notEnough": "More than the available consignment stock",
+      "empty": "Enter a quantity for at least one product.",
+      "noFreeStock": "There isn't enough free stock at this site for the top-up."
+    },
+    "transfers": {
+      "notFound": "This transfer doesn't exist or you can't see it.",
+      "notOpen": "This transfer can no longer be changed.",
+      "sameSite": "Choose two different sites.",
+      "empty": "Add at least one product with a quantity.",
+      "reasonRequired": "Say why the stock is needed.",
+      "noStock": "There isn't enough free stock at the source site."
     }
   },
   "login": {
@@ -155,14 +170,18 @@
       "operations": "Operations",
       "engage": "Engage",
       "admin": "Administration",
-      "purchasing": "Purchasing"
+      "purchasing": "Purchasing",
+      "inventory": "Inventory"
     },
     "access": "Module access",
     "requests": "Sales requests",
     "workflow": "Workflow rules",
     "supplierCatalog": "My products",
     "purchaseRequests": "Purchase requests",
-    "purchaseOrders": "Purchase orders"
+    "purchaseOrders": "Purchase orders",
+    "inventory": "Inventory",
+    "consignment": "Consignment stock",
+    "transfers": "Stock transfers"
   },
   "common": {
     "search": "Search",
@@ -253,7 +272,9 @@
     "pickup_confirmed": "Pickup confirmed",
     "in_transit": "In transit",
     "partly_received": "Partly received",
-    "received": "Received"
+    "received": "Received",
+    "initiated": "Transfer initiated",
+    "transferred": "Transferred"
   },
   "dashboard": {
     "admin": "Platform overview",
@@ -672,5 +693,155 @@
     "reason": "Reason",
     "cancelledMsg": "Order cancelled",
     "open": "Open"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "intro": "Stock at {site}: what is on hand, reserved, free to promise and on the way.",
+    "search": "Search by product, SKU or brand",
+    "category": "Category",
+    "allCategories": "All categories",
+    "filterLabel": "Show",
+    "filter": {
+      "all": "All",
+      "low": "Low",
+      "reserved": "Reserved",
+      "incoming": "Incoming",
+      "consignment": "Consignment"
+    },
+    "kpi": {
+      "low": "Products low on stock",
+      "reserved": "Units reserved",
+      "reservedHint": "{held} held for requests",
+      "incoming": "Units incoming",
+      "consignment": "Units in consignment"
+    },
+    "col": {
+      "product": "Product",
+      "onHand": "On hand",
+      "allocated": "Allocated",
+      "held": "Held",
+      "available": "Available",
+      "incoming": "Incoming",
+      "consignment": "Consignment"
+    },
+    "low": "Low",
+    "empty": "No products match",
+    "legend": "Allocated: on sales orders not yet shipped. Held: kept for submitted requests while stock hold is on. Available = on hand − allocated − held. Consignment stock belongs to customer agreements and is not included.",
+    "detail": {
+      "allocated": "Allocated to sales orders",
+      "held": "Held for requests",
+      "incoming": "On the way",
+      "consignment": "Customer consignment",
+      "otherSites": "Available at other sites",
+      "none": "None",
+      "until": "until {date}",
+      "fromSite": "from {site}",
+      "requestTransfer": "Request a transfer"
+    }
+  },
+  "transfers": {
+    "title": "Stock transfers",
+    "intro": "Stock moving into and out of {site}.",
+    "new": "Request transfer",
+    "newTitle": "Request a stock transfer",
+    "newIntro": "Ask another site to send stock. A supervisor approves it, the source site ships it and this site receives it.",
+    "col": {
+      "number": "Transfer",
+      "route": "From → to",
+      "items": "Products",
+      "by": "Requested by",
+      "date": "Date",
+      "status": "Status"
+    },
+    "direction": {
+      "label": "Direction",
+      "both": "In and out",
+      "in": "Incoming",
+      "out": "Outgoing"
+    },
+    "empty": "No transfers",
+    "emptyHint": "Transfers between sites appear here.",
+    "from": "From site",
+    "to": "To site",
+    "chooseSite": "Choose a site",
+    "availableAt": "Free at {site}",
+    "reason": "Reason",
+    "reasonPlaceholder": "Customer order, rebalancing, shortage…",
+    "neededBy": "Needed by",
+    "neededByDate": "needed by {date}",
+    "overWarning": "Some quantities are more than {site} has free today. You can still ask; the transfer can only ship when the stock is there.",
+    "submit": "Send transfer request",
+    "created": "Transfer {number} requested",
+    "requested": "Requested",
+    "received": "Received",
+    "approve": "Approve",
+    "reject": "Reject",
+    "cancel": "Cancel request",
+    "rejectTitle": "Reject {number}?",
+    "rejectText": "The requester sees your comment.",
+    "initiate": "Ship from {site}",
+    "receive": "Receive at {site}",
+    "receiveText": "Enter what arrived. Anything short is recorded on the transfer for investigation.",
+    "receiveConfirm": "Confirm receipt",
+    "sent": "{qty} {uom} sent",
+    "complete": "Complete and post",
+    "hint": {
+      "pending": "Waiting for a supervisor to approve.",
+      "approved": "Approved. {from} ships it next.",
+      "initiated": "On the way from {from} to {to}.",
+      "transferred": "Received at {to}. Check it and complete the transfer."
+    },
+    "msg": {
+      "approved": "Transfer approved",
+      "rejected": "Transfer rejected",
+      "initiated": "Stock shipped",
+      "received": "Receipt recorded",
+      "completed": "Transfer completed",
+      "cancelled": "Transfer cancelled",
+      "commented": "Comment added"
+    }
+  },
+  "consignment": {
+    "title": "Consignment stock",
+    "introCustomer": "Stock we keep for you at our warehouse. Call off what you need and we deliver it.",
+    "introStaff": "Customer consignment stock held at {site}.",
+    "products": "Products",
+    "units": "Units",
+    "openCallOffs": "Open call-offs",
+    "belowMin": {
+      "one": "{count} product below the agreed minimum",
+      "other": "{count} products below the agreed minimum"
+    },
+    "belowMinShort": "Below minimum",
+    "empty": "No consignment stock",
+    "emptyCustomer": "Ask your sales representative about holding stock for you at our warehouse.",
+    "heldAt": "Held at {site}, location {location}",
+    "callOffIntro": "Enter the quantities you need and send a call-off. It becomes a sales request like any other order.",
+    "staffIntro": "Call-offs from this customer appear as sales requests. Top up when stock falls below the agreed minimum.",
+    "col": {
+      "atLocation": "At location",
+      "reserved": "On open call-offs",
+      "available": "Available",
+      "min": "Minimum",
+      "callOff": "Call off"
+    },
+    "callOff": "Call off stock",
+    "callOffText": "This creates a sales request against your consignment stock.",
+    "callOffSubmit": "Send call-off",
+    "calledOff": "Call-off {number} sent",
+    "calledOffConverted": "Call-off confirmed as order {number}",
+    "callOffChip": "Consignment call-off",
+    "noCallOffs": "No open call-offs",
+    "movements": "Movements",
+    "kind": {
+      "top_up": "Top-up",
+      "call_off": "Call-off",
+      "adjustment": "Adjustment"
+    },
+    "topUp": "Top up",
+    "topUpText": "Move free stock at {site} into location {location}.",
+    "nowMin": "Now {now} · minimum {min}",
+    "topUpConfirm": "Post top-up",
+    "toppedUp": "Consignment topped up"
   }
 }

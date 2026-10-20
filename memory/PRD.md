@@ -62,3 +62,8 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - Purchase requests: pickup offers from suppliers and internal requests (with "add low-stock items"); convert to PO with expected date (idempotent), send back / reject with comment, cancel by supplier
 - Purchase orders: stepper issued → acknowledged → pickup confirmed → in transit → received; supplier acknowledges, confirms pickup (date, vehicle, driver, documents) and dispatches; buyer posts partial or full goods receipts (GRN) that add stock at the site, or cancels with a reason
 - Supplier dashboard with action counts and recent POs; assistant answers what needs the supplier's attention
+
+## Iteration 8 – Inventory (Oct 2026)
+- Inventory overview per site: on hand, allocated (open sales orders), held (stock-hold requests), available, incoming (POs and transfers on the way), consignment; low/reserved/incoming/consignment filters; drill-down sheet showing the orders, requests, POs, transfers and consignments behind each number, plus availability at other sites
+- Consignment stock: customer sees their consignment location with available quantities and calls stock off, which raises a sales request (normal workflow; conversion takes stock from the consignment, not free stock); staff see every consignment at the site, below-minimum flags, movements and top-ups from free stock
+- Stock transfers between sites: request (reason, needed by, availability at both sites), approve / reject with comment, ship (stock leaves the source), receive with short quantities recorded (stock arrives at destination), complete; stepper and history

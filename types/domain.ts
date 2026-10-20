@@ -259,6 +259,7 @@ export type NotificationType =
   | 'approval_required'
   | 'request_update'
   | 'purchase_update'
+  | 'stock_update'
   | 'offer'
   | 'announcement'
   | 'message';
@@ -383,6 +384,8 @@ export interface SalesRequest {
   holdUntil?: ISODate;
   /** Request expires if not converted by this time (when the setting is on). */
   expiresAt?: ISODate;
+  /** Call-off from customer consignment stock: lines are taken from this consignment, not free stock. */
+  consignmentId?: ID;
   orderIds: ID[];
   orderNumbers: string[];
   timeline: RequestEvent[];
@@ -480,4 +483,100 @@ export interface PurchaseOrder {
   receipts: { id: ID; number: string; at: ISODate; by: string; lines: { productId: ID; quantity: number }[] }[];
   erpRef?: string;
   timeline: { status: PurchaseOrderStatus; at: ISODate; by: string; note?: string }[];
+}
+
+/* ------------------------------------------------------------------ */
+/* Inventory: consignment stock and stock transfers                    */
+/* ------------------------------------------------------------------ */
+
+/** Stock that belongs to a customer's agreement, kept at one of our warehouse locations. */
+export interface ConsignmentLine {
+  productId: ID;
+  sku: string;
+  name: string;
+  uom: string;
+  /** Quantity at the consignment location now. */
+  quantity: number;
+  /** Agreed minimum; below this we top up. */
+  minQty: number;
+}
+
+export interface ConsignmentMovement {
+  id: ID;
+  at: ISODate;
+  by: string;
+  kind: 'top_up' | 'call_off' | 'adjustment';
+  productId: ID;
+  /** Positive in, negative out. */
+  quantity: number;
+  /** Request or order number for call-offs. */
+  ref?: string;
+}
+
+export interface Consignment {
+  id: ID;
+  number: string;
+  customerId: ID;
+  customerName: string;
+  site: string;
+  /** Warehouse location code in the ERP (for example CONS-ABC). */
+  location: string;
+  lines: ConsignmentLine[];
+  movements: ConsignmentMovement[];
+}
+
+export type TransferStatus = 'pending' | 'approved' | 'initiated' | 'transferred' | 'completed' | 'rejected' | 'cancelled';
+export const TRANSFER_FLOW: TransferStatus[] = ['pending', 'approved', 'initiated', 'transferred', 'completed'];
+export const OPEN_TRANSFER: TransferStatus[] = ['pending', 'approved', 'initiated', 'transferred'];
+
+export interface TransferLine {
+  productId: ID;
+  sku: string;
+  name: string;
+  uom: string;
+  quantity: number;
+  receivedQty: number;
+}
+
+export interface StockTransfer {
+  id: ID;
+  number: string;
+  fromSite: string;
+  toSite: string;
+  status: TransferStatus;
+  lines: TransferLine[];
+  reason: string;
+  neededBy?: ISODate;
+  createdBy: ActorRef;
+  date: ISODate;
+  erpRef?: string;
+  timeline: { status: TransferStatus; at: ISODate; by: string; note?: string }[];
+  comments: { by: string; at: ISODate; text: string }[];
+}
+
+/** One product's position at a site. */
+export interface StockPosition {
+  product: Product;
+  /** Physically at the site: free + allocated to open sales orders. */
+  onHand: number;
+  /** On open sales orders not yet shipped. */
+  allocated: number;
+  /** Held for submitted requests while the stock-hold setting applies. */
+  held: number;
+  /** Free to promise: on hand − allocated − held. */
+  available: number;
+  /** Coming in: purchase orders and transfers on the way. */
+  incoming: number;
+  /** Customer consignment stock at this site (not in on hand). */
+  consignment: number;
+  low: boolean;
+}
+
+/** What makes up a product's reserved, incoming or consignment quantity. */
+export interface StockDetail {
+  allocated: { orderId: ID; number: string; customerName: string; quantity: number; status: OrderStatus }[];
+  held: { requestId: ID; number: string; customerName: string; quantity: number; until: ISODate }[];
+  incoming: { kind: 'po' | 'transfer'; id: ID; number: string; from: string; quantity: number; status: string; expected?: ISODate }[];
+  consignment: { id: ID; number: string; customerName: string; location: string; quantity: number }[];
+  otherSites: { site: string; available: number }[];
 }

@@ -35,6 +35,21 @@
       "empty": "Añade al menos un producto con cantidad.",
       "pickupDetails": "Introduce la fecha de recogida y el vehículo.",
       "nothingToReceive": "Introduce una cantidad para recibir."
+    },
+    "forbidden": "No tiene permiso para hacer esto.",
+    "consignment": {
+      "notFound": "Esta consignación no existe o no puede verla.",
+      "notEnough": "Más que el stock en consignación disponible",
+      "empty": "Indique una cantidad para al menos un producto.",
+      "noFreeStock": "No hay suficiente stock libre en este centro para la reposición."
+    },
+    "transfers": {
+      "notFound": "Este traspaso no existe o no puede verlo.",
+      "notOpen": "Este traspaso ya no se puede modificar.",
+      "sameSite": "Elija dos centros distintos.",
+      "empty": "Añada al menos un producto con cantidad.",
+      "reasonRequired": "Indique para qué se necesita el stock.",
+      "noStock": "No hay suficiente stock libre en el centro de origen."
     }
   },
   "login": {
@@ -155,14 +170,18 @@
       "operations": "Operaciones",
       "engage": "Comunicación",
       "admin": "Administración",
-      "purchasing": "Compras"
+      "purchasing": "Compras",
+      "inventory": "Inventario"
     },
     "access": "Acceso a módulos",
     "requests": "Solicitudes de venta",
     "workflow": "Reglas de flujo",
     "supplierCatalog": "Mis productos",
     "purchaseRequests": "Solicitudes de compra",
-    "purchaseOrders": "Pedidos de compra"
+    "purchaseOrders": "Pedidos de compra",
+    "inventory": "Inventario",
+    "consignment": "Stock en consignación",
+    "transfers": "Traspasos de stock"
   },
   "common": {
     "search": "Buscar",
@@ -253,7 +272,9 @@
     "pickup_confirmed": "Recogida confirmada",
     "in_transit": "En tránsito",
     "partly_received": "Recibido en parte",
-    "received": "Recibido"
+    "received": "Recibido",
+    "initiated": "Traspaso iniciado",
+    "transferred": "Traspasado"
   },
   "dashboard": {
     "admin": "Resumen de la plataforma",
@@ -672,5 +693,155 @@
     "reason": "Motivo",
     "cancelledMsg": "Pedido cancelado",
     "open": "Pendiente"
+  },
+  "inventory": {
+    "title": "Inventario",
+    "intro": "Stock en {site}: existencias, reservado, disponible para prometer y en camino.",
+    "search": "Buscar por producto, referencia o marca",
+    "category": "Categoría",
+    "allCategories": "Todas las categorías",
+    "filterLabel": "Mostrar",
+    "filter": {
+      "all": "Todo",
+      "low": "Bajo",
+      "reserved": "Reservado",
+      "incoming": "Entrante",
+      "consignment": "Consignación"
+    },
+    "kpi": {
+      "low": "Productos con stock bajo",
+      "reserved": "Unidades reservadas",
+      "reservedHint": "{held} retenidas para solicitudes",
+      "incoming": "Unidades entrantes",
+      "consignment": "Unidades en consignación"
+    },
+    "col": {
+      "product": "Producto",
+      "onHand": "Existencias",
+      "allocated": "Asignado",
+      "held": "Retenido",
+      "available": "Disponible",
+      "incoming": "Entrante",
+      "consignment": "Consignación"
+    },
+    "low": "Bajo",
+    "empty": "Ningún producto coincide",
+    "legend": "Asignado: en pedidos de venta aún no enviados. Retenido: guardado para solicitudes enviadas mientras la retención de stock está activa. Disponible = existencias − asignado − retenido. El stock en consignación pertenece a acuerdos con clientes y no se incluye.",
+    "detail": {
+      "allocated": "Asignado a pedidos de venta",
+      "held": "Retenido para solicitudes",
+      "incoming": "En camino",
+      "consignment": "Consignación de clientes",
+      "otherSites": "Disponible en otros centros",
+      "none": "Ninguno",
+      "until": "hasta el {date}",
+      "fromSite": "desde {site}",
+      "requestTransfer": "Solicitar un traspaso"
+    }
+  },
+  "transfers": {
+    "title": "Traspasos de stock",
+    "intro": "Stock que entra y sale de {site}.",
+    "new": "Solicitar traspaso",
+    "newTitle": "Solicitar un traspaso de stock",
+    "newIntro": "Pida a otro centro que envíe stock. Un supervisor lo aprueba, el centro de origen lo envía y este centro lo recibe.",
+    "col": {
+      "number": "Traspaso",
+      "route": "De → a",
+      "items": "Productos",
+      "by": "Solicitado por",
+      "date": "Fecha",
+      "status": "Estado"
+    },
+    "direction": {
+      "label": "Sentido",
+      "both": "Entradas y salidas",
+      "in": "Entrantes",
+      "out": "Salientes"
+    },
+    "empty": "No hay traspasos",
+    "emptyHint": "Aquí aparecen los traspasos entre centros.",
+    "from": "Centro de origen",
+    "to": "Centro de destino",
+    "chooseSite": "Elija un centro",
+    "availableAt": "Libre en {site}",
+    "reason": "Motivo",
+    "reasonPlaceholder": "Pedido de cliente, reequilibrio, rotura…",
+    "neededBy": "Necesario para",
+    "neededByDate": "necesario para el {date}",
+    "overWarning": "Algunas cantidades superan el stock libre de {site} hoy. Puede solicitarlo igualmente; el traspaso solo se enviará cuando haya stock.",
+    "submit": "Enviar solicitud de traspaso",
+    "created": "Traspaso {number} solicitado",
+    "requested": "Solicitado",
+    "received": "Recibido",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "cancel": "Cancelar solicitud",
+    "rejectTitle": "¿Rechazar {number}?",
+    "rejectText": "El solicitante verá su comentario.",
+    "initiate": "Enviar desde {site}",
+    "receive": "Recibir en {site}",
+    "receiveText": "Indique lo que ha llegado. Cualquier falta se registra en el traspaso para su revisión.",
+    "receiveConfirm": "Confirmar recepción",
+    "sent": "{qty} {uom} enviados",
+    "complete": "Cerrar y contabilizar",
+    "hint": {
+      "pending": "Pendiente de aprobación por un supervisor.",
+      "approved": "Aprobado. {from} lo envía a continuación.",
+      "initiated": "En camino de {from} a {to}.",
+      "transferred": "Recibido en {to}. Revíselo y cierre el traspaso."
+    },
+    "msg": {
+      "approved": "Traspaso aprobado",
+      "rejected": "Traspaso rechazado",
+      "initiated": "Stock enviado",
+      "received": "Recepción registrada",
+      "completed": "Traspaso cerrado",
+      "cancelled": "Traspaso cancelado",
+      "commented": "Comentario añadido"
+    }
+  },
+  "consignment": {
+    "title": "Stock en consignación",
+    "introCustomer": "Stock que guardamos para usted en nuestro almacén. Retire lo que necesite y se lo entregamos.",
+    "introStaff": "Stock en consignación de clientes guardado en {site}.",
+    "products": "Productos",
+    "units": "Unidades",
+    "openCallOffs": "Retiradas abiertas",
+    "belowMin": {
+      "one": "{count} producto por debajo del mínimo acordado",
+      "other": "{count} productos por debajo del mínimo acordado"
+    },
+    "belowMinShort": "Bajo mínimo",
+    "empty": "No hay stock en consignación",
+    "emptyCustomer": "Pregunte a su comercial si podemos guardar stock para usted en nuestro almacén.",
+    "heldAt": "Guardado en {site}, ubicación {location}",
+    "callOffIntro": "Indique las cantidades que necesita y envíe una retirada. Se convierte en una solicitud de venta como cualquier otro pedido.",
+    "staffIntro": "Las retiradas de este cliente aparecen como solicitudes de venta. Reponga cuando el stock baje del mínimo acordado.",
+    "col": {
+      "atLocation": "En la ubicación",
+      "reserved": "En retiradas abiertas",
+      "available": "Disponible",
+      "min": "Mínimo",
+      "callOff": "Retirar"
+    },
+    "callOff": "Retirar stock",
+    "callOffText": "Esto crea una solicitud de venta sobre su stock en consignación.",
+    "callOffSubmit": "Enviar retirada",
+    "calledOff": "Retirada {number} enviada",
+    "calledOffConverted": "Retirada confirmada como pedido {number}",
+    "callOffChip": "Retirada de consignación",
+    "noCallOffs": "No hay retiradas abiertas",
+    "movements": "Movimientos",
+    "kind": {
+      "top_up": "Reposición",
+      "call_off": "Retirada",
+      "adjustment": "Ajuste"
+    },
+    "topUp": "Reponer",
+    "topUpText": "Mover stock libre de {site} a la ubicación {location}.",
+    "nowMin": "Ahora {now} · mínimo {min}",
+    "topUpConfirm": "Contabilizar reposición",
+    "toppedUp": "Consignación repuesta"
   }
 }

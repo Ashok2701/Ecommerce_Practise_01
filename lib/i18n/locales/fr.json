@@ -35,6 +35,21 @@
       "empty": "Ajoutez au moins un produit avec une quantité.",
       "pickupDetails": "Saisissez la date d’enlèvement et le véhicule.",
       "nothingToReceive": "Saisissez une quantité à réceptionner."
+    },
+    "forbidden": "Vous n'avez pas l'autorisation de faire cela.",
+    "consignment": {
+      "notFound": "Cette consignation n'existe pas ou vous ne pouvez pas la voir.",
+      "notEnough": "Plus que le stock en consignation disponible",
+      "empty": "Saisissez une quantité pour au moins un produit.",
+      "noFreeStock": "Le stock libre de ce site est insuffisant pour ce réapprovisionnement."
+    },
+    "transfers": {
+      "notFound": "Ce transfert n'existe pas ou vous ne pouvez pas le voir.",
+      "notOpen": "Ce transfert ne peut plus être modifié.",
+      "sameSite": "Choisissez deux sites différents.",
+      "empty": "Ajoutez au moins un produit avec une quantité.",
+      "reasonRequired": "Indiquez pourquoi le stock est nécessaire.",
+      "noStock": "Le stock libre du site d'origine est insuffisant."
     }
   },
   "login": {
@@ -155,14 +170,18 @@
       "operations": "Opérations",
       "engage": "Communication",
       "admin": "Administration",
-      "purchasing": "Achats"
+      "purchasing": "Achats",
+      "inventory": "Stock"
     },
     "access": "Accès aux modules",
     "requests": "Demandes de vente",
     "workflow": "Règles de workflow",
     "supplierCatalog": "Mes produits",
     "purchaseRequests": "Demandes d’achat",
-    "purchaseOrders": "Commandes d’achat"
+    "purchaseOrders": "Commandes d’achat",
+    "inventory": "Stock",
+    "consignment": "Stock en consignation",
+    "transfers": "Transferts de stock"
   },
   "common": {
     "search": "Rechercher",
@@ -253,7 +272,9 @@
     "pickup_confirmed": "Enlèvement confirmé",
     "in_transit": "En transit",
     "partly_received": "Reçue en partie",
-    "received": "Reçue"
+    "received": "Reçue",
+    "initiated": "Transfert lancé",
+    "transferred": "Transféré"
   },
   "dashboard": {
     "admin": "Vue d’ensemble de la plateforme",
@@ -672,5 +693,155 @@
     "reason": "Motif",
     "cancelledMsg": "Commande annulée",
     "open": "Reste"
+  },
+  "inventory": {
+    "title": "Stock",
+    "intro": "Stock à {site} : disponible physiquement, réservé, libre à la vente et en cours d'acheminement.",
+    "search": "Rechercher par produit, référence ou marque",
+    "category": "Catégorie",
+    "allCategories": "Toutes les catégories",
+    "filterLabel": "Afficher",
+    "filter": {
+      "all": "Tout",
+      "low": "Stock faible",
+      "reserved": "Réservé",
+      "incoming": "À recevoir",
+      "consignment": "Consignation"
+    },
+    "kpi": {
+      "low": "Produits en stock faible",
+      "reserved": "Unités réservées",
+      "reservedHint": "{held} retenues pour des demandes",
+      "incoming": "Unités à recevoir",
+      "consignment": "Unités en consignation"
+    },
+    "col": {
+      "product": "Produit",
+      "onHand": "En stock",
+      "allocated": "Affecté",
+      "held": "Retenu",
+      "available": "Disponible",
+      "incoming": "À recevoir",
+      "consignment": "Consignation"
+    },
+    "low": "Faible",
+    "empty": "Aucun produit ne correspond",
+    "legend": "Affecté : sur des commandes clients non encore expédiées. Retenu : gardé pour des demandes soumises tant que la retenue de stock est active. Disponible = en stock − affecté − retenu. Le stock en consignation appartient aux accords clients et n'est pas inclus.",
+    "detail": {
+      "allocated": "Affecté aux commandes clients",
+      "held": "Retenu pour des demandes",
+      "incoming": "En cours d'acheminement",
+      "consignment": "Consignation client",
+      "otherSites": "Disponible sur les autres sites",
+      "none": "Aucun",
+      "until": "jusqu'au {date}",
+      "fromSite": "depuis {site}",
+      "requestTransfer": "Demander un transfert"
+    }
+  },
+  "transfers": {
+    "title": "Transferts de stock",
+    "intro": "Stock entrant et sortant de {site}.",
+    "new": "Demander un transfert",
+    "newTitle": "Demander un transfert de stock",
+    "newIntro": "Demandez à un autre site d'envoyer du stock. Un superviseur l'approuve, le site d'origine l'expédie et ce site le réceptionne.",
+    "col": {
+      "number": "Transfert",
+      "route": "De → vers",
+      "items": "Produits",
+      "by": "Demandé par",
+      "date": "Date",
+      "status": "Statut"
+    },
+    "direction": {
+      "label": "Sens",
+      "both": "Entrants et sortants",
+      "in": "Entrants",
+      "out": "Sortants"
+    },
+    "empty": "Aucun transfert",
+    "emptyHint": "Les transferts entre sites apparaissent ici.",
+    "from": "Site d'origine",
+    "to": "Site de destination",
+    "chooseSite": "Choisir un site",
+    "availableAt": "Libre à {site}",
+    "reason": "Motif",
+    "reasonPlaceholder": "Commande client, rééquilibrage, rupture…",
+    "neededBy": "Requis pour le",
+    "neededByDate": "requis pour le {date}",
+    "overWarning": "Certaines quantités dépassent le stock libre de {site} aujourd'hui. Vous pouvez quand même demander ; le transfert ne sera expédié que lorsque le stock sera là.",
+    "submit": "Envoyer la demande de transfert",
+    "created": "Transfert {number} demandé",
+    "requested": "Demandé",
+    "received": "Reçu",
+    "approve": "Approuver",
+    "reject": "Refuser",
+    "cancel": "Annuler la demande",
+    "rejectTitle": "Refuser {number} ?",
+    "rejectText": "Le demandeur verra votre commentaire.",
+    "initiate": "Expédier depuis {site}",
+    "receive": "Réceptionner à {site}",
+    "receiveText": "Saisissez ce qui est arrivé. Tout manque est enregistré sur le transfert pour analyse.",
+    "receiveConfirm": "Confirmer la réception",
+    "sent": "{qty} {uom} envoyés",
+    "complete": "Clôturer et comptabiliser",
+    "hint": {
+      "pending": "En attente de l'approbation d'un superviseur.",
+      "approved": "Approuvé. {from} l'expédie ensuite.",
+      "initiated": "En route de {from} vers {to}.",
+      "transferred": "Reçu à {to}. Vérifiez puis clôturez le transfert."
+    },
+    "msg": {
+      "approved": "Transfert approuvé",
+      "rejected": "Transfert refusé",
+      "initiated": "Stock expédié",
+      "received": "Réception enregistrée",
+      "completed": "Transfert clôturé",
+      "cancelled": "Transfert annulé",
+      "commented": "Commentaire ajouté"
+    }
+  },
+  "consignment": {
+    "title": "Stock en consignation",
+    "introCustomer": "Le stock que nous gardons pour vous dans notre entrepôt. Prélevez ce dont vous avez besoin et nous vous le livrons.",
+    "introStaff": "Stock en consignation des clients conservé à {site}.",
+    "products": "Produits",
+    "units": "Unités",
+    "openCallOffs": "Prélèvements en cours",
+    "belowMin": {
+      "one": "{count} produit sous le minimum convenu",
+      "other": "{count} produits sous le minimum convenu"
+    },
+    "belowMinShort": "Sous le minimum",
+    "empty": "Aucun stock en consignation",
+    "emptyCustomer": "Demandez à votre commercial de conserver du stock pour vous dans notre entrepôt.",
+    "heldAt": "Conservé à {site}, emplacement {location}",
+    "callOffIntro": "Saisissez les quantités nécessaires et envoyez un prélèvement. Il devient une demande de vente comme toute autre commande.",
+    "staffIntro": "Les prélèvements de ce client apparaissent comme des demandes de vente. Réapprovisionnez quand le stock passe sous le minimum convenu.",
+    "col": {
+      "atLocation": "À l'emplacement",
+      "reserved": "Sur prélèvements en cours",
+      "available": "Disponible",
+      "min": "Minimum",
+      "callOff": "Prélever"
+    },
+    "callOff": "Prélever du stock",
+    "callOffText": "Cela crée une demande de vente sur votre stock en consignation.",
+    "callOffSubmit": "Envoyer le prélèvement",
+    "calledOff": "Prélèvement {number} envoyé",
+    "calledOffConverted": "Prélèvement confirmé en commande {number}",
+    "callOffChip": "Prélèvement en consignation",
+    "noCallOffs": "Aucun prélèvement en cours",
+    "movements": "Mouvements",
+    "kind": {
+      "top_up": "Réapprovisionnement",
+      "call_off": "Prélèvement",
+      "adjustment": "Ajustement"
+    },
+    "topUp": "Réapprovisionner",
+    "topUpText": "Déplacer du stock libre de {site} vers l'emplacement {location}.",
+    "nowMin": "Actuel {now} · minimum {min}",
+    "topUpConfirm": "Comptabiliser le réapprovisionnement",
+    "toppedUp": "Consignation réapprovisionnée"
   }
 }

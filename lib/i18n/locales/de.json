@@ -35,6 +35,21 @@
       "empty": "Fügen Sie mindestens ein Produkt mit Menge hinzu.",
       "pickupDetails": "Geben Sie Abholdatum und Fahrzeug ein.",
       "nothingToReceive": "Geben Sie eine Menge zum Annehmen ein."
+    },
+    "forbidden": "Dafür fehlt Ihnen die Berechtigung.",
+    "consignment": {
+      "notFound": "Dieses Konsignationslager existiert nicht oder ist für Sie nicht sichtbar.",
+      "notEnough": "Mehr als der verfügbare Konsignationsbestand",
+      "empty": "Geben Sie für mindestens ein Produkt eine Menge ein.",
+      "noFreeStock": "Am Standort ist nicht genug freier Bestand für die Auffüllung."
+    },
+    "transfers": {
+      "notFound": "Diese Umlagerung existiert nicht oder ist für Sie nicht sichtbar.",
+      "notOpen": "Diese Umlagerung kann nicht mehr geändert werden.",
+      "sameSite": "Wählen Sie zwei verschiedene Standorte.",
+      "empty": "Fügen Sie mindestens ein Produkt mit Menge hinzu.",
+      "reasonRequired": "Geben Sie an, wofür der Bestand benötigt wird.",
+      "noStock": "Am Quellstandort ist nicht genug freier Bestand."
     }
   },
   "login": {
@@ -155,14 +170,18 @@
       "operations": "Betrieb",
       "engage": "Kommunikation",
       "admin": "Verwaltung",
-      "purchasing": "Einkauf"
+      "purchasing": "Einkauf",
+      "inventory": "Bestand"
     },
     "access": "Modulzugriff",
     "requests": "Verkaufsanfragen",
     "workflow": "Workflow-Regeln",
     "supplierCatalog": "Meine Produkte",
     "purchaseRequests": "Bedarfsanforderungen",
-    "purchaseOrders": "Bestellungen"
+    "purchaseOrders": "Bestellungen",
+    "inventory": "Bestand",
+    "consignment": "Konsignationslager",
+    "transfers": "Umlagerungen"
   },
   "common": {
     "search": "Suchen",
@@ -253,7 +272,9 @@
     "pickup_confirmed": "Abholung bestätigt",
     "in_transit": "Unterwegs",
     "partly_received": "Teilweise erhalten",
-    "received": "Erhalten"
+    "received": "Erhalten",
+    "initiated": "Umlagerung gestartet",
+    "transferred": "Umgelagert"
   },
   "dashboard": {
     "admin": "Plattformübersicht",
@@ -672,5 +693,155 @@
     "reason": "Grund",
     "cancelledMsg": "Bestellung storniert",
     "open": "Offen"
+  },
+  "inventory": {
+    "title": "Bestand",
+    "intro": "Bestand in {site}: physisch vorhanden, reserviert, frei verfügbar und unterwegs.",
+    "search": "Nach Produkt, Artikelnummer oder Marke suchen",
+    "category": "Kategorie",
+    "allCategories": "Alle Kategorien",
+    "filterLabel": "Anzeigen",
+    "filter": {
+      "all": "Alle",
+      "low": "Knapp",
+      "reserved": "Reserviert",
+      "incoming": "Im Zulauf",
+      "consignment": "Konsignation"
+    },
+    "kpi": {
+      "low": "Produkte mit knappem Bestand",
+      "reserved": "Reservierte Einheiten",
+      "reservedHint": "{held} für Anfragen zurückgehalten",
+      "incoming": "Einheiten im Zulauf",
+      "consignment": "Einheiten in Konsignation"
+    },
+    "col": {
+      "product": "Produkt",
+      "onHand": "Vorhanden",
+      "allocated": "Zugeordnet",
+      "held": "Zurückgehalten",
+      "available": "Verfügbar",
+      "incoming": "Im Zulauf",
+      "consignment": "Konsignation"
+    },
+    "low": "Knapp",
+    "empty": "Keine passenden Produkte",
+    "legend": "Zugeordnet: auf noch nicht versendeten Kundenaufträgen. Zurückgehalten: für eingereichte Anfragen reserviert, solange die Bestandsreservierung aktiv ist. Verfügbar = vorhanden − zugeordnet − zurückgehalten. Konsignationsbestand gehört zu Kundenvereinbarungen und ist nicht enthalten.",
+    "detail": {
+      "allocated": "Kundenaufträgen zugeordnet",
+      "held": "Für Anfragen zurückgehalten",
+      "incoming": "Unterwegs",
+      "consignment": "Kundenkonsignation",
+      "otherSites": "Verfügbar an anderen Standorten",
+      "none": "Keine",
+      "until": "bis {date}",
+      "fromSite": "von {site}",
+      "requestTransfer": "Umlagerung anfordern"
+    }
+  },
+  "transfers": {
+    "title": "Umlagerungen",
+    "intro": "Bestand, der nach {site} oder von dort bewegt wird.",
+    "new": "Umlagerung anfordern",
+    "newTitle": "Umlagerung anfordern",
+    "newIntro": "Bitten Sie einen anderen Standort, Bestand zu senden. Ein Supervisor genehmigt, der Quellstandort versendet und dieser Standort nimmt die Ware an.",
+    "col": {
+      "number": "Umlagerung",
+      "route": "Von → nach",
+      "items": "Produkte",
+      "by": "Angefordert von",
+      "date": "Datum",
+      "status": "Status"
+    },
+    "direction": {
+      "label": "Richtung",
+      "both": "Ein- und ausgehend",
+      "in": "Eingehend",
+      "out": "Ausgehend"
+    },
+    "empty": "Keine Umlagerungen",
+    "emptyHint": "Umlagerungen zwischen Standorten erscheinen hier.",
+    "from": "Von Standort",
+    "to": "Nach Standort",
+    "chooseSite": "Standort wählen",
+    "availableAt": "Frei in {site}",
+    "reason": "Grund",
+    "reasonPlaceholder": "Kundenauftrag, Ausgleich, Engpass…",
+    "neededBy": "Benötigt bis",
+    "neededByDate": "benötigt bis {date}",
+    "overWarning": "Einige Mengen übersteigen den heutigen freien Bestand in {site}. Sie können trotzdem anfragen; die Umlagerung wird erst versendet, wenn der Bestand da ist.",
+    "submit": "Umlagerung anfordern",
+    "created": "Umlagerung {number} angefordert",
+    "requested": "Angefordert",
+    "received": "Erhalten",
+    "approve": "Genehmigen",
+    "reject": "Ablehnen",
+    "cancel": "Anforderung stornieren",
+    "rejectTitle": "{number} ablehnen?",
+    "rejectText": "Der Anforderer sieht Ihren Kommentar.",
+    "initiate": "Aus {site} versenden",
+    "receive": "In {site} annehmen",
+    "receiveText": "Geben Sie ein, was angekommen ist. Fehlmengen werden zur Klärung an der Umlagerung vermerkt.",
+    "receiveConfirm": "Wareneingang bestätigen",
+    "sent": "{qty} {uom} versendet",
+    "complete": "Abschließen und buchen",
+    "hint": {
+      "pending": "Wartet auf die Genehmigung durch einen Supervisor.",
+      "approved": "Genehmigt. Als Nächstes versendet {from}.",
+      "initiated": "Unterwegs von {from} nach {to}.",
+      "transferred": "In {to} angekommen. Prüfen und die Umlagerung abschließen."
+    },
+    "msg": {
+      "approved": "Umlagerung genehmigt",
+      "rejected": "Umlagerung abgelehnt",
+      "initiated": "Bestand versendet",
+      "received": "Wareneingang erfasst",
+      "completed": "Umlagerung abgeschlossen",
+      "cancelled": "Umlagerung storniert",
+      "commented": "Kommentar hinzugefügt"
+    }
+  },
+  "consignment": {
+    "title": "Konsignationslager",
+    "introCustomer": "Bestand, den wir in unserem Lager für Sie vorhalten. Rufen Sie ab, was Sie brauchen, und wir liefern.",
+    "introStaff": "Konsignationsbestand von Kunden in {site}.",
+    "products": "Produkte",
+    "units": "Einheiten",
+    "openCallOffs": "Offene Abrufe",
+    "belowMin": {
+      "one": "{count} Produkt unter dem vereinbarten Minimum",
+      "other": "{count} Produkte unter dem vereinbarten Minimum"
+    },
+    "belowMinShort": "Unter Minimum",
+    "empty": "Kein Konsignationsbestand",
+    "emptyCustomer": "Fragen Sie Ihren Vertriebsmitarbeiter, ob wir Bestand für Sie in unserem Lager vorhalten können.",
+    "heldAt": "Gelagert in {site}, Lagerplatz {location}",
+    "callOffIntro": "Geben Sie die benötigten Mengen ein und senden Sie einen Abruf. Er wird wie jede Bestellung zu einer Verkaufsanfrage.",
+    "staffIntro": "Abrufe dieses Kunden erscheinen als Verkaufsanfragen. Füllen Sie auf, wenn der Bestand unter das vereinbarte Minimum fällt.",
+    "col": {
+      "atLocation": "Am Lagerplatz",
+      "reserved": "In offenen Abrufen",
+      "available": "Verfügbar",
+      "min": "Minimum",
+      "callOff": "Abrufen"
+    },
+    "callOff": "Bestand abrufen",
+    "callOffText": "Damit wird eine Verkaufsanfrage auf Ihren Konsignationsbestand erstellt.",
+    "callOffSubmit": "Abruf senden",
+    "calledOff": "Abruf {number} gesendet",
+    "calledOffConverted": "Abruf als Auftrag {number} bestätigt",
+    "callOffChip": "Konsignationsabruf",
+    "noCallOffs": "Keine offenen Abrufe",
+    "movements": "Bewegungen",
+    "kind": {
+      "top_up": "Auffüllung",
+      "call_off": "Abruf",
+      "adjustment": "Korrektur"
+    },
+    "topUp": "Auffüllen",
+    "topUpText": "Freien Bestand in {site} auf Lagerplatz {location} umbuchen.",
+    "nowMin": "Aktuell {now} · Minimum {min}",
+    "topUpConfirm": "Auffüllung buchen",
+    "toppedUp": "Konsignation aufgefüllt"
   }
 }
