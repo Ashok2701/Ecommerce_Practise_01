@@ -12,3 +12,4 @@ export * from './assistantService';
 export * from './accessService';
 export * from './siteService';
 export * from './requestService';
+export * from './purchasingService';

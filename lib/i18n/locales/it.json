@@ -28,6 +28,13 @@
       "priceChanged": "I prezzi sono cambiati dall’invio. Conferma che il richiedente li ha accettati.",
       "commentRequired": "Aggiungi prima un commento.",
       "nothingInStock": "Nessun articolo di questa richiesta è disponibile in questa sede."
+    },
+    "purchasing": {
+      "notFound": "Questo documento d’acquisto non esiste o non puoi vederlo.",
+      "notOpen": "Questo documento non può più essere modificato.",
+      "empty": "Aggiungi almeno un prodotto con una quantità.",
+      "pickupDetails": "Inserisci la data di ritiro e il veicolo.",
+      "nothingToReceive": "Inserisci una quantità da ricevere."
     }
   },
   "login": {
@@ -147,11 +154,15 @@
       "commerce": "Commercio",
       "operations": "Operazioni",
       "engage": "Comunicazione",
-      "admin": "Amministrazione"
+      "admin": "Amministrazione",
+      "purchasing": "Acquisti"
     },
     "access": "Accesso ai moduli",
     "requests": "Richieste di vendita",
-    "workflow": "Regole di workflow"
+    "workflow": "Regole di workflow",
+    "supplierCatalog": "I miei prodotti",
+    "purchaseRequests": "Richieste d’acquisto",
+    "purchaseOrders": "Ordini d’acquisto"
   },
   "common": {
     "search": "Cerca",
@@ -236,7 +247,13 @@
     "submitted": "Inviata",
     "approved": "Approvata",
     "partly_converted": "Convertita in parte",
-    "converted": "Convertita"
+    "converted": "Convertita",
+    "issued": "Emesso",
+    "acknowledged": "Confermato",
+    "pickup_confirmed": "Ritiro confermato",
+    "in_transit": "In transito",
+    "partly_received": "Ricevuto in parte",
+    "received": "Ricevuto"
   },
   "dashboard": {
     "admin": "Panoramica della piattaforma",
@@ -334,14 +351,13 @@
   },
   "supplierDash": {
     "code": "Codice fornitore {code}",
-    "comingTitle": "Gli acquisti arrivano nella prossima versione",
-    "comingText": "Qui vedrai gli ordini d’acquisto, creerai richieste di ritiro e seguirai i pagamenti.",
-    "purchaseOrders": "Ordini d’acquisto",
-    "purchaseOrdersText": "Consulta e conferma i nostri ordini e le date.",
-    "pickups": "Richieste di ritiro",
-    "pickupsText": "Offri merce da ritirare; la verifichiamo e creiamo un ordine d’acquisto.",
-    "payments": "Pagamenti",
-    "paymentsText": "Segui fatture e stato dei pagamenti.",
+    "toAcknowledge": "Da confermare",
+    "toConfirm": "Ritiri da confermare",
+    "inTransit": "In transito",
+    "openRequests": "Richieste di ritiro aperte",
+    "recentOrders": "Ordini d’acquisto recenti",
+    "requestPickup": "Richiedi ritiro",
+    "noOrders": "Ancora nessun ordine d’acquisto",
     "contactTitle": "Ti serve qualcosa adesso?",
     "contactText": "Scrivi all’ufficio acquisti. Le risposte arrivano qui e come notifica.",
     "openMessages": "Apri messaggi"
@@ -551,5 +567,110 @@
     "save": "Salva regole",
     "discard": "Annulla modifiche",
     "saved": "Regole di workflow salvate"
+  },
+  "supplierCatalog": {
+    "title": "I miei prodotti",
+    "intro": "I prodotti che ci fornisci, con il nostro stock a {site}. Offri merce da ritirare e la trasformeremo in un ordine d’acquisto.",
+    "product": "Prodotto",
+    "ourStock": "Nostro stock",
+    "cost": "Il tuo prezzo",
+    "qty": "Quantità offerta",
+    "low": "Scarso a {site}",
+    "selected": {
+      "one": "{count} prodotto selezionato",
+      "other": "{count} prodotti selezionati"
+    },
+    "request": "Richiedi ritiro",
+    "dialogText": "Valutiamo la tua offerta e creiamo un ordine d’acquisto.",
+    "proposedDate": "Data di ritiro proposta",
+    "notes": "Note",
+    "notesPlaceholder": "Dettagli del lotto, orario di carico…",
+    "submit": "Invia richiesta di ritiro",
+    "sent": "Richiesta di ritiro {number} inviata",
+    "empty": "Al tuo account fornitore non sono ancora collegati prodotti."
+  },
+  "purchaseRequests": {
+    "title": "Richieste d’acquisto",
+    "introSupplier": "Le tue richieste di ritiro e il loro stato.",
+    "introBuyer": "Offerte di ritiro dai fornitori e richieste d’acquisto interne per questa sede.",
+    "new": "Nuova richiesta d’acquisto",
+    "col": {
+      "number": "Richiesta",
+      "supplier": "Fornitore",
+      "source": "Tipo",
+      "date": "Data",
+      "items": "Articoli",
+      "total": "Totale",
+      "status": "Stato",
+      "po": "Ordine d’acquisto"
+    },
+    "source": {
+      "pickup": "Offerta di ritiro",
+      "internal": "Interna"
+    },
+    "empty": "Nessuna richiesta d’acquisto",
+    "emptyHint": "Le offerte di ritiro e le richieste interne compaiono qui.",
+    "proposedDate": "Ritiro proposto",
+    "cost": "Costo unitario",
+    "convert": "Crea ordine d’acquisto",
+    "convertText": "L’ordine viene creato in {erp} e inviato a {supplier}.",
+    "expectedDate": "Consegna prevista",
+    "converted": "Ordine d’acquisto {number} creato",
+    "cancel": "Annulla richiesta",
+    "cancelled": "Richiesta annullata",
+    "newTitle": "Nuova richiesta d’acquisto",
+    "supplier": "Fornitore",
+    "chooseSupplier": "Scegli un fornitore",
+    "fillLow": "Aggiungi articoli con stock scarso",
+    "noLow": "Nessun articolo di questo fornitore è scarso a {site}.",
+    "submit": "Invia richiesta d’acquisto",
+    "created": "Richiesta d’acquisto {number} creata"
+  },
+  "purchaseOrders": {
+    "title": "Ordini d’acquisto",
+    "introSupplier": "I nostri ordini. Confermali, conferma il ritiro e segnala la spedizione.",
+    "introBuyer": "Ordini d’acquisto e ricevimenti merce per questa sede.",
+    "col": {
+      "number": "Ordine",
+      "supplier": "Fornitore",
+      "date": "Data",
+      "expected": "Previsto",
+      "total": "Totale",
+      "status": "Stato"
+    },
+    "empty": "Nessun ordine d’acquisto",
+    "emptyHint": "Gli ordini d’acquisto compaiono qui quando una richiesta viene convertita.",
+    "fromRequest": "Da {number}",
+    "expected": "Previsto il {date}",
+    "ordered": "Ordinato",
+    "received": "Ricevuto",
+    "pickup": "Ritiro",
+    "pickupDate": "Data di ritiro",
+    "vehicle": "Veicolo",
+    "driver": "Autista",
+    "documents": "Documenti",
+    "receipts": "Ricevimenti merce",
+    "noReceipts": "Nessuna merce ricevuta",
+    "acknowledge": "Conferma ordine",
+    "acknowledged": "Ordine confermato",
+    "confirmPickup": "Conferma ritiro",
+    "pickupText": "Indicaci quando e come parte la merce.",
+    "vehiclePlaceholder": "es. MH 04 KT 5521",
+    "driverPlaceholder": "Nome e telefono",
+    "documentsPlaceholder": "Numeri di fattura e documento di trasporto",
+    "confirm": "Conferma",
+    "pickupSaved": "Ritiro confermato",
+    "dispatch": "Segna come spedito",
+    "dispatched": "Segnato come spedito",
+    "receive": "Ricevi merce",
+    "receiveText": "Inserisci le quantità arrivate. Ciò che non è arrivato resta aperto.",
+    "receiveConfirm": "Registra ricevimento",
+    "receivedMsg": "Ricevimento registrato",
+    "cancel": "Annulla ordine",
+    "cancelTitle": "Annullare {number}?",
+    "cancelText": "Il fornitore riceve un avviso con il tuo motivo.",
+    "reason": "Motivo",
+    "cancelledMsg": "Ordine annullato",
+    "open": "Aperto"
   }
 }

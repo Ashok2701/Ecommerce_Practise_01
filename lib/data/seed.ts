@@ -4,7 +4,7 @@ import type {
 import { PRODUCTS } from './catalog';
 import { buildOrderTotals } from '@/lib/domain/pricing';
 import { DEFAULT_ROLE_MODULES, type ModuleId } from '@/lib/access/modules';
-import type { Role, Site, SalesRequest, WorkflowSettings } from '@/types/domain';
+import type { Role, Site, SalesRequest, WorkflowSettings, Supplier, PurchaseRequest, PurchaseOrder, PurchaseLine } from '@/types/domain';
 import { creditCheck } from '@/lib/domain/credit';
 
 export interface MockDb {
@@ -30,7 +30,10 @@ export interface MockDb {
   /** Sales requests (every sales order starts as one). */
   requests: SalesRequest[];
   workflow: WorkflowSettings;
-  seq: { order: number; invoice: number; request: number };
+  suppliers: Supplier[];
+  purchaseRequests: PurchaseRequest[];
+  purchaseOrders: PurchaseOrder[];
+  seq: { order: number; invoice: number; request: number; pr: number; po: number; grn: number };
 }
 
 // deterministic PRNG so the demo looks the same for everyone
@@ -376,7 +379,53 @@ export function createSeed(): MockDb {
   orders.length = 0; orders.push(...kept);
   requests.sort((a, b) => b.date.localeCompare(a.date));
 
-  return { version: 7, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), requests, workflow: structuredClone(DEFAULT_WORKFLOW), users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
+  // ---------- purchasing ----------
+  const byCat = (cat: string) => products.filter((x) => x.category === cat).map((x) => x.id);
+  const suppliers: Supplier[] = [
+    { id: 'sup_1', code: 'SUP-0007', name: 'Precision Bearings Ltd', contactName: 'Deepak Malhotra', email: 'supplier@nexusb2b.in', phone: '+91 22 4012 7700', address: addr('Unit 12, Andheri MIDC', 'Mumbai', 'Maharashtra', '400093'), paymentTerms: 'Net 60', productIds: [...byCat('Bearings'), ...byCat('Fasteners')] },
+    { id: 'sup_2', code: 'SUP-0012', name: 'Shakti Lubricants', contactName: 'R. Venkatesan', email: 'sales@shaktilube.in', phone: '+91 44 2815 3300', address: addr('Plot 8, Ambattur Industrial Estate', 'Chennai', 'Tamil Nadu', '600058'), paymentTerms: 'Net 45', productIds: byCat('Lubricants') },
+    { id: 'sup_3', code: 'SUP-0019', name: 'Safeguard PPE Industries', contactName: 'Nisha Shah', email: 'orders@safeguardppe.in', phone: '+91 79 2583 9900', address: addr('Shed 45, Naroda GIDC', 'Ahmedabad', 'Gujarat', '382330'), paymentTerms: 'Net 30', productIds: byCat('Safety & PPE') },
+  ];
+  users.find((u) => u.id === 'usr_sup_1')!.supplierId = 'sup_1';
+  const cost = (pid: string) => Math.round(products.find((x) => x.id === pid)!.basePrice * 0.68 * 100) / 100;
+  const pline = (pid: string, quantity: number): PurchaseLine => {
+    const x = products.find((y) => y.id === pid)!;
+    return { productId: pid, sku: x.sku, name: x.name, uom: x.uom, quantity, unitCost: cost(pid), lineTotal: Math.round(cost(pid) * quantity * 100) / 100 };
+  };
+  const sum = (ls: PurchaseLine[]) => Math.round(ls.reduce((a, l) => a + l.lineTotal, 0) * 100) / 100;
+  let seqPr = 310, seqPo = 7120, seqGrn = 880;
+  const deepak = { id: 'usr_sup_1', name: 'Deepak Malhotra', role: 'SUPPLIER' as const };
+  const suresh = { id: 'usr_mgr_1', name: 'Suresh Iyer', role: 'SUPERVISOR' as const };
+  const pr = (sup: Supplier, source: PurchaseRequest['source'], by: typeof deepak | typeof suresh, lines: PurchaseLine[], days: number, site: string, notes?: string): PurchaseRequest => ({
+    id: `pr_${seqPr}`, number: `PR-26-${String(seqPr++).padStart(5, '0')}`, site, supplierId: sup.id, supplierName: sup.name, source, createdBy: by, date: ago(days), status: 'submitted',
+    lines, total: sum(lines), proposedDate: source === 'pickup' ? ahead(3) : undefined, notes, comments: [],
+    timeline: [{ status: 'submitted', at: ago(days), by: by.name, note: source === 'pickup' ? 'Pickup offered by supplier' : 'Raised for low stock' }],
+  });
+  const b = byCat('Bearings'), l = byCat('Lubricants'), f = byCat('Fasteners');
+  const purchaseRequests: PurchaseRequest[] = [
+    pr(suppliers[0], 'pickup', deepak, [pline(b[0], 400), pline(b[2], 120)], 0.6, 'MAIN', 'Fresh lot ready at our Mumbai plant. Can load on Thursday.'),
+    pr(suppliers[1], 'internal', suresh, [pline(l[0], 60), pline(l[1], 24)], 1.5, 'MAIN', 'EP2 grease below reorder level at MAIN.'),
+  ];
+  const po = (sup: Supplier, lines: PurchaseLine[], status: PurchaseOrder['status'], days: number, site: string): PurchaseOrder => {
+    const flow: PurchaseOrder['status'][] = ['issued', 'acknowledged', 'pickup_confirmed', 'in_transit', 'received'];
+    const n = seqPo++;
+    const o: PurchaseOrder = {
+      id: `po_${n}`, number: `PO-26-${String(n).padStart(5, '0')}`, site, supplierId: sup.id, supplierName: sup.name, date: ago(days), expectedDate: ago(days - 5),
+      status, lines: lines.map((x) => ({ ...x, receivedQty: status === 'received' ? x.quantity : 0 })), total: sum(lines), receipts: [], erpRef: `POH${410000 + n}`,
+      timeline: flow.slice(0, flow.indexOf(status) + 1).map((st, k) => ({ status: st, at: ago(days - k * 0.8), by: k === 0 ? 'Suresh Iyer' : k === 4 ? 'Warehouse – Hyderabad DC' : sup.contactName })),
+    };
+    if (flow.indexOf(status) >= 2) o.pickup = { date: ago(days - 2), vehicle: 'MH 04 KT 5521', driver: 'Ramesh Pawar', documents: 'Invoice SUP/2611, e-way bill 3910 4471 2210' };
+    if (status === 'received') o.receipts.push({ id: `grn_${seqGrn}`, number: `GRN-26-${String(seqGrn++).padStart(5, '0')}`, at: ago(days - 4), by: 'Warehouse – Hyderabad DC', lines: o.lines.map((x) => ({ productId: x.productId, quantity: x.quantity })) });
+    return o;
+  };
+  const purchaseOrders: PurchaseOrder[] = [
+    po(suppliers[0], [pline(b[1], 200), pline(f[0], 50)], 'issued', 0.3, 'MAIN'),
+    po(suppliers[0], [pline(b[3], 80)], 'in_transit', 4, 'MAIN'),
+    po(suppliers[0], [pline(b[4], 60), pline(f[1], 40)], 'acknowledged', 2, 'MUM-WH'),
+    po(suppliers[1], [pline(l[2], 30)], 'received', 12, 'MAIN'),
+  ];
+
+  return { version: 8, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), requests, workflow: structuredClone(DEFAULT_WORKFLOW), suppliers, purchaseRequests, purchaseOrders, users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
     { id: 'vr_1', visitId: 'vis_1', customerId: 'cus_001', salesRepId: 'usr_rep_1', salesRepName: 'Ravi Kumar', at: ago(0, 3), outcome: 'quote_requested', contactMet: 'Venkat Rao (Purchase Head)', notes: 'Plant shutdown planned for next Monday. Needs 200 bearings (6205/6308) and 6 buckets of EP2 grease. Competitor quoted 4% lower on grease.', nextSteps: 'Send revised grease quote; confirm bearing stock with Hyderabad DC.', followUpDate: ahead(1), photos: [] },
-  ], seq: { order: seqOrder, invoice: seqInv, request: seqReq } };
+  ], seq: { order: seqOrder, invoice: seqInv, request: seqReq, pr: seqPr, po: seqPo, grn: seqGrn } };
 }

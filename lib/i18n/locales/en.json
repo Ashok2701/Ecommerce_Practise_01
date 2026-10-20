@@ -28,6 +28,13 @@
       "priceChanged": "Prices changed since submission. Confirm that the requester accepted them.",
       "commentRequired": "Add a comment first.",
       "nothingInStock": "Nothing on this request is in stock at this site."
+    },
+    "purchasing": {
+      "notFound": "This purchasing document doesn't exist or you can't see it.",
+      "notOpen": "This document can no longer be changed.",
+      "empty": "Add at least one product with a quantity.",
+      "pickupDetails": "Enter the pickup date and the vehicle.",
+      "nothingToReceive": "Enter a quantity to receive."
     }
   },
   "login": {
@@ -147,11 +154,15 @@
       "commerce": "Commerce",
       "operations": "Operations",
       "engage": "Engage",
-      "admin": "Administration"
+      "admin": "Administration",
+      "purchasing": "Purchasing"
     },
     "access": "Module access",
     "requests": "Sales requests",
-    "workflow": "Workflow rules"
+    "workflow": "Workflow rules",
+    "supplierCatalog": "My products",
+    "purchaseRequests": "Purchase requests",
+    "purchaseOrders": "Purchase orders"
   },
   "common": {
     "search": "Search",
@@ -236,7 +247,13 @@
     "submitted": "Submitted",
     "approved": "Approved",
     "partly_converted": "Partly converted",
-    "converted": "Converted"
+    "converted": "Converted",
+    "issued": "Issued",
+    "acknowledged": "Acknowledged",
+    "pickup_confirmed": "Pickup confirmed",
+    "in_transit": "In transit",
+    "partly_received": "Partly received",
+    "received": "Received"
   },
   "dashboard": {
     "admin": "Platform overview",
@@ -334,14 +351,13 @@
   },
   "supplierDash": {
     "code": "Supplier code {code}",
-    "comingTitle": "Purchasing arrives in the next release",
-    "comingText": "You'll see purchase orders, raise pickup requests and follow payments here.",
-    "purchaseOrders": "Purchase orders",
-    "purchaseOrdersText": "View and acknowledge orders from us, and confirm dates.",
-    "pickups": "Pickup requests",
-    "pickupsText": "Offer stock for pickup; we review it and raise a purchase order.",
-    "payments": "Payments",
-    "paymentsText": "Track invoices and payment status.",
+    "toAcknowledge": "To acknowledge",
+    "toConfirm": "Pickups to confirm",
+    "inTransit": "In transit",
+    "openRequests": "Open pickup requests",
+    "recentOrders": "Recent purchase orders",
+    "requestPickup": "Request pickup",
+    "noOrders": "No purchase orders yet",
     "contactTitle": "Need something now?",
     "contactText": "Message the purchasing team. Replies arrive here and as notifications.",
     "openMessages": "Open messages"
@@ -551,5 +567,110 @@
     "save": "Save rules",
     "discard": "Discard",
     "saved": "Workflow rules saved"
+  },
+  "supplierCatalog": {
+    "title": "My products",
+    "intro": "Products you supply to us, with our stock at {site}. Offer stock for pickup and we'll turn it into a purchase order.",
+    "product": "Product",
+    "ourStock": "Our stock",
+    "cost": "Your price",
+    "qty": "Offer quantity",
+    "low": "Low at {site}",
+    "selected": {
+      "one": "{count} product selected",
+      "other": "{count} products selected"
+    },
+    "request": "Request pickup",
+    "dialogText": "We review your offer and create a purchase order.",
+    "proposedDate": "Proposed pickup date",
+    "notes": "Notes",
+    "notesPlaceholder": "Lot details, loading time…",
+    "submit": "Send pickup request",
+    "sent": "Pickup request {number} sent",
+    "empty": "No products are linked to your supplier account yet."
+  },
+  "purchaseRequests": {
+    "title": "Purchase requests",
+    "introSupplier": "Your pickup requests and their status.",
+    "introBuyer": "Pickup offers from suppliers and internal purchase requests at this site.",
+    "new": "New purchase request",
+    "col": {
+      "number": "Request",
+      "supplier": "Supplier",
+      "source": "Type",
+      "date": "Date",
+      "items": "Items",
+      "total": "Total",
+      "status": "Status",
+      "po": "Purchase order"
+    },
+    "source": {
+      "pickup": "Pickup offer",
+      "internal": "Internal"
+    },
+    "empty": "No purchase requests",
+    "emptyHint": "Pickup offers and internal requests appear here.",
+    "proposedDate": "Proposed pickup",
+    "cost": "Unit cost",
+    "convert": "Create purchase order",
+    "convertText": "The order is created in {erp} and sent to {supplier}.",
+    "expectedDate": "Expected delivery",
+    "converted": "Purchase order {number} created",
+    "cancel": "Cancel request",
+    "cancelled": "Request cancelled",
+    "newTitle": "New purchase request",
+    "supplier": "Supplier",
+    "chooseSupplier": "Choose a supplier",
+    "fillLow": "Add low-stock items",
+    "noLow": "Nothing from this supplier is low on stock at {site}.",
+    "submit": "Submit purchase request",
+    "created": "Purchase request {number} created"
+  },
+  "purchaseOrders": {
+    "title": "Purchase orders",
+    "introSupplier": "Orders from us. Acknowledge them, confirm pickup and mark them dispatched.",
+    "introBuyer": "Purchase orders and goods receipts at this site.",
+    "col": {
+      "number": "Order",
+      "supplier": "Supplier",
+      "date": "Date",
+      "expected": "Expected",
+      "total": "Total",
+      "status": "Status"
+    },
+    "empty": "No purchase orders",
+    "emptyHint": "Purchase orders appear here when a purchase request is converted.",
+    "fromRequest": "From {number}",
+    "expected": "Expected {date}",
+    "ordered": "Ordered",
+    "received": "Received",
+    "pickup": "Pickup",
+    "pickupDate": "Pickup date",
+    "vehicle": "Vehicle",
+    "driver": "Driver",
+    "documents": "Documents",
+    "receipts": "Goods receipts",
+    "noReceipts": "No goods received yet",
+    "acknowledge": "Acknowledge order",
+    "acknowledged": "Order acknowledged",
+    "confirmPickup": "Confirm pickup",
+    "pickupText": "Tell us when and how the goods leave.",
+    "vehiclePlaceholder": "e.g. MH 04 KT 5521",
+    "driverPlaceholder": "Name and phone",
+    "documentsPlaceholder": "Invoice and e-way bill numbers",
+    "confirm": "Confirm",
+    "pickupSaved": "Pickup confirmed",
+    "dispatch": "Mark as dispatched",
+    "dispatched": "Marked as dispatched",
+    "receive": "Receive goods",
+    "receiveText": "Enter the quantities that arrived. Anything not received stays open.",
+    "receiveConfirm": "Post receipt",
+    "receivedMsg": "Goods receipt posted",
+    "cancel": "Cancel order",
+    "cancelTitle": "Cancel {number}?",
+    "cancelText": "The supplier is notified with your reason.",
+    "reason": "Reason",
+    "cancelledMsg": "Order cancelled",
+    "open": "Open"
   }
 }

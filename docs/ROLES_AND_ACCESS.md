@@ -15,7 +15,7 @@ Module access**.
 | `ADMIN` | Portal administrator | none | Runs users, access and settings; no business modules by default |
 | `SUPERVISOR` | Sales manager, area supervisor | rep / employee code | Approvals, team, offers |
 | `SALES_REP` | Field and inside sales | rep code | Sees only assigned customers |
-| `SUPPLIER` | Vendor | supplier code | Purchasing modules arrive in the purchasing release |
+| `SUPPLIER` | Vendor | supplier code | Own products and our stock, pickup requests, purchase orders: acknowledge, confirm pickup, dispatch |
 | `CUSTOMER_B2B` | Dealer, distributor, company | customer code | Contract pricing, credit limit |
 | `CUSTOMER_B2C` | Retail buyer | customer code | List prices, pays up front, no credit check |
 
@@ -47,6 +47,9 @@ Defined in `lib/access/modules.ts` (`MODULES`, `DEFAULT_ROLE_MODULES`).
 | users | /users | locked | | | | | |
 | access | /access | locked | | | | | |
 | workflow | /workflow | ✓ | ✓ | | | | |
+| supplier_catalog | /supplier-catalog | | | | ✓ | | |
+| purchase_requests | /purchase-requests | | ✓ | | ✓ | | |
+| purchase_orders | /purchase-orders | | ✓ | | ✓ | | |
 | settings | /settings | locked | | | | | |
 
 - **always**: on for every role, can't be switched off.
@@ -56,7 +59,7 @@ Defined in `lib/access/modules.ts` (`MODULES`, `DEFAULT_ROLE_MODULES`).
 
 - `SALES_REP` sees and orders only for customers assigned to them.
 - `CUSTOMER_B2B` / `CUSTOMER_B2C` see only their own customer's data.
-- `SUPPLIER` sees no sales data (orders, customers, invoices of customers).
+- `SUPPLIER` sees no sales data (orders, customers, invoices of customers), and only purchase requests and orders for their own `supplier_id`. Suppliers may acknowledge, confirm pickup, dispatch and cancel their own open pickup requests; only buyers convert, receive and cancel purchase orders.
 - Site access (`allowed_sites`, below) applies on top of modules.
 
 ## Sites

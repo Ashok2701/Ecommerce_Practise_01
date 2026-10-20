@@ -28,6 +28,13 @@
       "priceChanged": "Les prix ont changé depuis l’envoi. Confirmez que le demandeur les a acceptés.",
       "commentRequired": "Ajoutez d’abord un commentaire.",
       "nothingInStock": "Aucun article de cette demande n’est en stock sur ce site."
+    },
+    "purchasing": {
+      "notFound": "Ce document d’achat n’existe pas ou vous ne pouvez pas le voir.",
+      "notOpen": "Ce document ne peut plus être modifié.",
+      "empty": "Ajoutez au moins un produit avec une quantité.",
+      "pickupDetails": "Saisissez la date d’enlèvement et le véhicule.",
+      "nothingToReceive": "Saisissez une quantité à réceptionner."
     }
   },
   "login": {
@@ -147,11 +154,15 @@
       "commerce": "Commerce",
       "operations": "Opérations",
       "engage": "Communication",
-      "admin": "Administration"
+      "admin": "Administration",
+      "purchasing": "Achats"
     },
     "access": "Accès aux modules",
     "requests": "Demandes de vente",
-    "workflow": "Règles de workflow"
+    "workflow": "Règles de workflow",
+    "supplierCatalog": "Mes produits",
+    "purchaseRequests": "Demandes d’achat",
+    "purchaseOrders": "Commandes d’achat"
   },
   "common": {
     "search": "Rechercher",
@@ -236,7 +247,13 @@
     "submitted": "Envoyée",
     "approved": "Validée",
     "partly_converted": "Partiellement convertie",
-    "converted": "Convertie"
+    "converted": "Convertie",
+    "issued": "Émise",
+    "acknowledged": "Confirmée",
+    "pickup_confirmed": "Enlèvement confirmé",
+    "in_transit": "En transit",
+    "partly_received": "Reçue en partie",
+    "received": "Reçue"
   },
   "dashboard": {
     "admin": "Vue d’ensemble de la plateforme",
@@ -334,14 +351,13 @@
   },
   "supplierDash": {
     "code": "Code fournisseur {code}",
-    "comingTitle": "Les achats arrivent dans la prochaine version",
-    "comingText": "Vous verrez ici les commandes d’achat, créerez des demandes d’enlèvement et suivrez les paiements.",
-    "purchaseOrders": "Commandes d’achat",
-    "purchaseOrdersText": "Consultez et confirmez nos commandes et leurs dates.",
-    "pickups": "Demandes d’enlèvement",
-    "pickupsText": "Proposez du stock à enlever ; nous le validons et créons une commande d’achat.",
-    "payments": "Paiements",
-    "paymentsText": "Suivez les factures et l’état des paiements.",
+    "toAcknowledge": "À confirmer",
+    "toConfirm": "Enlèvements à confirmer",
+    "inTransit": "En transit",
+    "openRequests": "Demandes d’enlèvement en cours",
+    "recentOrders": "Commandes d’achat récentes",
+    "requestPickup": "Demander un enlèvement",
+    "noOrders": "Aucune commande d’achat",
     "contactTitle": "Besoin d’aide maintenant ?",
     "contactText": "Écrivez au service achats. Les réponses arrivent ici et en notification.",
     "openMessages": "Ouvrir les messages"
@@ -551,5 +567,110 @@
     "save": "Enregistrer les règles",
     "discard": "Annuler les modifications",
     "saved": "Règles de workflow enregistrées"
+  },
+  "supplierCatalog": {
+    "title": "Mes produits",
+    "intro": "Les produits que vous nous fournissez, avec notre stock à {site}. Proposez du stock à enlever et nous le transformerons en commande d’achat.",
+    "product": "Produit",
+    "ourStock": "Notre stock",
+    "cost": "Votre prix",
+    "qty": "Quantité proposée",
+    "low": "Faible à {site}",
+    "selected": {
+      "one": "{count} produit sélectionné",
+      "other": "{count} produits sélectionnés"
+    },
+    "request": "Demander un enlèvement",
+    "dialogText": "Nous étudions votre offre et créons une commande d’achat.",
+    "proposedDate": "Date d’enlèvement proposée",
+    "notes": "Remarques",
+    "notesPlaceholder": "Détails du lot, heure de chargement…",
+    "submit": "Envoyer la demande d’enlèvement",
+    "sent": "Demande d’enlèvement {number} envoyée",
+    "empty": "Aucun produit n’est encore lié à votre compte fournisseur."
+  },
+  "purchaseRequests": {
+    "title": "Demandes d’achat",
+    "introSupplier": "Vos demandes d’enlèvement et leur statut.",
+    "introBuyer": "Offres d’enlèvement des fournisseurs et demandes d’achat internes sur ce site.",
+    "new": "Nouvelle demande d’achat",
+    "col": {
+      "number": "Demande",
+      "supplier": "Fournisseur",
+      "source": "Type",
+      "date": "Date",
+      "items": "Articles",
+      "total": "Total",
+      "status": "Statut",
+      "po": "Commande d’achat"
+    },
+    "source": {
+      "pickup": "Offre d’enlèvement",
+      "internal": "Interne"
+    },
+    "empty": "Aucune demande d’achat",
+    "emptyHint": "Les offres d’enlèvement et demandes internes apparaissent ici.",
+    "proposedDate": "Enlèvement proposé",
+    "cost": "Coût unitaire",
+    "convert": "Créer la commande d’achat",
+    "convertText": "La commande est créée dans {erp} et envoyée à {supplier}.",
+    "expectedDate": "Livraison prévue",
+    "converted": "Commande d’achat {number} créée",
+    "cancel": "Annuler la demande",
+    "cancelled": "Demande annulée",
+    "newTitle": "Nouvelle demande d’achat",
+    "supplier": "Fournisseur",
+    "chooseSupplier": "Choisir un fournisseur",
+    "fillLow": "Ajouter les articles en stock faible",
+    "noLow": "Aucun article de ce fournisseur n’est en stock faible à {site}.",
+    "submit": "Envoyer la demande d’achat",
+    "created": "Demande d’achat {number} créée"
+  },
+  "purchaseOrders": {
+    "title": "Commandes d’achat",
+    "introSupplier": "Nos commandes. Confirmez-les, confirmez l’enlèvement et indiquez l’expédition.",
+    "introBuyer": "Commandes d’achat et réceptions sur ce site.",
+    "col": {
+      "number": "Commande",
+      "supplier": "Fournisseur",
+      "date": "Date",
+      "expected": "Prévue",
+      "total": "Total",
+      "status": "Statut"
+    },
+    "empty": "Aucune commande d’achat",
+    "emptyHint": "Les commandes d’achat apparaissent ici quand une demande est convertie.",
+    "fromRequest": "Issue de {number}",
+    "expected": "Prévue le {date}",
+    "ordered": "Commandé",
+    "received": "Reçu",
+    "pickup": "Enlèvement",
+    "pickupDate": "Date d’enlèvement",
+    "vehicle": "Véhicule",
+    "driver": "Chauffeur",
+    "documents": "Documents",
+    "receipts": "Réceptions",
+    "noReceipts": "Aucune marchandise reçue",
+    "acknowledge": "Confirmer la commande",
+    "acknowledged": "Commande confirmée",
+    "confirmPickup": "Confirmer l’enlèvement",
+    "pickupText": "Indiquez quand et comment la marchandise part.",
+    "vehiclePlaceholder": "ex. MH 04 KT 5521",
+    "driverPlaceholder": "Nom et téléphone",
+    "documentsPlaceholder": "Numéros de facture et de bon de transport",
+    "confirm": "Confirmer",
+    "pickupSaved": "Enlèvement confirmé",
+    "dispatch": "Indiquer l’expédition",
+    "dispatched": "Expédition enregistrée",
+    "receive": "Réceptionner",
+    "receiveText": "Saisissez les quantités arrivées. Le reste reste ouvert.",
+    "receiveConfirm": "Enregistrer la réception",
+    "receivedMsg": "Réception enregistrée",
+    "cancel": "Annuler la commande",
+    "cancelTitle": "Annuler {number} ?",
+    "cancelText": "Le fournisseur est informé avec votre motif.",
+    "reason": "Motif",
+    "cancelledMsg": "Commande annulée",
+    "open": "Reste"
   }
 }

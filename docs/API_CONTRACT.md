@@ -156,8 +156,37 @@ with the user's token, role, site and data scope. It never queries the ERP
 directly, and any action that writes (for example raising a request) is shown to
 the user for confirmation first. The frontend mock is `lib/services/assistantService.ts`.
 
+## Purchasing (request-first)
+
+Suppliers offer stock for pickup, or buyers raise an internal request. Both are
+Purchase Requests; a buyer converts one into a Purchase Order in the ERP.
+Supplier users are scoped to their `supplier_id` server-side.
+
+| Method | Path | Who | Body / query | Returns |
+| --- | --- | --- | --- | --- |
+| GET | `/suppliers` | buyers | | `Supplier[]` |
+| GET | `/suppliers/{id}/catalog` | buyers, own supplier | | `{product, unitCost, low}[]` at `X-Site` |
+| GET | `/suppliers/{id}/reorder-suggestions` | buyers | | `{productId, suggested}[]` |
+| GET | `/purchase-requests` | buyers, supplier (own) | `supplierId?`, `view=open\|closed\|all` | `PurchaseRequest[]` |
+| GET | `/purchase-requests/{id}` | | | `PurchaseRequest` |
+| POST | `/purchase-requests` | buyers (`internal`), supplier (`pickup`) | `{supplierId, source, items[{productId, quantity}], proposedDate?, notes?}` | `PurchaseRequest` (status `submitted`) |
+| POST | `/purchase-requests/{id}/convert` | buyers | `{expectedDate, idempotencyKey}` | `PurchaseRequest` with `orderId`, `orderNumber`. Pickup offers create the PO already `acknowledged` |
+| POST | `/purchase-requests/{id}/review` | buyers | `{decision: changes\|reject, comment}` (comment required) | `PurchaseRequest` |
+| POST | `/purchase-requests/{id}/cancel` | creator | | `PurchaseRequest` |
+| POST | `/purchase-requests/{id}/comments` | | `{text}` | `PurchaseRequest` |
+| GET | `/purchase-orders` | buyers, supplier (own) | `supplierId?`, `view` | `PurchaseOrder[]` |
+| GET | `/purchase-orders/{id}` | | | `PurchaseOrder` |
+| POST | `/purchase-orders/{id}/acknowledge` | supplier | | `issued → acknowledged` |
+| POST | `/purchase-orders/{id}/pickup` | supplier | `{date, vehicle, driver?, documents?}` (date, vehicle required) | `→ pickup_confirmed` (can be updated again) |
+| POST | `/purchase-orders/{id}/dispatch` | supplier | | `pickup_confirmed → in_transit` |
+| POST | `/purchase-orders/{id}/receipts` | buyers / warehouse | `{lines[{productId, quantity}]}` | GRN posted to ERP, stock added at the PO site; `partly_received` or `received` |
+| POST | `/purchase-orders/{id}/cancel` | buyers | `{reason}` | only `issued` / `acknowledged` |
+
+PO flow: `issued → acknowledged → pickup_confirmed → in_transit → (partly_received) → received`, or `cancelled`.
+Errors: `errors.purchasing.notFound | notOpen | empty | pickupDetails | nothingToReceive`.
+Every transition notifies the other party (`purchase_update`).
+
 ## Not yet in the contract
 
-Purchasing (purchase requests, supplier pickup requests, purchase orders,
-receipts), the five inventory areas, quotes, deliveries, payments and the offer
+The five inventory areas, quotes, deliveries, payments and the offer
 engine are added with phase 2 of the frontend.

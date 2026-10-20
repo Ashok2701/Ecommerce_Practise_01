@@ -35,6 +35,8 @@ export interface User {
   customerId?: ID; // set for CUSTOMER_B2B / CUSTOMER_B2C (1 customer = 1 login in V1)
   /** ERP entity this login maps to: customer code, supplier code or rep code. Empty for ADMIN. */
   erpCode?: string;
+  /** SUPPLIER logins: the supplier record they act for. */
+  supplierId?: ID;
   /** Site codes this user may work in, e.g. ["MAIN","MUM-WH"]. */
   allowedSites?: string[];
   /** Site selected when the user signs in; must be one of allowedSites. */
@@ -256,6 +258,7 @@ export type NotificationType =
   | 'order_dispatched'
   | 'approval_required'
   | 'request_update'
+  | 'purchase_update'
   | 'offer'
   | 'announcement'
   | 'message';
@@ -400,4 +403,81 @@ export interface WorkflowSettings {
   stockHoldHours: number;
   /** Requests not converted after this many days expire (0 = never). */
   requestExpiryDays: number;
+}
+
+/* ------------------------------------------------------------------ */
+/* Purchasing: supplier pickup / purchase requests → purchase orders.  */
+/* ------------------------------------------------------------------ */
+
+export interface Supplier {
+  id: ID;
+  code: string; // ERP supplier code
+  name: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  address: Address;
+  paymentTerms: string;
+  /** Products this supplier can deliver. */
+  productIds: ID[];
+}
+
+export interface PurchaseLine {
+  productId: ID;
+  sku: string;
+  name: string;
+  uom: string;
+  quantity: number;
+  unitCost: number;
+  lineTotal: number;
+}
+
+export type PurchaseRequestStatus = 'submitted' | 'changes_requested' | 'converted' | 'rejected' | 'cancelled';
+
+/** A pickup request from a supplier, or an internal purchase request. Becomes a purchase order on conversion. */
+export interface PurchaseRequest {
+  id: ID;
+  number: string;
+  site?: string;
+  supplierId: ID;
+  supplierName: string;
+  /** pickup: offered by the supplier; internal: raised by our staff (e.g. low stock). */
+  source: 'pickup' | 'internal';
+  createdBy: ActorRef;
+  date: ISODate;
+  status: PurchaseRequestStatus;
+  lines: PurchaseLine[];
+  total: number;
+  /** Supplier's proposed pickup / delivery date. */
+  proposedDate?: ISODate;
+  notes?: string;
+  orderId?: ID;
+  orderNumber?: string;
+  timeline: { status: PurchaseRequestStatus; at: ISODate; by: string; note?: string }[];
+  comments: { by: string; at: ISODate; text: string }[];
+}
+
+export type PurchaseOrderStatus = 'issued' | 'acknowledged' | 'pickup_confirmed' | 'in_transit' | 'partly_received' | 'received' | 'cancelled';
+export const PO_FLOW: PurchaseOrderStatus[] = ['issued', 'acknowledged', 'pickup_confirmed', 'in_transit', 'received'];
+
+export interface PurchaseOrderLine extends PurchaseLine { receivedQty: number; }
+
+export interface PurchaseOrder {
+  id: ID;
+  number: string;
+  site?: string;
+  supplierId: ID;
+  supplierName: string;
+  requestId?: ID;
+  requestNumber?: string;
+  date: ISODate;
+  expectedDate: ISODate;
+  status: PurchaseOrderStatus;
+  lines: PurchaseOrderLine[];
+  total: number;
+  /** Confirmed by the supplier. */
+  pickup?: { date: ISODate; vehicle: string; driver?: string; documents?: string };
+  receipts: { id: ID; number: string; at: ISODate; by: string; lines: { productId: ID; quantity: number }[] }[];
+  erpRef?: string;
+  timeline: { status: PurchaseOrderStatus; at: ISODate; by: string; note?: string }[];
 }

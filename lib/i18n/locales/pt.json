@@ -28,6 +28,13 @@
       "priceChanged": "Os preços mudaram desde a submissão. Confirme que o requerente os aceitou.",
       "commentRequired": "Adicione primeiro um comentário.",
       "nothingInStock": "Nenhum artigo deste pedido está em stock neste local."
+    },
+    "purchasing": {
+      "notFound": "Este documento de compra não existe ou não o pode ver.",
+      "notOpen": "Este documento já não pode ser alterado.",
+      "empty": "Adicione pelo menos um produto com quantidade.",
+      "pickupDetails": "Introduza a data de recolha e o veículo.",
+      "nothingToReceive": "Introduza uma quantidade a receber."
     }
   },
   "login": {
@@ -147,11 +154,15 @@
       "commerce": "Comércio",
       "operations": "Operações",
       "engage": "Comunicação",
-      "admin": "Administração"
+      "admin": "Administração",
+      "purchasing": "Compras"
     },
     "access": "Acesso a módulos",
     "requests": "Pedidos de venda",
-    "workflow": "Regras de fluxo"
+    "workflow": "Regras de fluxo",
+    "supplierCatalog": "Os meus produtos",
+    "purchaseRequests": "Requisições de compra",
+    "purchaseOrders": "Encomendas de compra"
   },
   "common": {
     "search": "Pesquisar",
@@ -236,7 +247,13 @@
     "submitted": "Submetido",
     "approved": "Aprovado",
     "partly_converted": "Convertido em parte",
-    "converted": "Convertido"
+    "converted": "Convertido",
+    "issued": "Emitida",
+    "acknowledged": "Confirmada",
+    "pickup_confirmed": "Recolha confirmada",
+    "in_transit": "Em trânsito",
+    "partly_received": "Recebida em parte",
+    "received": "Recebida"
   },
   "dashboard": {
     "admin": "Visão geral da plataforma",
@@ -334,14 +351,13 @@
   },
   "supplierDash": {
     "code": "Código de fornecedor {code}",
-    "comingTitle": "As compras chegam na próxima versão",
-    "comingText": "Aqui vai ver encomendas de compra, criar pedidos de recolha e acompanhar pagamentos.",
-    "purchaseOrders": "Encomendas de compra",
-    "purchaseOrdersText": "Consulte e confirme as nossas encomendas e as datas.",
-    "pickups": "Pedidos de recolha",
-    "pickupsText": "Ofereça stock para recolha; analisamos e criamos uma encomenda de compra.",
-    "payments": "Pagamentos",
-    "paymentsText": "Acompanhe faturas e o estado dos pagamentos.",
+    "toAcknowledge": "Por confirmar",
+    "toConfirm": "Recolhas por confirmar",
+    "inTransit": "Em trânsito",
+    "openRequests": "Pedidos de recolha em aberto",
+    "recentOrders": "Encomendas de compra recentes",
+    "requestPickup": "Pedir recolha",
+    "noOrders": "Ainda sem encomendas de compra",
     "contactTitle": "Precisa de algo agora?",
     "contactText": "Escreva à equipa de compras. As respostas chegam aqui e como notificação.",
     "openMessages": "Abrir mensagens"
@@ -551,5 +567,110 @@
     "save": "Guardar regras",
     "discard": "Descartar",
     "saved": "Regras de fluxo guardadas"
+  },
+  "supplierCatalog": {
+    "title": "Os meus produtos",
+    "intro": "Os produtos que nos fornece, com o nosso stock em {site}. Ofereça stock para recolha e transformamo-lo numa encomenda de compra.",
+    "product": "Produto",
+    "ourStock": "O nosso stock",
+    "cost": "O seu preço",
+    "qty": "Quantidade oferecida",
+    "low": "Baixo em {site}",
+    "selected": {
+      "one": "{count} produto selecionado",
+      "other": "{count} produtos selecionados"
+    },
+    "request": "Pedir recolha",
+    "dialogText": "Analisamos a sua oferta e criamos uma encomenda de compra.",
+    "proposedDate": "Data de recolha proposta",
+    "notes": "Notas",
+    "notesPlaceholder": "Detalhes do lote, hora de carga…",
+    "submit": "Enviar pedido de recolha",
+    "sent": "Pedido de recolha {number} enviado",
+    "empty": "Ainda não há produtos associados à sua conta de fornecedor."
+  },
+  "purchaseRequests": {
+    "title": "Requisições de compra",
+    "introSupplier": "Os seus pedidos de recolha e o respetivo estado.",
+    "introBuyer": "Ofertas de recolha de fornecedores e requisições de compra internas neste local.",
+    "new": "Nova requisição de compra",
+    "col": {
+      "number": "Requisição",
+      "supplier": "Fornecedor",
+      "source": "Tipo",
+      "date": "Data",
+      "items": "Artigos",
+      "total": "Total",
+      "status": "Estado",
+      "po": "Encomenda de compra"
+    },
+    "source": {
+      "pickup": "Oferta de recolha",
+      "internal": "Interna"
+    },
+    "empty": "Sem requisições de compra",
+    "emptyHint": "As ofertas de recolha e as requisições internas aparecem aqui.",
+    "proposedDate": "Recolha proposta",
+    "cost": "Custo unitário",
+    "convert": "Criar encomenda de compra",
+    "convertText": "A encomenda é criada no {erp} e enviada a {supplier}.",
+    "expectedDate": "Entrega prevista",
+    "converted": "Encomenda de compra {number} criada",
+    "cancel": "Cancelar requisição",
+    "cancelled": "Requisição cancelada",
+    "newTitle": "Nova requisição de compra",
+    "supplier": "Fornecedor",
+    "chooseSupplier": "Escolha um fornecedor",
+    "fillLow": "Adicionar artigos com stock baixo",
+    "noLow": "Nada deste fornecedor tem stock baixo em {site}.",
+    "submit": "Submeter requisição de compra",
+    "created": "Requisição de compra {number} criada"
+  },
+  "purchaseOrders": {
+    "title": "Encomendas de compra",
+    "introSupplier": "As nossas encomendas. Confirme-as, confirme a recolha e marque-as como expedidas.",
+    "introBuyer": "Encomendas de compra e receções neste local.",
+    "col": {
+      "number": "Encomenda",
+      "supplier": "Fornecedor",
+      "date": "Data",
+      "expected": "Prevista",
+      "total": "Total",
+      "status": "Estado"
+    },
+    "empty": "Sem encomendas de compra",
+    "emptyHint": "As encomendas de compra aparecem aqui quando uma requisição é convertida.",
+    "fromRequest": "De {number}",
+    "expected": "Prevista para {date}",
+    "ordered": "Encomendado",
+    "received": "Recebido",
+    "pickup": "Recolha",
+    "pickupDate": "Data de recolha",
+    "vehicle": "Veículo",
+    "driver": "Motorista",
+    "documents": "Documentos",
+    "receipts": "Receções",
+    "noReceipts": "Ainda sem mercadoria recebida",
+    "acknowledge": "Confirmar encomenda",
+    "acknowledged": "Encomenda confirmada",
+    "confirmPickup": "Confirmar recolha",
+    "pickupText": "Diga-nos quando e como a mercadoria sai.",
+    "vehiclePlaceholder": "ex. MH 04 KT 5521",
+    "driverPlaceholder": "Nome e telefone",
+    "documentsPlaceholder": "Números de fatura e guia de transporte",
+    "confirm": "Confirmar",
+    "pickupSaved": "Recolha confirmada",
+    "dispatch": "Marcar como expedida",
+    "dispatched": "Marcada como expedida",
+    "receive": "Receber mercadoria",
+    "receiveText": "Introduza as quantidades que chegaram. O que não foi recebido fica em aberto.",
+    "receiveConfirm": "Registar receção",
+    "receivedMsg": "Receção registada",
+    "cancel": "Cancelar encomenda",
+    "cancelTitle": "Cancelar {number}?",
+    "cancelText": "O fornecedor é avisado com o seu motivo.",
+    "reason": "Motivo",
+    "cancelledMsg": "Encomenda cancelada",
+    "open": "Em aberto"
   }
 }

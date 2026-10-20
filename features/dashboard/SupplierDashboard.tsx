@@ -1,39 +1,56 @@
 'use client';
 import Link from 'next/link';
-import { ClipboardList, MessageSquare, Truck, Wallet } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { ClipboardCheck, FileInput, MessageSquare, PlusCircle, Truck, Warehouse } from 'lucide-react';
+import { purchaseOrderService, purchaseRequestService } from '@/lib/services';
 import { useUser } from '@/lib/auth/AuthProvider';
 import { useT } from '@/lib/i18n';
-import { PageHeader, SectionCard } from '@/components/common';
+import { fmtDate, fmtMoney } from '@/lib/format';
+import { PageHeader, SectionCard, EmptyState } from '@/components/common';
+import { StatusBadge } from '@/components/common/StatusBadge';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
-/**
- * Supplier home. Purchasing (purchase orders, pickup requests, receipts, payments)
- * is the next release; until then this page says what is coming and how to reach purchasing.
- */
+/** Supplier home: what needs action now, recent purchase orders, and a pickup shortcut. */
 export function SupplierDashboard() {
   const { t } = useT();
   const user = useUser();
-  const items = [
-    { icon: ClipboardList, title: t('supplierDash.purchaseOrders'), text: t('supplierDash.purchaseOrdersText') },
-    { icon: Truck, title: t('supplierDash.pickups'), text: t('supplierDash.pickupsText') },
-    { icon: Wallet, title: t('supplierDash.payments'), text: t('supplierDash.paymentsText') },
+  const scope = { supplierId: user.supplierId };
+  const pos = useQuery({ queryKey: ['purchase-orders', scope], queryFn: () => purchaseOrderService.list(scope) });
+  const prs = useQuery({ queryKey: ['purchase-requests', scope], queryFn: () => purchaseRequestService.list(scope) });
+  const orders = pos.data ?? [];
+  const count = (s: string[]) => orders.filter((o) => s.includes(o.status)).length;
+  const kpis = [
+    { key: 'ack', icon: ClipboardCheck, label: t('supplierDash.toAcknowledge'), value: count(['issued']) },
+    { key: 'pick', icon: Truck, label: t('supplierDash.toConfirm'), value: count(['acknowledged']) },
+    { key: 'transit', icon: Warehouse, label: t('supplierDash.inTransit'), value: count(['in_transit']) },
+    { key: 'pr', icon: FileInput, label: t('supplierDash.openRequests'), value: (prs.data ?? []).filter((r) => ['submitted', 'changes_requested'].includes(r.status)).length },
   ];
   return (
     <div>
       <PageHeader eyebrow={user.erpCode ? t('supplierDash.code', { code: user.erpCode }) : undefined}
-        title={t('dashboard.customer', { name: user.name.split(' ')[0] })} description={user.title} />
+        title={t('dashboard.customer', { name: user.name.split(' ')[0] })} description={user.title}
+        actions={<Button asChild><Link href="/supplier-catalog" data-testid="dash-request-pickup"><PlusCircle className="me-2 h-4 w-4" aria-hidden="true" />{t('supplierDash.requestPickup')}</Link></Button>} />
 
-      <SectionCard title={t('supplierDash.comingTitle')}>
-        <p className="px-4 pt-4 text-sm text-muted-foreground">{t('supplierDash.comingText')}</p>
-        <ul className="grid gap-3 p-4 sm:grid-cols-3">
-          {items.map(({ icon: Icon, title, text }) => (
-            <li key={title} className="rounded-lg border border-dashed p-4">
-              <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
-              <div className="mt-3 text-sm font-semibold">{title}</div>
-              <p className="mt-1 text-[13px] leading-snug text-muted-foreground">{text}</p>
-            </li>
-          ))}
-        </ul>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {kpis.map(({ key, icon: Icon, label, value }) => (
+          <Card key={key} className="p-4" data-testid={`sup-kpi-${key}`}>
+            <Icon className="h-4 w-4 text-primary" aria-hidden="true" />
+            <div className="mt-2 text-2xl font-semibold tabular">{value}</div>
+            <div className="text-xs text-muted-foreground">{label}</div>
+          </Card>
+        ))}
+      </div>
+
+      <SectionCard className="mt-4" title={t('supplierDash.recentOrders')} action={<Link href="/purchase-orders" className="text-sm font-medium text-primary hover:underline">{t('common.viewAll')}</Link>}>
+        {orders.length ? (
+          <ul className="divide-y">{orders.slice(0, 5).map((o) => (
+            <li key={o.id}><Link href={`/purchase-orders/${o.id}`} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-muted/40">
+              <div className="min-w-0"><div className="font-mono text-xs font-semibold">{o.number}</div><div className="text-xs text-muted-foreground">{fmtDate(o.date)} · {t('purchaseOrders.expected', { date: fmtDate(o.expectedDate) })}</div></div>
+              <div className="flex items-center gap-3"><span className="text-sm font-medium tabular">{fmtMoney(o.total)}</span><StatusBadge status={o.status} /></div>
+            </Link></li>
+          ))}</ul>
+        ) : <EmptyState title={t('supplierDash.noOrders')} />}
       </SectionCard>
 
       <SectionCard className="mt-4" title={t('supplierDash.contactTitle')}>

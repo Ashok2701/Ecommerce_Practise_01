@@ -56,3 +56,9 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - Workflow rules page (/workflow, Admin and Supervisor): credit block/warn with per-customer exceptions, auto-approval up to a total, B2C auto-convert after payment, stock hold hours, request expiry days
 - Offline checkout saves a draft request that is sent automatically when back online
 - docs/API_CONTRACT.md: every endpoint, headers, error codes, data scope
+
+## Iteration 7 – Purchasing (Oct 2026)
+- Supplier role is live: My products (their items with our stock at the site, low-stock flags, their price) and pickup requests with proposed date and notes
+- Purchase requests: pickup offers from suppliers and internal requests (with "add low-stock items"); convert to PO with expected date (idempotent), send back / reject with comment, cancel by supplier
+- Purchase orders: stepper issued → acknowledged → pickup confirmed → in transit → received; supplier acknowledges, confirms pickup (date, vehicle, driver, documents) and dispatches; buyer posts partial or full goods receipts (GRN) that add stock at the site, or cancels with a reason
+- Supplier dashboard with action counts and recent POs; assistant answers what needs the supplier's attention

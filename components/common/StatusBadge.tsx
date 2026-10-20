@@ -13,13 +13,15 @@ const TONES: Record<string, string> = {
   confirmed: 'bg-blue-50 text-blue-700 ring-blue-600/25', scheduled: 'bg-blue-50 text-blue-700 ring-blue-600/25', open: 'bg-blue-50 text-blue-700 ring-blue-600/25', planned: 'bg-blue-50 text-blue-700 ring-blue-600/25',
   processing: 'bg-indigo-50 text-indigo-700 ring-indigo-600/25', checked_in: 'bg-indigo-50 text-indigo-700 ring-indigo-600/25',
   packed: 'bg-violet-50 text-violet-700 ring-violet-600/25',
-  dispatched: 'bg-sky-50 text-sky-700 ring-sky-600/25',
+  dispatched: 'bg-sky-50 text-sky-700 ring-sky-600/25', in_transit: 'bg-sky-50 text-sky-700 ring-sky-600/25',
+  issued: 'bg-amber-50 text-amber-800 ring-amber-600/25', acknowledged: 'bg-blue-50 text-blue-700 ring-blue-600/25', pickup_confirmed: 'bg-indigo-50 text-indigo-700 ring-indigo-600/25',
+  partly_received: 'bg-violet-50 text-violet-700 ring-violet-600/25', received: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25',
   delivered: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25', paid: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25', active: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25',
   published: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25', in_stock: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25', done: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25', completed: 'bg-emerald-50 text-emerald-700 ring-emerald-600/25',
   cancelled: 'bg-slate-100 text-slate-600 ring-slate-500/20', inactive: 'bg-slate-100 text-slate-600 ring-slate-500/20', draft: 'bg-slate-100 text-slate-600 ring-slate-500/20', expired: 'bg-slate-100 text-slate-500 ring-slate-500/20', unpaid: 'bg-slate-100 text-slate-700 ring-slate-500/20',
   rejected: 'bg-rose-50 text-rose-700 ring-rose-600/25', overdue: 'bg-rose-50 text-rose-700 ring-rose-600/25', out_of_stock: 'bg-rose-50 text-rose-700 ring-rose-600/25',
 };
-const DOT: Record<string, string> = { delivered: 'bg-emerald-500', paid: 'bg-emerald-500', active: 'bg-emerald-500', in_stock: 'bg-emerald-500', published: 'bg-emerald-500', overdue: 'bg-rose-500', rejected: 'bg-rose-500', out_of_stock: 'bg-rose-500' };
+const DOT: Record<string, string> = { received: 'bg-emerald-500', delivered: 'bg-emerald-500', paid: 'bg-emerald-500', active: 'bg-emerald-500', in_stock: 'bg-emerald-500', published: 'bg-emerald-500', overdue: 'bg-rose-500', rejected: 'bg-rose-500', out_of_stock: 'bg-rose-500' };
 
 export function StatusBadge({ status, className }: { status: string; className?: string }) {
   const { t } = useT();

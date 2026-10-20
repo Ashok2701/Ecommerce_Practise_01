@@ -28,6 +28,13 @@
       "priceChanged": "Die Preise haben sich seit dem Einreichen geändert. Bestätigen Sie, dass der Anfragende sie akzeptiert hat.",
       "commentRequired": "Fügen Sie zuerst einen Kommentar hinzu.",
       "nothingInStock": "Nichts aus dieser Anfrage ist an diesem Standort vorrätig."
+    },
+    "purchasing": {
+      "notFound": "Dieser Einkaufsbeleg existiert nicht oder Sie können ihn nicht sehen.",
+      "notOpen": "Dieser Beleg kann nicht mehr geändert werden.",
+      "empty": "Fügen Sie mindestens ein Produkt mit Menge hinzu.",
+      "pickupDetails": "Geben Sie Abholdatum und Fahrzeug ein.",
+      "nothingToReceive": "Geben Sie eine Menge zum Annehmen ein."
     }
   },
   "login": {
@@ -147,11 +154,15 @@
       "commerce": "Handel",
       "operations": "Betrieb",
       "engage": "Kommunikation",
-      "admin": "Verwaltung"
+      "admin": "Verwaltung",
+      "purchasing": "Einkauf"
     },
     "access": "Modulzugriff",
     "requests": "Verkaufsanfragen",
-    "workflow": "Workflow-Regeln"
+    "workflow": "Workflow-Regeln",
+    "supplierCatalog": "Meine Produkte",
+    "purchaseRequests": "Bedarfsanforderungen",
+    "purchaseOrders": "Bestellungen"
   },
   "common": {
     "search": "Suchen",
@@ -236,7 +247,13 @@
     "submitted": "Eingereicht",
     "approved": "Freigegeben",
     "partly_converted": "Teilweise umgewandelt",
-    "converted": "Umgewandelt"
+    "converted": "Umgewandelt",
+    "issued": "Ausgestellt",
+    "acknowledged": "Bestätigt",
+    "pickup_confirmed": "Abholung bestätigt",
+    "in_transit": "Unterwegs",
+    "partly_received": "Teilweise erhalten",
+    "received": "Erhalten"
   },
   "dashboard": {
     "admin": "Plattformübersicht",
@@ -334,14 +351,13 @@
   },
   "supplierDash": {
     "code": "Lieferantennummer {code}",
-    "comingTitle": "Der Einkauf kommt mit dem nächsten Release",
-    "comingText": "Hier sehen Sie künftig Bestellungen, erstellen Abholanfragen und verfolgen Zahlungen.",
-    "purchaseOrders": "Bestellungen",
-    "purchaseOrdersText": "Unsere Bestellungen ansehen, bestätigen und Termine zusagen.",
-    "pickups": "Abholanfragen",
-    "pickupsText": "Bestand zur Abholung anbieten; wir prüfen und erstellen eine Bestellung.",
-    "payments": "Zahlungen",
-    "paymentsText": "Rechnungen und Zahlungsstatus verfolgen.",
+    "toAcknowledge": "Zu bestätigen",
+    "toConfirm": "Abholungen zu bestätigen",
+    "inTransit": "Unterwegs",
+    "openRequests": "Offene Abholanfragen",
+    "recentOrders": "Letzte Bestellungen",
+    "requestPickup": "Abholung anfragen",
+    "noOrders": "Noch keine Bestellungen",
     "contactTitle": "Brauchen Sie jetzt etwas?",
     "contactText": "Schreiben Sie dem Einkauf. Antworten erscheinen hier und als Benachrichtigung.",
     "openMessages": "Nachrichten öffnen"
@@ -551,5 +567,110 @@
     "save": "Regeln speichern",
     "discard": "Verwerfen",
     "saved": "Workflow-Regeln gespeichert"
+  },
+  "supplierCatalog": {
+    "title": "Meine Produkte",
+    "intro": "Produkte, die Sie uns liefern, mit unserem Bestand in {site}. Bieten Sie Ware zur Abholung an, wir machen daraus eine Bestellung.",
+    "product": "Produkt",
+    "ourStock": "Unser Bestand",
+    "cost": "Ihr Preis",
+    "qty": "Angebotsmenge",
+    "low": "Knapp in {site}",
+    "selected": {
+      "one": "{count} Produkt ausgewählt",
+      "other": "{count} Produkte ausgewählt"
+    },
+    "request": "Abholung anfragen",
+    "dialogText": "Wir prüfen Ihr Angebot und erstellen eine Bestellung.",
+    "proposedDate": "Vorgeschlagenes Abholdatum",
+    "notes": "Hinweise",
+    "notesPlaceholder": "Chargendetails, Ladezeit…",
+    "submit": "Abholanfrage senden",
+    "sent": "Abholanfrage {number} gesendet",
+    "empty": "Mit Ihrem Lieferantenkonto sind noch keine Produkte verknüpft."
+  },
+  "purchaseRequests": {
+    "title": "Bedarfsanforderungen",
+    "introSupplier": "Ihre Abholanfragen und ihr Status.",
+    "introBuyer": "Abholangebote von Lieferanten und interne Bedarfsanforderungen an diesem Standort.",
+    "new": "Neue Bedarfsanforderung",
+    "col": {
+      "number": "Anforderung",
+      "supplier": "Lieferant",
+      "source": "Art",
+      "date": "Datum",
+      "items": "Positionen",
+      "total": "Gesamt",
+      "status": "Status",
+      "po": "Bestellung"
+    },
+    "source": {
+      "pickup": "Abholangebot",
+      "internal": "Intern"
+    },
+    "empty": "Keine Bedarfsanforderungen",
+    "emptyHint": "Abholangebote und interne Anforderungen erscheinen hier.",
+    "proposedDate": "Vorgeschlagene Abholung",
+    "cost": "Einkaufspreis",
+    "convert": "Bestellung anlegen",
+    "convertText": "Die Bestellung wird in {erp} angelegt und an {supplier} gesendet.",
+    "expectedDate": "Erwartete Lieferung",
+    "converted": "Bestellung {number} angelegt",
+    "cancel": "Anforderung stornieren",
+    "cancelled": "Anforderung storniert",
+    "newTitle": "Neue Bedarfsanforderung",
+    "supplier": "Lieferant",
+    "chooseSupplier": "Lieferant wählen",
+    "fillLow": "Knappe Artikel hinzufügen",
+    "noLow": "Von diesem Lieferanten ist in {site} nichts knapp.",
+    "submit": "Bedarfsanforderung senden",
+    "created": "Bedarfsanforderung {number} angelegt"
+  },
+  "purchaseOrders": {
+    "title": "Bestellungen",
+    "introSupplier": "Unsere Bestellungen. Bestätigen Sie sie, bestätigen Sie die Abholung und melden Sie den Versand.",
+    "introBuyer": "Bestellungen und Wareneingänge an diesem Standort.",
+    "col": {
+      "number": "Bestellung",
+      "supplier": "Lieferant",
+      "date": "Datum",
+      "expected": "Erwartet",
+      "total": "Gesamt",
+      "status": "Status"
+    },
+    "empty": "Keine Bestellungen",
+    "emptyHint": "Bestellungen erscheinen hier, sobald eine Anforderung umgewandelt wird.",
+    "fromRequest": "Aus {number}",
+    "expected": "Erwartet am {date}",
+    "ordered": "Bestellt",
+    "received": "Erhalten",
+    "pickup": "Abholung",
+    "pickupDate": "Abholdatum",
+    "vehicle": "Fahrzeug",
+    "driver": "Fahrer",
+    "documents": "Dokumente",
+    "receipts": "Wareneingänge",
+    "noReceipts": "Noch keine Ware erhalten",
+    "acknowledge": "Bestellung bestätigen",
+    "acknowledged": "Bestellung bestätigt",
+    "confirmPickup": "Abholung bestätigen",
+    "pickupText": "Teilen Sie uns mit, wann und wie die Ware abfährt.",
+    "vehiclePlaceholder": "z. B. MH 04 KT 5521",
+    "driverPlaceholder": "Name und Telefon",
+    "documentsPlaceholder": "Rechnungs- und Frachtbriefnummern",
+    "confirm": "Bestätigen",
+    "pickupSaved": "Abholung bestätigt",
+    "dispatch": "Als versendet melden",
+    "dispatched": "Als versendet gemeldet",
+    "receive": "Ware annehmen",
+    "receiveText": "Geben Sie die eingetroffenen Mengen ein. Nicht Erhaltenes bleibt offen.",
+    "receiveConfirm": "Wareneingang buchen",
+    "receivedMsg": "Wareneingang gebucht",
+    "cancel": "Bestellung stornieren",
+    "cancelTitle": "{number} stornieren?",
+    "cancelText": "Der Lieferant wird mit Ihrem Grund benachrichtigt.",
+    "reason": "Grund",
+    "cancelledMsg": "Bestellung storniert",
+    "open": "Offen"
   }
 }

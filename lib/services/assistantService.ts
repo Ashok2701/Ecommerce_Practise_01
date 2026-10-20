@@ -2,6 +2,7 @@ import { orderService } from './orderService';
 import { requestService } from './requestService';
 import { invoiceService } from './invoiceService';
 import { customerService } from './customerService';
+import { purchaseOrderService } from './purchasingService';
 import { fmtDate, fmtMoney } from '@/lib/format';
 import { isCustomerRole } from '@/types/domain';
 import type { User } from '@/types/domain';
@@ -14,7 +15,7 @@ export interface AssistantAction { label: string; href?: string; kind?: 'reorder
 export interface AssistantReply { text: string; bullets?: string[]; actions?: AssistantAction[]; tool?: string; }
 
 export const ASSISTANT_SUGGESTIONS: Record<string, string[]> = {
-  SUPPLIER: ['What can I do here?'],
+  SUPPLIER: ['What needs my attention?', 'What can I do here?'],
   CUSTOMER_B2C: ['What are my recent orders?', 'When is my order expected?', 'Show products I usually buy'],
   CUSTOMER_B2B: ['What are my recent orders?', 'What is my outstanding balance?', 'When is my order expected?', 'Show products I usually buy', 'Create the same order as last month'],
   SALES_REP: ['Which customers have overdue payments?', 'What are my recent orders?', 'Show my sales this month'],
@@ -27,7 +28,10 @@ export const assistantService = {
     const s = q.toLowerCase();
     // Same scoping as the screens: customers see their own data, reps their customers, suppliers no sales data.
     if (user.role === 'SUPPLIER') {
-      return { text: 'Purchase orders, pickup requests and payments will be available here in the purchasing release. Until then, use Messages to reach the purchasing team.', actions: [{ label: 'Open messages', href: '/messages' }] };
+      const pos = await purchaseOrderService.list({ supplierId: user.supplierId });
+      const ack = pos.filter((o) => o.status === 'issued').length;
+      const pick = pos.filter((o) => o.status === 'acknowledged').length;
+      return { text: `You have ${ack} purchase order(s) to acknowledge and ${pick} pickup(s) to confirm. You can also offer stock for pickup from My products.`, actions: [{ label: 'Purchase orders', href: '/purchase-orders' }, { label: 'Request pickup', href: '/supplier-catalog' }] };
     }
     const scope = isCustomerRole(user.role) ? { customerId: user.customerId } : user.role === 'SALES_REP' ? { salesRepId: user.id } : {};
     const orders = await orderService.getOrders(scope);
