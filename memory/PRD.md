@@ -74,3 +74,9 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - Payments: pay online (provider step simulated), remittance advice from customers, collections recorded by reps; finance verifies against the bank, then the receipt posts and is allocated
 - Collections: ageing by customer (not due, 1–30, 31–60, 61–90, 90+), payments to verify, promises to pay (kept/broken), reminders and call notes
 - Account, Invoices and Cart pages moved fully onto translations
+
+## Iteration 10 – Detail pages everywhere (Oct 2026)
+- New pages: invoice (lines, totals, paid/balance, payments applied incl. earlier ERP payments, related order/delivery, pay or record payment), payment receipt (allocations, verification, verify/reject), suppliers list and supplier page (contacts, KPIs, products with our stock, POs, PRs, portal logins), sales rep (target, trend, customers, orders, quotes, follow-ups, collections), user (account, linked customer/supplier, modules from role, sites), product stock (position, what makes up each number, other sites, movement journal), offer (products with the viewer's price after the offer, add to cart), announcement
+- Customer page gains requests, quotes, invoices & payments, deliveries and consignment tabs; order, customer and user pages fully translated
+- Every list row and every reference (customer, supplier, product, order, invoice, payment, delivery, request, quote) links to its page when the viewer may open it; plain text otherwise
+- Shared detail routes (invoices/payments for customers, collections and customer staff); reps only see their own customers' invoices and receipts; errors show translated "doesn't exist or you can't see it"

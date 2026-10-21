@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { ProductRef, RefLink } from '@/features/detail/DetailBits';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -87,7 +88,7 @@ function Detail({ q }: { q: Quote }) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2"><h1 className="font-mono text-xl font-semibold" data-testid="quote-number">{q.number}</h1><StatusBadge status={q.status} />{q.version > 1 && <span className="rounded-md border px-2 py-0.5 text-xs text-muted-foreground">{t('quotes.version', { n: q.version })}</span>}</div>
-          <p className="mt-1 text-sm text-muted-foreground">{q.customerName} · {t('requests.detail.createdBy', { name: q.createdBy.name })} · {fmtDateTime(q.date)}</p>
+          <p className="mt-1 text-sm text-muted-foreground"><RefLink href={`/customers/${q.customerId}`}>{q.customerName}</RefLink> · {t('requests.detail.createdBy', { name: q.createdBy.name })} · {fmtDateTime(q.date)}</p>
           {q.validUntil && q.status === 'sent' && <p className="mt-1 text-sm">{t('quotes.validUntilDate', { date: fmtDate(q.validUntil) })}</p>}
           {q.requestId && <Link href={`/requests/${q.requestId}`} className="mt-1 inline-block text-sm font-medium text-primary hover:underline" data-testid="quote-request-link">{t('quotes.becameRequest', { number: q.requestNumber ?? '' })}</Link>}
         </div>
@@ -100,7 +101,7 @@ function Detail({ q }: { q: Quote }) {
       {q.customerNote && <Card className="border-primary/20 bg-primary/5 p-4 text-sm"><div className="text-xs font-medium text-muted-foreground">{t('quotes.customerAsked')}</div><p className="mt-1">{q.customerNote}</p></Card>}
       {customer && q.status === 'requested' && <Card className="p-4 text-sm text-muted-foreground" data-testid="quote-waiting">{t('quotes.waiting')}</Card>}
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
+      <div className="grid gap-4 lg:grid-cols-[1fr_340px] [&>*]:min-w-0">
         <div className="space-y-4">
           <Card className="overflow-x-auto">
             <table className="w-full min-w-[640px] text-sm" data-testid="quote-lines">
@@ -116,7 +117,7 @@ function Detail({ q }: { q: Quote }) {
                 const d = discountPct(l);
                 return (
                   <tr key={l.productId}>
-                    <td className="px-4 py-2.5"><div className="font-medium">{l.name}</div><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td>
+                    <td className="px-4 py-2.5"><ProductRef id={l.productId} name={l.name} /><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td>
                     <td className="px-3 py-2.5 text-end tabular">{editing ? <Input type="number" min={0} aria-label={`${t('requests.detail.qty')}: ${l.name}`} className="ms-auto h-9 w-20 text-end" value={l.quantity} onChange={(e) => setLine(l.productId, 'quantity', e.target.value)} /> : `${fmtNumber(l.quantity)} ${l.uom}`}</td>
                     {staff && <td className="px-3 py-2.5 text-end tabular text-muted-foreground">{fmtMoney(l.listPrice, true)}</td>}
                     {showTarget && <td className="px-3 py-2.5 text-end tabular text-muted-foreground">{l.targetPrice ? fmtMoney(l.targetPrice, true) : '—'}</td>}

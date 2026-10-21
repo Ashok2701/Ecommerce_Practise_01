@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { ProductRef, RefLink } from '@/features/detail/DetailBits';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -69,18 +70,18 @@ function Detail({ o }: { o: PurchaseOrder }) {
     <div className="space-y-4">
       <div>
         <div className="flex flex-wrap items-center gap-2"><h1 className="font-mono text-xl font-semibold" data-testid="po-number">{o.number}</h1><StatusBadge status={o.status} />{o.site && <span className="rounded-md border px-2 py-0.5 text-xs text-muted-foreground">{t('sites.label')} {o.site}</span>}{o.erpRef && <span className="font-mono text-xs text-muted-foreground">{o.erpRef}</span>}</div>
-        <p className="mt-1 text-sm text-muted-foreground">{o.supplierName} · {fmtDate(o.date)} · {t('purchaseOrders.expected', { date: fmtDate(o.expectedDate) })}</p>
+        <p className="mt-1 text-sm text-muted-foreground"><RefLink href={`/suppliers/${o.supplierId}`}>{o.supplierName}</RefLink> · {fmtDate(o.date)} · {t('purchaseOrders.expected', { date: fmtDate(o.expectedDate) })}</p>
         {o.requestId && <Link href={`/purchase-requests/${o.requestId}`} className="mt-1 inline-block text-sm text-primary hover:underline">{t('purchaseOrders.fromRequest', { number: o.requestNumber ?? '' })}</Link>}
       </div>
       <Card className="p-4"><PoStepper status={o.status} /></Card>
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
+      <div className="grid gap-4 lg:grid-cols-[1fr_340px] [&>*]:min-w-0">
         <div className="space-y-4">
           <Card className="overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-muted/40 text-xs text-muted-foreground"><tr><th className="px-4 py-2 text-start font-medium">{t('requests.detail.lines')}</th><th className="px-3 py-2 text-end font-medium">{t('purchaseOrders.ordered')}</th><th className="px-3 py-2 text-end font-medium">{t('purchaseOrders.received')}</th><th className="px-4 py-2 text-end font-medium">{t('requests.detail.lineTotal')}</th></tr></thead>
               <tbody className="divide-y">{o.lines.map((l) => (
-                <tr key={l.productId}><td className="px-4 py-2.5"><div className="font-medium">{l.name}</div><div className="font-mono text-[11px] text-muted-foreground">{l.sku} · {fmtMoney(l.unitCost, true)}</div></td><td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.quantity)} {l.uom}</td><td className="px-3 py-2.5 text-end tabular" data-testid={`po-recv-${l.productId}`}>{fmtNumber(l.receivedQty)}</td><td className="px-4 py-2.5 text-end font-medium tabular">{fmtMoney(l.lineTotal, true)}</td></tr>
+                <tr key={l.productId}><td className="px-4 py-2.5"><ProductRef id={l.productId} name={l.name} /><div className="font-mono text-[11px] text-muted-foreground">{l.sku} · {fmtMoney(l.unitCost, true)}</div></td><td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.quantity)} {l.uom}</td><td className="px-3 py-2.5 text-end tabular" data-testid={`po-recv-${l.productId}`}>{fmtNumber(l.receivedQty)}</td><td className="px-4 py-2.5 text-end font-medium tabular">{fmtMoney(l.lineTotal, true)}</td></tr>
               ))}</tbody>
               <tfoot className="border-t bg-muted/20"><tr><td className="px-4 py-2.5 font-semibold" colSpan={3}>{t('common.total')}</td><td className="px-4 py-2.5 text-end font-semibold tabular">{fmtMoney(o.total, true)}</td></tr></tfoot>
             </table>

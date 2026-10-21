@@ -75,7 +75,8 @@
       "notPending": "Este pagamento já foi tratado.",
       "reasonRequired": "Indique um motivo.",
       "promiseDetails": "Indique a data e o valor prometidos."
-    }
+    },
+    "notFound": "Este registo não existe ou não o pode ver."
   },
   "login": {
     "title": "Iniciar sessão",
@@ -209,7 +210,8 @@
     "transfers": "Transferências de stock",
     "quotes": "Orçamentos",
     "deliveries": "Entregas",
-    "collections": "Cobranças"
+    "collections": "Cobranças",
+    "suppliers": "Fornecedores"
   },
   "common": {
     "search": "Pesquisar",
@@ -479,6 +481,37 @@
       "save": "Guardar locais",
       "saved": "Locais atualizados para {name}",
       "column": "Locais"
+    },
+    "title": "Gestão de utilizadores",
+    "intro": "Utilizadores internos, acessos de fornecedores e de clientes.",
+    "awaiting": {
+      "one": "{count} a aguardar aprovação",
+      "other": "{count} a aguardar aprovação"
+    },
+    "search": "Nome, e-mail ou cargo…",
+    "allRoles": "Todas as funções",
+    "allStatuses": "Todos os estados",
+    "col": {
+      "user": "Utilizador",
+      "role": "Função",
+      "lastLogin": "Último acesso"
+    },
+    "never": "Nunca",
+    "statusChanged": "{name} está agora {status}",
+    "approve": "Aprovar",
+    "deactivate": "Desativar",
+    "activate": "Ativar",
+    "detail": {
+      "account": "Conta",
+      "erpCode": "Código ERP",
+      "region": "Região",
+      "linkedCustomer": "Cliente",
+      "linkedSupplier": "Fornecedor",
+      "salesPage": "Desempenho comercial",
+      "openPerformance": "Abrir desempenho",
+      "created": "Criado",
+      "modules": "Módulos",
+      "modulesHint": "Vêm da função {role}. Altere em Acesso a módulos."
     }
   },
   "requests": {
@@ -790,7 +823,21 @@
       "none": "Nenhum",
       "until": "até {date}",
       "fromSite": "de {site}",
-      "requestTransfer": "Pedir uma transferência"
+      "requestTransfer": "Pedir uma transferência",
+      "leadTime": "Prazo de {days} dias",
+      "atSite": "Stock em {site}",
+      "movements": "Movimentos recentes",
+      "movement": "Movimento",
+      "document": "Documento",
+      "noMovements": "Ainda sem movimentos"
+    },
+    "move": {
+      "receipt": "Receção de mercadoria",
+      "transfer_in": "Transferência de entrada",
+      "transfer_out": "Transferência de saída",
+      "sale": "Encomenda de venda",
+      "consignment_in": "Passado para consignação",
+      "consignment_out": "Levantamento de consignação"
     }
   },
   "transfers": {
@@ -953,7 +1000,20 @@
     "balanceOf": "Saldo {balance} de {amount}",
     "pay": "Pagar",
     "viewOrder": "Ver encomenda {number}",
-    "pdfInfo": "O {erp} gera o PDF da fatura {number}."
+    "pdfInfo": "O {erp} gera o PDF da fatura {number}.",
+    "payAmount": "Pagar {amount}",
+    "detail": {
+      "paid": "Pago",
+      "terms": "Condições de pagamento",
+      "payments": "Pagamentos desta fatura",
+      "related": "Documentos relacionados",
+      "order": "Encomenda de venda",
+      "customerPo": "Encomenda do cliente",
+      "erpRef": "Referência ERP",
+      "billTo": "Faturar a",
+      "earlier": "Pago anteriormente no {erp}",
+      "earlierHint": "Registado antes de estes pagamentos estarem no portal"
+    }
   },
   "quotes": {
     "title": "Orçamentos",
@@ -1132,6 +1192,14 @@
       "recorded": "Pagamento {number} enviado para verificação",
       "verified": "Pagamento {number} lançado",
       "rejected": "Pagamento rejeitado"
+    },
+    "receiptInfo": "O {erp} gera o recibo em PDF.",
+    "rejectedBecause": "Rejeitado: {reason}",
+    "detail": {
+      "enteredBy": "Registado por",
+      "verifiedBy": "Verificado por",
+      "allocated": "Imputado às faturas",
+      "forInvoices": "Para as faturas"
     }
   },
   "collections": {
@@ -1194,5 +1262,152 @@
       "saved": "Guardado",
       "reminded": "Lembrete enviado"
     }
+  },
+  "announcements": {
+    "pinned": "Fixado",
+    "scheduledFor": "Agendado para {date}",
+    "audience": "Destinatários",
+    "everyone": "Todos",
+    "category": {
+      "company": "Empresa",
+      "product": "Produto",
+      "notice": "Aviso importante"
+    }
+  },
+  "customers": {
+    "detail": {
+      "notYours": "Não está atribuído a si",
+      "notYoursText": "Este cliente pertence à zona de outro comercial.",
+      "tier": "Escalão {tier} ({pct}% sobre a tabela)",
+      "since": "Cliente desde {date}",
+      "createOrder": "Criar encomenda",
+      "repeatLast": "Repetir última encomenda",
+      "logVisit": "Registar visita",
+      "message": "Mensagem",
+      "available": "{amount} disponível",
+      "lastOrder": "Última encomenda",
+      "salesRep": "Comercial",
+      "finance": "Faturas e pagamentos",
+      "purchases": "Compras anteriores",
+      "pricing": "Preços do cliente",
+      "visits": "Visitas",
+      "paidInvoices": "Faturas pagas",
+      "frequent": "Compras frequentes",
+      "timesOrdered": {
+        "one": "Encomendado uma vez · {qty} {uom}",
+        "other": "Encomendado {count} vezes · {qty} {uom}"
+      },
+      "lastOn": "última a {date}",
+      "add": "Adicionar",
+      "noPurchases": "Ainda sem compras",
+      "priceList": "Tabela de preços do cliente",
+      "priceListHint": "Escalão {tier} · preços de contrato destacados",
+      "customerPrice": "Preço do cliente",
+      "contract": "Contrato"
+    }
+  },
+  "offers": {
+    "activated": "Oferta ativada",
+    "deactivated": "Oferta desativada",
+    "percentOff": "-{pct}%",
+    "codeCopied": "Código copiado",
+    "activate": "Ativar",
+    "deactivate": "Desativar",
+    "validity": "Validade",
+    "audience": "Para",
+    "howItWorks": "Como funciona",
+    "appliedAutomatically": "Aplicada automaticamente no carrinho",
+    "notForYou": "Esta oferta não está disponível para a sua conta.",
+    "listPrice": "Preço de tabela",
+    "yourPrice": "O seu preço",
+    "withOffer": "Com oferta",
+    "added": "{name} adicionado ao carrinho",
+    "audiences": {
+      "all": "Todos os clientes",
+      "tier_A": "Clientes escalão A",
+      "tier_B": "Clientes escalão B",
+      "tier_C": "Clientes escalão C"
+    }
+  },
+  "orders": {
+    "source": {
+      "portal": "pelo portal",
+      "sales_app": "pela app de vendas",
+      "offline": "registada offline"
+    },
+    "detail": {
+      "cancelled": "Encomenda cancelada",
+      "statusUpdated": "Estado atualizado: {status}",
+      "placed": "feita a {date} por {name} ({role})",
+      "repeat": "Repetir encomenda",
+      "review": "Rever aprovação",
+      "simulate": "Simular atualização do ERP",
+      "total": "Total da encomenda",
+      "expected": "Entrega prevista",
+      "afterSync": "Após sincronizar",
+      "notInErp": "Ainda não está no ERP",
+      "items": "Linhas",
+      "products": "Produtos",
+      "invoice": "Fatura",
+      "invoiceAtDispatch": "O {erp} cria a fatura quando a encomenda é expedida.",
+      "notes": "Notas da encomenda:",
+      "timeline": "Histórico de estados",
+      "cancelTitle": "Cancelar {number}?",
+      "cancelText": "A encomenda é retirada. Não é possível anular.",
+      "cancelConfirm": "Cancelar encomenda"
+    }
+  },
+  "reps": {
+    "kpi": {
+      "month": "Vendas do mês",
+      "ofTarget": "{pct}% do objetivo de {target}",
+      "orders": "Encomendas do mês",
+      "today": {
+        "one": "{count} hoje",
+        "other": "{count} hoje"
+      },
+      "customers": "Clientes",
+      "overdue": "Vencido dos clientes"
+    },
+    "trend": "Vendas face ao objetivo",
+    "noCustomers": "Sem clientes atribuídos",
+    "noOrders": "Ainda sem encomendas",
+    "noFollowUps": "Sem acompanhamentos",
+    "overdueAmount": "{amount} vencido",
+    "followType": {
+      "call": "Chamada",
+      "visit": "Visita",
+      "payment": "Acompanhamento de cobrança",
+      "quote": "Acompanhamento de orçamento"
+    }
+  },
+  "suppliers": {
+    "title": "Fornecedores",
+    "intro": "Fornecedores do ERP com o que fornecem e as compras em aberto.",
+    "terms": "Condições de pagamento {terms}",
+    "kpi": {
+      "openPos": "Encomendas de compra em aberto",
+      "openRequests": "Pedidos de compra em aberto",
+      "received": "Recebido (total)",
+      "onTime": "Entregas a tempo"
+    },
+    "tabs": {
+      "products": "Produtos fornecidos",
+      "logins": "Acessos ao portal"
+    },
+    "noLogins": "Este fornecedor ainda não tem acesso ao portal.",
+    "col": {
+      "supplier": "Fornecedor",
+      "contact": "Contacto",
+      "city": "Cidade",
+      "products": "Produtos",
+      "openPos": "Encomendas em aberto",
+      "terms": "Condições"
+    },
+    "productsCount": {
+      "one": "{count} produto",
+      "other": "{count} produtos"
+    },
+    "empty": "Sem fornecedores"
   }
 }

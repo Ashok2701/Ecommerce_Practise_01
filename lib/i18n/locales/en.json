@@ -75,7 +75,8 @@
       "notPending": "This payment has already been handled.",
       "reasonRequired": "Enter a reason.",
       "promiseDetails": "Enter the promised date and amount."
-    }
+    },
+    "notFound": "This record doesn't exist or you can't see it."
   },
   "login": {
     "title": "Sign in",
@@ -209,7 +210,8 @@
     "transfers": "Stock transfers",
     "quotes": "Quotes",
     "deliveries": "Deliveries",
-    "collections": "Collections"
+    "collections": "Collections",
+    "suppliers": "Suppliers"
   },
   "common": {
     "search": "Search",
@@ -479,6 +481,37 @@
       "save": "Save sites",
       "saved": "Sites updated for {name}",
       "column": "Sites"
+    },
+    "title": "User management",
+    "intro": "Internal users, supplier logins and customer logins.",
+    "awaiting": {
+      "one": "{count} awaiting approval",
+      "other": "{count} awaiting approval"
+    },
+    "search": "Name, email or title…",
+    "allRoles": "All roles",
+    "allStatuses": "All statuses",
+    "col": {
+      "user": "User",
+      "role": "Role",
+      "lastLogin": "Last login"
+    },
+    "never": "Never",
+    "statusChanged": "{name} is now {status}",
+    "approve": "Approve",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "detail": {
+      "account": "Account",
+      "erpCode": "ERP code",
+      "region": "Region",
+      "linkedCustomer": "Customer",
+      "linkedSupplier": "Supplier",
+      "salesPage": "Sales performance",
+      "openPerformance": "Open performance",
+      "created": "Created",
+      "modules": "Modules",
+      "modulesHint": "Comes from the {role} role. Change it on Module access."
     }
   },
   "requests": {
@@ -790,7 +823,21 @@
       "none": "None",
       "until": "until {date}",
       "fromSite": "from {site}",
-      "requestTransfer": "Request a transfer"
+      "requestTransfer": "Request a transfer",
+      "leadTime": "{days} days lead time",
+      "atSite": "Stock at {site}",
+      "movements": "Recent movements",
+      "movement": "Movement",
+      "document": "Document",
+      "noMovements": "No movements yet"
+    },
+    "move": {
+      "receipt": "Goods receipt",
+      "transfer_in": "Transfer in",
+      "transfer_out": "Transfer out",
+      "sale": "Sales order",
+      "consignment_in": "Moved to consignment",
+      "consignment_out": "Consignment call-off"
     }
   },
   "transfers": {
@@ -953,7 +1000,20 @@
     "balanceOf": "Balance {balance} of {amount}",
     "pay": "Pay",
     "viewOrder": "View order {number}",
-    "pdfInfo": "{erp} generates the PDF of invoice {number}."
+    "pdfInfo": "{erp} generates the PDF of invoice {number}.",
+    "payAmount": "Pay {amount}",
+    "detail": {
+      "paid": "Paid",
+      "terms": "Payment terms",
+      "payments": "Payments on this invoice",
+      "related": "Related documents",
+      "order": "Sales order",
+      "customerPo": "Customer PO",
+      "erpRef": "ERP reference",
+      "billTo": "Bill to",
+      "earlier": "Paid earlier in {erp}",
+      "earlierHint": "Recorded before these payments were in the portal"
+    }
   },
   "quotes": {
     "title": "Quotes",
@@ -1132,6 +1192,14 @@
       "recorded": "Payment {number} sent for verification",
       "verified": "Payment {number} posted",
       "rejected": "Payment rejected"
+    },
+    "receiptInfo": "{erp} generates the receipt PDF.",
+    "rejectedBecause": "Rejected: {reason}",
+    "detail": {
+      "enteredBy": "Entered by",
+      "verifiedBy": "Checked by",
+      "allocated": "Applied to invoices",
+      "forInvoices": "For invoices"
     }
   },
   "collections": {
@@ -1194,5 +1262,152 @@
       "saved": "Saved",
       "reminded": "Reminder sent"
     }
+  },
+  "announcements": {
+    "pinned": "Pinned",
+    "scheduledFor": "Scheduled for {date}",
+    "audience": "Audience",
+    "everyone": "Everyone",
+    "category": {
+      "company": "Company",
+      "product": "Product",
+      "notice": "Important notice"
+    }
+  },
+  "customers": {
+    "detail": {
+      "notYours": "Not assigned to you",
+      "notYoursText": "This customer belongs to another sales representative's territory.",
+      "tier": "Tier {tier} ({pct}% off list)",
+      "since": "Customer since {date}",
+      "createOrder": "Create order",
+      "repeatLast": "Repeat last order",
+      "logVisit": "Log visit",
+      "message": "Message",
+      "available": "{amount} available",
+      "lastOrder": "Last order",
+      "salesRep": "Sales rep",
+      "finance": "Invoices & payments",
+      "purchases": "Previous purchases",
+      "pricing": "Customer pricing",
+      "visits": "Visits",
+      "paidInvoices": "Paid invoices",
+      "frequent": "Frequently purchased",
+      "timesOrdered": {
+        "one": "Ordered once · {qty} {uom}",
+        "other": "Ordered {count}× · {qty} {uom}"
+      },
+      "lastOn": "last {date}",
+      "add": "Add",
+      "noPurchases": "No purchases yet",
+      "priceList": "Customer price list",
+      "priceListHint": "Tier {tier} · contract prices highlighted",
+      "customerPrice": "Customer price",
+      "contract": "Contract"
+    }
+  },
+  "offers": {
+    "activated": "Offer activated",
+    "deactivated": "Offer deactivated",
+    "percentOff": "{pct}% off",
+    "codeCopied": "Code copied",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "validity": "Valid",
+    "audience": "For",
+    "howItWorks": "How it works",
+    "appliedAutomatically": "Applied automatically in the cart",
+    "notForYou": "This offer isn't available for your account.",
+    "listPrice": "List price",
+    "yourPrice": "Your price",
+    "withOffer": "With offer",
+    "added": "{name} added to cart",
+    "audiences": {
+      "all": "All customers",
+      "tier_A": "Tier A customers",
+      "tier_B": "Tier B customers",
+      "tier_C": "Tier C customers"
+    }
+  },
+  "orders": {
+    "source": {
+      "portal": "via portal",
+      "sales_app": "via sales app",
+      "offline": "entered offline"
+    },
+    "detail": {
+      "cancelled": "Order cancelled",
+      "statusUpdated": "Status updated: {status}",
+      "placed": "placed {date} by {name} ({role})",
+      "repeat": "Repeat order",
+      "review": "Review approval",
+      "simulate": "Simulate ERP update",
+      "total": "Order total",
+      "expected": "Expected delivery",
+      "afterSync": "After sync",
+      "notInErp": "Not yet in the ERP",
+      "items": "Items",
+      "products": "Products",
+      "invoice": "Invoice",
+      "invoiceAtDispatch": "{erp} creates the invoice when the order is dispatched.",
+      "notes": "Order notes:",
+      "timeline": "Status timeline",
+      "cancelTitle": "Cancel {number}?",
+      "cancelText": "The order is withdrawn. This can't be undone.",
+      "cancelConfirm": "Cancel order"
+    }
+  },
+  "reps": {
+    "kpi": {
+      "month": "Sales this month",
+      "ofTarget": "{pct}% of {target} target",
+      "orders": "Orders this month",
+      "today": {
+        "one": "{count} today",
+        "other": "{count} today"
+      },
+      "customers": "Customers",
+      "overdue": "Customers' overdue"
+    },
+    "trend": "Sales against target",
+    "noCustomers": "No customers assigned",
+    "noOrders": "No orders yet",
+    "noFollowUps": "No follow-ups",
+    "overdueAmount": "{amount} overdue",
+    "followType": {
+      "call": "Call",
+      "visit": "Visit",
+      "payment": "Payment follow-up",
+      "quote": "Quote follow-up"
+    }
+  },
+  "suppliers": {
+    "title": "Suppliers",
+    "intro": "Suppliers from the ERP with what they supply and open purchasing.",
+    "terms": "Payment terms {terms}",
+    "kpi": {
+      "openPos": "Open purchase orders",
+      "openRequests": "Open purchase requests",
+      "received": "Received (all time)",
+      "onTime": "On-time deliveries"
+    },
+    "tabs": {
+      "products": "Products they supply",
+      "logins": "Portal logins"
+    },
+    "noLogins": "This supplier has no portal login yet.",
+    "col": {
+      "supplier": "Supplier",
+      "contact": "Contact",
+      "city": "City",
+      "products": "Products",
+      "openPos": "Open POs",
+      "terms": "Terms"
+    },
+    "productsCount": {
+      "one": "{count} product",
+      "other": "{count} products"
+    },
+    "empty": "No suppliers"
   }
 }

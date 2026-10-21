@@ -49,5 +49,6 @@ export const userService = {
       commit();
       return u;
     }, () => http.put(`/users/${id}/sites`, { allowedSites, defaultSite })),
+  get: (id: string) => source<User>(() => { const u = getDb().users.find((x) => x.id === id); if (!u) throw new Error('errors.notFound'); return u; }, () => http.get(`/users/${id}`)),
   getSalesReps: () => source<User[]>(() => getDb().users.filter((u) => u.role === 'SALES_REP'), () => http.get('/users', { role: 'SALES_REP' })),
 };

@@ -53,12 +53,14 @@ Defined in `lib/access/modules.ts` (`MODULES`, `DEFAULT_ROLE_MODULES`).
 | supplier_catalog | /supplier-catalog | | | | ✓ | | |
 | purchase_requests | /purchase-requests | | ✓ | | ✓ | | |
 | purchase_orders | /purchase-orders | | ✓ | | ✓ | | |
+| suppliers | /suppliers | | ✓ | | | | |
 | inventory | /inventory | | ✓ | ✓ | | | |
 | consignment | /consignment | | ✓ | ✓ | | ✓ | |
 | transfers | /transfers | | ✓ | ✓ | | | |
 | settings | /settings | locked | | | | | |
 
 - **always**: on for every role, can't be switched off.
+- **Shared detail pages**: a few detail pages can be opened from more than one module. Invoice and payment pages (`/invoices/{id}`, `/payments/{id}`) open for anyone with Invoices, Account, Customers or Collections; product stock pages and catalog product pages open from Inventory. Lists stay with their own module.
 - **locked**: ADMIN always keeps these, so nobody gets locked out.
 
 ## Rules beyond modules (backend must enforce)

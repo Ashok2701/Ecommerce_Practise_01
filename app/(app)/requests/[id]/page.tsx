@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { ProductRef, RefLink } from '@/features/detail/DetailBits';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -64,7 +65,7 @@ function Detail({ r }: { r: SalesRequest }) {
             <h1 className="font-mono text-xl font-semibold" data-testid="request-number">{r.number}</h1><StatusBadge status={r.status} />
             {r.site && <span className="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs text-muted-foreground"><MapPin className="h-3 w-3" aria-hidden="true" />{t('sites.label')} {r.site}</span>}
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">{r.customerName} · {t('requests.detail.createdBy', { name: r.createdBy.name })} · {fmtDateTime(r.date)} · {t(`requests.detail.source.${r.source}`)}</p>
+          <p className="mt-1 text-sm text-muted-foreground"><RefLink href={`/customers/${r.customerId}`}>{r.customerName}</RefLink> · {t('requests.detail.createdBy', { name: r.createdBy.name })} · {fmtDateTime(r.date)} · {t(`requests.detail.source.${r.source}`)}</p>
         </div>
         {canWithdraw && (
           <div className="flex gap-2">
@@ -84,7 +85,7 @@ function Detail({ r }: { r: SalesRequest }) {
         {r.expiresAt && ['submitted', 'changes_requested', 'approved'].includes(r.status) && <span className="rounded-md bg-muted px-2 py-1">{t('requests.detail.expires')}: {fmtDate(r.expiresAt)}</span>}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
+      <div className="grid gap-4 lg:grid-cols-[1fr_380px] [&>*]:min-w-0">
         <div className="space-y-4">
           <Card className="overflow-hidden">
             <h2 className="border-b px-4 py-3 text-sm font-semibold">{t('requests.detail.lines')}</h2>
@@ -96,7 +97,7 @@ function Detail({ r }: { r: SalesRequest }) {
                 </tr></thead>
                 <tbody className="divide-y">{r.lines.map((l) => (
                   <tr key={l.productId}>
-                    <td className="px-4 py-2.5"><div className="font-medium">{l.name}</div><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td>
+                    <td className="px-4 py-2.5"><ProductRef id={l.productId} name={l.name} /><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td>
                     <td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.quantity)} {l.uom}</td>
                     <td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.convertedQty)}</td>
                     <td className="px-3 py-2.5 text-end tabular">{fmtMoney(l.unitPrice, true)}</td>

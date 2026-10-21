@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { Building2, ShoppingCart, MapPin } from 'lucide-react';
 import { salesService } from '@/lib/services';
@@ -20,7 +21,7 @@ export default function SalesRepsPage() {
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" data-testid="reps-grid">
               {team.map((p) => (
                 <Card key={p.rep.id} className="p-4">
-                  <div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{initials(p.rep.name)}</span><div className="min-w-0"><div className="font-semibold">{p.rep.name}</div><div className="flex items-center gap-1 truncate text-xs text-muted-foreground"><MapPin className="h-3 w-3" />{p.rep.region}</div></div></div>
+                  <div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{initials(p.rep.name)}</span><div className="min-w-0"><Link href={`/sales-reps/${p.rep.id}`} className="font-semibold hover:text-primary" data-testid={`rep-link-${p.rep.id}`}>{p.rep.name}</Link><div className="flex items-center gap-1 truncate text-xs text-muted-foreground"><MapPin className="h-3 w-3" />{p.rep.region}</div></div></div>
                   <div className="mt-4 flex items-end justify-between"><div><div className="text-xs text-muted-foreground">This month</div><div className="text-lg font-semibold tabular">{fmtMoney(p.salesMonth)}</div></div><span className={cn('text-sm font-semibold', p.achievementPct >= 75 ? 'text-emerald-600' : p.achievementPct >= 40 ? 'text-amber-600' : 'text-rose-600')}>{p.achievementPct}%</span></div>
                   <Progress value={Math.min(100, p.achievementPct)} className="mt-2 h-1.5" aria-label={`${p.rep.name} target achievement`} />
                   <div className="mt-1 text-[11px] text-muted-foreground">Target {fmtCompactMoney(p.target)}</div>

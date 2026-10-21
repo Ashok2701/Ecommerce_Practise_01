@@ -34,13 +34,15 @@ export function EmptyState({ icon: Icon = Inbox, title, description, action }: {
 }
 
 export function ErrorState({ message, onRetry }: { message?: string; onRetry?: () => void }) {
-  const { t } = useT();
+  const { t, has } = useT();
+  // service errors are translation keys (errors.*); anything else falls back to the generic hint
+  const text = message && has(message) ? t(message) : t('common.errorHint');
   return (
     <div role="alert" className="flex flex-col items-center justify-center rounded-lg border border-destructive/30 bg-destructive/5 px-6 py-12 text-center">
       <AlertTriangle className="mb-3 h-6 w-6 text-destructive" />
       <h3 className="text-sm font-semibold">{t('common.error')}</h3>
-      <p className="mt-1 text-sm text-muted-foreground">{message ?? t('common.errorHint')}</p>
-      {onRetry && <Button variant="outline" size="sm" className="mt-4" onClick={onRetry}><RefreshCw className="mr-2 h-4 w-4" />{t('common.retry')}</Button>}
+      <p className="mt-1 text-sm text-muted-foreground">{text}</p>
+      {onRetry && <Button variant="outline" size="sm" className="mt-4" onClick={onRetry}><RefreshCw className="me-2 h-4 w-4" aria-hidden="true" />{t('common.retry')}</Button>}
     </div>
   );
 }
@@ -55,7 +57,11 @@ export function LoadingState({ variant = 'list', rows = 5 }: { variant?: 'list' 
 /** Renders loading / error / empty / data branches for a react-query result. */
 export function QueryView<T>({ query, children, loading, isEmpty, empty }: { query: UseQueryResult<T>; children: (data: T) => React.ReactNode; loading?: React.ReactNode; isEmpty?: (d: T) => boolean; empty?: React.ReactNode }) {
   if (query.isLoading) return <>{loading ?? <LoadingState />}</>;
-  if (query.isError) return <ErrorState message={(query.error as Error)?.message} onRetry={() => query.refetch()} />;
+  if (query.isError) {
+    const message = (query.error as Error)?.message;
+    // "not found" won't change on retry, so don't offer one
+    return <ErrorState message={message} onRetry={/notFound$/.test(message ?? '') ? undefined : () => query.refetch()} />;
+  }
   if (query.data === undefined) return null;
   if (isEmpty?.(query.data)) return <>{empty ?? <EmptyState />}</>;
   return <>{children(query.data)}</>;

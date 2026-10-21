@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { ProductRef, RefLink } from '@/features/detail/DetailBits';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -76,7 +77,7 @@ function Detail({ c }: { c: ConsignmentView }) {
     <div className="space-y-4 pb-24">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="flex flex-wrap items-center gap-2"><h1 className="text-xl font-semibold">{c.customerName}</h1><span className="font-mono text-xs text-muted-foreground">{c.number}</span></div>
+          <div className="flex flex-wrap items-center gap-2"><h1 className="text-xl font-semibold"><RefLink href={`/customers/${c.customerId}`} className="text-foreground">{c.customerName}</RefLink></h1><span className="font-mono text-xs text-muted-foreground">{c.number}</span></div>
           <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4" aria-hidden="true" />{t('consignment.heldAt', { site: c.site, location: c.location })}</p>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{canCallOff ? t('consignment.callOffIntro') : t('consignment.staffIntro')}</p>
         </div>
@@ -97,7 +98,7 @@ function Detail({ c }: { c: ConsignmentView }) {
             const n = qty[l.productId] ?? 0;
             return (
               <tr key={l.productId} className={l.low ? 'bg-amber-50/50 dark:bg-amber-500/5' : ''}>
-                <td className="px-4 py-2.5"><div className="font-medium">{l.name}</div>
+                <td className="px-4 py-2.5"><ProductRef id={l.productId} name={l.name} />
                   <div className="flex items-center gap-2 text-[11px] text-muted-foreground"><span className="font-mono">{l.sku}</span>{l.low && <span className="inline-flex items-center gap-1 font-medium text-amber-700 dark:text-amber-400"><AlertTriangle className="h-3 w-3" aria-hidden="true" />{t('consignment.belowMinShort')}</span>}</div></td>
                 <td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.quantity)} {l.uom}</td>
                 <td className="px-3 py-2.5 text-end tabular text-muted-foreground">{l.reserved ? fmtNumber(l.reserved) : '—'}</td>

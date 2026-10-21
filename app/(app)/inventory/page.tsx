@@ -1,18 +1,17 @@
 'use client';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle, ArrowLeftRight, Lock, PackageOpen, Search, Truck } from 'lucide-react';
 import { inventoryService, type StockFilter } from '@/lib/services';
 import { useSite } from '@/lib/sites/SiteProvider';
 import { useT } from '@/lib/i18n';
-import { fmtDate, fmtNumber } from '@/lib/format';
+import { fmtNumber } from '@/lib/format';
 import { PageHeader, QueryView, EmptyState, KpiCard, LoadingState } from '@/components/common';
-import { StatusBadge } from '@/components/common/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import type { StockPosition } from '@/types/domain';
 
@@ -26,7 +25,7 @@ export default function InventoryPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
   const [filter, setFilter] = useState<StockFilter>('all');
-  const [openId, setOpenId] = useState<string | null>(null);
+  const router = useRouter();
   const rows = all.data ?? [];
   const categories = useMemo(() => Array.from(new Set(rows.map((r) => r.product.category))).sort(), [rows]);
   const match = (r: StockPosition, f: StockFilter) => f === 'all' || (f === 'low' ? r.low : f === 'reserved' ? r.allocated + r.held > 0 : f === 'incoming' ? r.incoming > 0 : r.consignment > 0);
@@ -77,9 +76,9 @@ export default function InventoryPage() {
                   {(['onHand', 'allocated', 'held', 'available', 'incoming', 'consignment'] as const).map((k) => <th key={k} className="px-3 py-2.5 text-end font-medium">{t(`inventory.col.${k}`)}</th>)}
                 </tr></thead>
                 <tbody className="divide-y">{shown.map((r) => (
-                  <tr key={r.product.id} className="cursor-pointer hover:bg-muted/40" onClick={() => setOpenId(r.product.id)} data-testid={`inv-row-${r.product.id}`}>
+                  <tr key={r.product.id} className="cursor-pointer hover:bg-muted/40" onClick={() => router.push(`/inventory/${r.product.id}`)} data-testid={`inv-row-${r.product.id}`}>
                     <td className="px-4 py-2.5">
-                      <div className="font-medium">{r.product.name}</div>
+                      <Link href={`/inventory/${r.product.id}`} className="font-medium hover:text-primary" onClick={(e) => e.stopPropagation()}>{r.product.name}</Link>
                       <div className="flex items-center gap-2 text-[11px] text-muted-foreground"><span className="font-mono">{r.product.sku}</span>{r.low && <span className="inline-flex items-center gap-1 font-medium text-amber-700 dark:text-amber-400"><AlertTriangle className="h-3 w-3" aria-hidden="true" />{t('inventory.low')}</span>}</div>
                     </td>
                     <td className="px-3 py-2.5 text-end tabular">{fmtNumber(r.onHand)}</td>
@@ -96,68 +95,6 @@ export default function InventoryPage() {
         </QueryView>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">{t('inventory.legend')}</p>
-      <StockSheet productId={openId} onClose={() => setOpenId(null)} />
     </div>
   );
-}
-
-function StockSheet({ productId, onClose }: { productId: string | null; onClose: () => void }) {
-  const { t } = useT();
-  const { site } = useSite();
-  const q = useQuery({ queryKey: ['inventory-detail', productId, site], queryFn: () => inventoryService.detail(productId!), enabled: !!productId });
-  return (
-    <Sheet open={!!productId} onOpenChange={(v) => !v && onClose()}>
-      <SheetContent className="w-full overflow-y-auto sm:max-w-md" data-testid="inv-sheet">
-        {q.data ? (() => {
-          const { position: p, detail: d } = q.data;
-          return (
-            <>
-              <SheetHeader className="text-start"><SheetTitle>{p.product.name}</SheetTitle><SheetDescription className="font-mono text-xs">{p.product.sku} · {t('sites.label')} {site}</SheetDescription></SheetHeader>
-              <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
-                {([['onHand', p.onHand], ['available', p.available], ['incoming', p.incoming]] as const).map(([k, v]) => (
-                  <div key={k} className="rounded-md border p-2"><dt className="text-[11px] text-muted-foreground">{t(`inventory.col.${k}`)}</dt><dd className="text-lg font-semibold tabular">{fmtNumber(v)}</dd></div>
-                ))}
-              </dl>
-              <Block title={t('inventory.detail.allocated')} empty={!d.allocated.length}>
-                {d.allocated.map((a) => <Row key={a.orderId} href={`/orders/${a.orderId}`} left={a.number} sub={a.customerName} right={fmtNumber(a.quantity)} badge={<StatusBadge status={a.status} />} />)}
-              </Block>
-              <Block title={t('inventory.detail.held')} empty={!d.held.length}>
-                {d.held.map((h) => <Row key={h.requestId} href={`/requests/${h.requestId}`} left={h.number} sub={`${h.customerName} · ${t('inventory.detail.until', { date: fmtDate(h.until) })}`} right={fmtNumber(h.quantity)} />)}
-              </Block>
-              <Block title={t('inventory.detail.incoming')} empty={!d.incoming.length}>
-                {d.incoming.map((i) => <Row key={i.id} href={i.kind === 'po' ? `/purchase-orders/${i.id}` : `/transfers/${i.id}`} left={i.number} sub={`${i.kind === 'po' ? i.from : t('inventory.detail.fromSite', { site: i.from })}${i.expected ? ` · ${fmtDate(i.expected)}` : ''}`} right={fmtNumber(i.quantity)} badge={<StatusBadge status={i.status} />} />)}
-              </Block>
-              <Block title={t('inventory.detail.consignment')} empty={!d.consignment.length}>
-                {d.consignment.map((c) => <Row key={c.id} href={`/consignment/${c.id}`} left={c.customerName} sub={`${c.number} · ${c.location}`} right={fmtNumber(c.quantity)} />)}
-              </Block>
-              <Block title={t('inventory.detail.otherSites')} empty={!d.otherSites.length}>
-                {d.otherSites.map((o) => <Row key={o.site} left={o.site} right={fmtNumber(o.available)} />)}
-              </Block>
-              <Button asChild className="mt-5 w-full" data-testid="inv-transfer"><Link href={`/transfers/new?product=${p.product.id}`}><ArrowLeftRight className="me-2 h-4 w-4" aria-hidden="true" />{t('inventory.detail.requestTransfer')}</Link></Button>
-            </>
-          );
-        })() : <LoadingState variant="detail" />}
-      </SheetContent>
-    </Sheet>
-  );
-}
-
-function Block({ title, empty, children }: { title: string; empty: boolean; children: React.ReactNode }) {
-  const { t } = useT();
-  return (
-    <section className="mt-5">
-      <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</h3>
-      {empty ? <p className="text-sm text-muted-foreground">{t('inventory.detail.none')}</p> : <ul className="divide-y rounded-md border">{children}</ul>}
-    </section>
-  );
-}
-
-function Row({ left, sub, right, href, badge }: { left: string; sub?: string; right: string; href?: string; badge?: React.ReactNode }) {
-  const body = (
-    <div className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
-      <div className="min-w-0"><div className="truncate font-medium">{left}</div>{sub && <div className="truncate text-xs text-muted-foreground">{sub}</div>}</div>
-      <div className="flex shrink-0 items-center gap-2">{badge}<span className="font-semibold tabular">{right}</span></div>
-    </div>
-  );
-  return <li>{href ? <Link href={href} className="block hover:bg-muted/40">{body}</Link> : body}</li>;
 }

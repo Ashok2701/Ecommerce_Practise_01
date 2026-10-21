@@ -2,7 +2,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { accessService } from '@/lib/services/accessService';
-import { BOTTOM_PREFERENCE, GROUP_ORDER, MODULES, moduleForPath, normaliseModules, type ModuleDef, type ModuleId } from '@/lib/access/modules';
+import { BOTTOM_PREFERENCE, GROUP_ORDER, MODULES, modulesForPath, normaliseModules, type ModuleDef, type ModuleId } from '@/lib/access/modules';
 import type { Role } from '@/types/domain';
 
 export interface NavItem { id: ModuleId; href: string; label: string; icon: ModuleDef['icon']; badge?: ModuleDef['badge']; }
@@ -26,7 +26,7 @@ export function useAccess(role: Role) {
   return useMemo(() => {
     const allowed = new Set<ModuleId>(normaliseModules(role, q.data?.[role]));
     const can = (id: ModuleId) => allowed.has(id);
-    const canPath = (path: string) => { const m = moduleForPath(path); return m ? allowed.has(m.id) : false; };
+    const canPath = (path: string) => modulesForPath(path).some((id) => allowed.has(id));
     const nav: NavGroup[] = GROUP_ORDER.map((g) => ({
       label: `nav.groups.${g}`,
       items: MODULES.filter((m) => m.group === g && m.inNav !== false && allowed.has(m.id)).map((m) => toItem(m, role)),

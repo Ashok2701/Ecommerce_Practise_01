@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Users, Building2, ClipboardCheck, Package, ShoppingCart, FileText, Wallet, Megaphone, BadgePercent, MessageSquare,
-  Bell, Sparkles, UserSquare2, CalendarCheck, TrendingUp, Settings, PlusCircle, Boxes, Zap, KeyRound, ClipboardList, Workflow, Truck, PackageSearch, FileInput, Warehouse, ArrowLeftRight, PackageOpen, FileSignature, PackageCheck, HandCoins, type LucideIcon,
+  Bell, Sparkles, UserSquare2, CalendarCheck, TrendingUp, Settings, PlusCircle, Boxes, Zap, KeyRound, ClipboardList, Workflow, Truck, PackageSearch, FileInput, Warehouse, ArrowLeftRight, PackageOpen, FileSignature, PackageCheck, HandCoins, Factory, type LucideIcon,
 } from 'lucide-react';
 import type { Role } from '@/types/domain';
 
@@ -17,7 +17,7 @@ import type { Role } from '@/types/domain';
 export type ModuleId =
   | 'dashboard' | 'catalog' | 'quick_order' | 'cart' | 'requests' | 'orders' | 'new_order' | 'invoices' | 'account' | 'offers'
   | 'supplier_catalog' | 'purchase_requests' | 'purchase_orders'
-  | 'inventory' | 'consignment' | 'transfers'
+  | 'inventory' | 'consignment' | 'transfers' | 'suppliers'
   | 'quotes' | 'deliveries' | 'collections'
   | 'customers' | 'approvals' | 'team' | 'follow_ups' | 'performance'
   | 'announcements' | 'messages' | 'assistant' | 'notifications'
@@ -33,6 +33,11 @@ export interface ModuleDef {
   group: ModuleGroup;
   /** Routes this module owns. The longest matching prefix wins. */
   routes: string[];
+  /**
+   * Detail pages owned by another module that this module may also open
+   * (for example collections staff opening an invoice). Not shown in the menu.
+   */
+  shared?: string[];
   /** Shown in the menu (notifications live in the header bell instead). */
   inNav?: boolean;
   badge?: 'cart' | 'messages' | 'approvals';
@@ -42,8 +47,8 @@ export interface ModuleDef {
 export const MODULES: ModuleDef[] = [
   { id: 'dashboard', label: 'nav.dashboard', icon: LayoutDashboard, group: 'overview', routes: ['/dashboard'] },
   { id: 'approvals', label: 'nav.approvals', icon: ClipboardCheck, group: 'overview', routes: ['/approvals'], badge: 'approvals' },
-  { id: 'customers', label: 'nav.customers', icon: Building2, group: 'operations', routes: ['/customers'] },
-  { id: 'collections', label: 'nav.collections', icon: HandCoins, group: 'operations', routes: ['/collections'] },
+  { id: 'customers', label: 'nav.customers', icon: Building2, group: 'operations', routes: ['/customers'], shared: ['/invoices/', '/payments'] },
+  { id: 'collections', label: 'nav.collections', icon: HandCoins, group: 'operations', routes: ['/collections'], shared: ['/invoices/', '/payments'] },
   { id: 'follow_ups', label: 'nav.followUps', icon: CalendarCheck, group: 'operations', routes: ['/follow-ups'] },
   { id: 'performance', label: 'nav.performance', icon: TrendingUp, group: 'operations', routes: ['/performance'] },
   { id: 'team', label: 'nav.salesReps', icon: UserSquare2, group: 'operations', routes: ['/sales-reps'] },
@@ -55,12 +60,13 @@ export const MODULES: ModuleDef[] = [
   { id: 'requests', label: 'nav.requests', icon: ClipboardList, group: 'commerce', routes: ['/requests'] },
   { id: 'orders', label: 'nav.orders', icon: Package, group: 'commerce', routes: ['/orders'] },
   { id: 'deliveries', label: 'nav.deliveries', icon: PackageCheck, group: 'commerce', routes: ['/deliveries'] },
-  { id: 'invoices', label: 'nav.invoices', icon: FileText, group: 'commerce', routes: ['/invoices'] },
-  { id: 'account', label: 'nav.account', icon: Wallet, group: 'commerce', routes: ['/account'] },
+  { id: 'invoices', label: 'nav.invoices', icon: FileText, group: 'commerce', routes: ['/invoices'], shared: ['/payments'] },
+  { id: 'account', label: 'nav.account', icon: Wallet, group: 'commerce', routes: ['/account'], shared: ['/invoices/', '/payments'] },
   { id: 'supplier_catalog', label: 'nav.supplierCatalog', icon: PackageSearch, group: 'purchasing', routes: ['/supplier-catalog'] },
   { id: 'purchase_requests', label: 'nav.purchaseRequests', icon: FileInput, group: 'purchasing', routes: ['/purchase-requests'] },
   { id: 'purchase_orders', label: 'nav.purchaseOrders', icon: Truck, group: 'purchasing', routes: ['/purchase-orders'] },
-  { id: 'inventory', label: 'nav.inventory', icon: Warehouse, group: 'inventory', routes: ['/inventory'] },
+  { id: 'suppliers', label: 'nav.suppliers', icon: Factory, group: 'purchasing', routes: ['/suppliers'] },
+  { id: 'inventory', label: 'nav.inventory', icon: Warehouse, group: 'inventory', routes: ['/inventory'], shared: ['/catalog/'] },
   { id: 'consignment', label: 'nav.consignment', icon: PackageOpen, group: 'inventory', routes: ['/consignment'] },
   { id: 'transfers', label: 'nav.transfers', icon: ArrowLeftRight, group: 'inventory', routes: ['/transfers'] },
   { id: 'offers', label: 'nav.offers', icon: BadgePercent, group: 'engage', routes: ['/offers'] },
@@ -86,7 +92,7 @@ export const isLocked = (role: Role, id: ModuleId) => ALWAYS_ON.includes(id) || 
 export const DEFAULT_ROLE_MODULES: Record<Role, ModuleId[]> = {
   // Admin runs the portal; business modules are not granted automatically.
   ADMIN: ['dashboard', 'users', 'access', 'workflow', 'settings', 'customers', 'announcements', 'messages', 'assistant', 'notifications'],
-  SUPERVISOR: ['dashboard', 'approvals', 'quotes', 'requests', 'orders', 'deliveries', 'collections', 'workflow', 'purchase_requests', 'purchase_orders', 'inventory', 'consignment', 'transfers', 'customers', 'team', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
+  SUPERVISOR: ['dashboard', 'approvals', 'quotes', 'requests', 'orders', 'deliveries', 'collections', 'workflow', 'purchase_requests', 'purchase_orders', 'suppliers', 'inventory', 'consignment', 'transfers', 'customers', 'team', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
   SALES_REP: ['dashboard', 'customers', 'collections', 'follow_ups', 'performance', 'new_order', 'catalog', 'quick_order', 'cart', 'quotes', 'requests', 'orders', 'deliveries', 'inventory', 'consignment', 'transfers', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
   SUPPLIER: ['dashboard', 'supplier_catalog', 'purchase_requests', 'purchase_orders', 'announcements', 'messages', 'assistant', 'notifications'],
   CUSTOMER_B2B: ['dashboard', 'catalog', 'quick_order', 'cart', 'quotes', 'requests', 'orders', 'consignment', 'invoices', 'account', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
@@ -109,6 +115,14 @@ export function normaliseModules(role: Role, ids: string[] | undefined): ModuleI
   const set = new Set((ids ?? DEFAULT_ROLE_MODULES[role]).filter((id): id is ModuleId => known.has(id as ModuleId)));
   MODULES.forEach((m) => { if (isLocked(role, m.id)) set.add(m.id); });
   return MODULES.map((m) => m.id).filter((id) => set.has(id));
+}
+
+const under = (path: string, r: string) => (r.endsWith('/') ? path.startsWith(r) : path === r || path.startsWith(r + '/'));
+
+/** Modules that may open a path: the owner plus any module sharing it. */
+export function modulesForPath(path: string): ModuleId[] {
+  const owner = moduleForPath(path);
+  return [...(owner ? [owner.id] : []), ...MODULES.filter((m) => m.shared?.some((r) => under(path, r))).map((m) => m.id)];
 }
 
 /** Which module owns a path (longest route prefix wins), or undefined. */

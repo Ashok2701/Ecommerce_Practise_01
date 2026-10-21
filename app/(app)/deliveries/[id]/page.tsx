@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { ProductRef, RefLink } from '@/features/detail/DetailBits';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -56,7 +57,7 @@ function Detail({ d }: { d: Delivery }) {
     <div className="space-y-4">
       <div>
         <div className="flex flex-wrap items-center gap-2"><h1 className="font-mono text-xl font-semibold" data-testid="del-number">{d.number}</h1><StatusBadge status={d.status} /><Link href={`/orders/${d.orderId}`} className="rounded-md border px-2 py-0.5 font-mono text-xs text-primary hover:underline">{d.orderNumber}</Link></div>
-        <p className="mt-1 text-sm text-muted-foreground">{d.customerName} · {t('deliveries.plannedFor', { date: fmtDate(d.plannedDate) })} · {d.carrier}{d.trackingRef ? ` · ${d.trackingRef}` : ''}</p>
+        <p className="mt-1 text-sm text-muted-foreground"><RefLink href={`/customers/${d.customerId}`}>{d.customerName}</RefLink> · {t('deliveries.plannedFor', { date: fmtDate(d.plannedDate) })} · {d.carrier}{d.trackingRef ? ` · ${d.trackingRef}` : ''}</p>
       </div>
       <Card className="p-4">
         <ol className="grid grid-cols-3 gap-1" data-testid="del-stepper">
@@ -70,13 +71,13 @@ function Detail({ d }: { d: Delivery }) {
         {d.failReason && <p className="mt-3 text-center text-sm text-destructive">{d.failReason}</p>}
       </Card>
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
+      <div className="grid gap-4 lg:grid-cols-[1fr_340px] [&>*]:min-w-0">
         <div className="space-y-4">
           <Card className="overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-muted/40 text-xs text-muted-foreground"><tr><th className="px-4 py-2 text-start font-medium">{t('inventory.col.product')}</th><th className="px-3 py-2 text-end font-medium">{t('deliveries.col.shipped')}</th><th className="px-3 py-2 text-end font-medium">{t('deliveries.pod.received')}</th><th className="px-4 py-2 text-end font-medium">{t('deliveries.pod.damaged')}</th></tr></thead>
               <tbody className="divide-y">{d.lines.map((l) => (
-                <tr key={l.productId}><td className="px-4 py-2.5"><div className="font-medium">{l.name}</div><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td>
+                <tr key={l.productId}><td className="px-4 py-2.5"><ProductRef id={l.productId} name={l.name} /><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td>
                   <td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.quantity)} {l.uom}</td>
                   <td className={cn('px-3 py-2.5 text-end tabular', l.receivedQty !== undefined && l.receivedQty < l.quantity && 'font-semibold text-destructive')}>{l.receivedQty !== undefined ? fmtNumber(l.receivedQty) : '—'}</td>
                   <td className={cn('px-4 py-2.5 text-end tabular', (l.damagedQty ?? 0) > 0 && 'font-semibold text-destructive')}>{l.damagedQty ? fmtNumber(l.damagedQty) : '—'}</td></tr>

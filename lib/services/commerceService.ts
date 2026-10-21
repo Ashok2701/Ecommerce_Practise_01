@@ -322,6 +322,16 @@ export const paymentService = {
     source<Payment[]>(() => getDb().payments.filter((p) => (!q.customerId || p.customerId === q.customerId) && (!q.status || q.status === 'all' || (p.status ?? 'posted') === q.status))
       .sort((a, b) => b.date.localeCompare(a.date)), () => http.get('/payments', q)),
 
+  /** Receipt with the invoices it was allocated to. Backend: GET /payments/{id} */
+  get: (id: string) =>
+    source<{ payment: Payment; invoices: Invoice[] }>(() => {
+      const db = getDb();
+      const payment = db.payments.find((p) => p.id === id);
+      if (!payment) throw new Error('errors.payments.notFound');
+      const nums = payment.allocations?.map((a) => a.invoiceNumber) ?? payment.invoiceNumbers;
+      return { payment: { ...payment, customerName: payment.customerName ?? db.customers.find((c) => c.id === payment.customerId)?.name }, invoices: db.invoices.filter((i) => nums.includes(i.number)) };
+    }, () => http.get(`/payments/${id}`)),
+
   /**
    * Online payment. In production the portal creates a payment session with
    * the provider configured for the client (Razorpay, Stripe, …) and the

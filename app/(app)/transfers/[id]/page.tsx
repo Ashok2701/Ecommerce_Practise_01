@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { ProductRef, RefLink } from '@/features/detail/DetailBits';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -99,13 +100,13 @@ function Detail({ x }: { x: StockTransfer }) {
       </div>
       <Card className="p-4"><Stepper status={x.status} />{hint[x.status] && <p className="mt-3 text-center text-xs text-muted-foreground">{t(`transfers.hint.${hint[x.status]}`, { from: x.fromSite, to: x.toSite })}</p>}</Card>
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
+      <div className="grid gap-4 lg:grid-cols-[1fr_340px] [&>*]:min-w-0">
         <div className="space-y-4">
           <Card className="overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-muted/40 text-xs text-muted-foreground"><tr><th className="px-4 py-2 text-start font-medium">{t('requests.detail.lines')}</th><th className="px-3 py-2 text-end font-medium">{t('transfers.requested')}</th><th className="px-4 py-2 text-end font-medium">{t('transfers.received')}</th></tr></thead>
               <tbody className="divide-y">{x.lines.map((l) => (
-                <tr key={l.productId}><td className="px-4 py-2.5"><div className="font-medium">{l.name}</div><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td>
+                <tr key={l.productId}><td className="px-4 py-2.5"><ProductRef id={l.productId} name={l.name} /><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td>
                   <td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.quantity)} {l.uom}</td>
                   <td className={cn('px-4 py-2.5 text-end tabular', ['transferred', 'completed'].includes(x.status) && l.receivedQty < l.quantity && 'font-semibold text-destructive')} data-testid={`tr-recv-${l.productId}`}>{['transferred', 'completed'].includes(x.status) ? fmtNumber(l.receivedQty) : '—'}</td></tr>
               ))}</tbody>

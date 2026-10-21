@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -100,7 +101,7 @@ function Collections() {
               <table className="w-full min-w-[720px] text-sm"><thead className="bg-muted/40 text-xs text-muted-foreground"><tr>
                 <th className="px-4 py-2.5 text-start font-medium">{t('payments.receipt')}</th><th className="px-3 py-2.5 text-start font-medium">{t('quotes.col.customer')}</th><th className="px-3 py-2.5 text-start font-medium">{t('payments.method')}</th><th className="px-3 py-2.5 text-start font-medium">{t('payments.source')}</th><th className="px-3 py-2.5 text-start font-medium">{t('common.status')}</th><th className="px-4 py-2.5 text-end font-medium">{t('payments.amount')}</th></tr></thead>
                 <tbody className="divide-y">{list.filter((p) => manager || mineIds.has(p.customerId)).slice(0, 40).map((p) => (
-                  <tr key={p.id}><td className="px-4 py-2.5"><div className="font-mono text-xs font-semibold">{p.number ?? p.reference}</div><div className="text-xs text-muted-foreground">{fmtDate(p.date)}</div></td><td className="px-3 py-2.5">{p.customerName ?? p.customerId}</td>
+                  <tr key={p.id}><td className="px-4 py-2.5"><Link href={`/payments/${p.id}`} className="font-mono text-xs font-semibold text-primary hover:underline" data-testid={`col-pay-${p.id}`}>{p.number ?? p.reference}</Link><div className="text-xs text-muted-foreground">{fmtDate(p.date)}</div></td><td className="px-3 py-2.5"><Link href={`/customers/${p.customerId}?tab=finance`} className="hover:text-primary">{p.customerName ?? p.customerId}</Link></td>
                     <td className="px-3 py-2.5">{t(`payments.methods.${p.method}`)} <span className="font-mono text-xs text-muted-foreground">{p.reference}</span></td><td className="px-3 py-2.5 text-xs text-muted-foreground">{t(`payments.sources.${p.source ?? 'erp'}`)}</td><td className="px-3 py-2.5"><StatusBadge status={p.status ?? 'posted'} /></td><td className="px-4 py-2.5 text-end font-medium tabular">{fmtMoney(p.amount)}</td></tr>
                 ))}</tbody></table>
             </Card>
@@ -125,7 +126,7 @@ function VerifyRow({ p, canVerify }: { p: Payment; canVerify: boolean }) {
   return (
     <Card className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between" data-testid={`verify-${p.number}`}>
       <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-2"><span className="font-mono text-sm font-semibold">{p.number}</span><StatusBadge status="pending_verification" /><span className="text-xs text-muted-foreground">{t(`payments.sources.${p.source ?? 'advice'}`)}</span></div>
+        <div className="flex flex-wrap items-center gap-2"><Link href={`/payments/${p.id}`} className="font-mono text-sm font-semibold text-primary hover:underline">{p.number}</Link><StatusBadge status="pending_verification" /><span className="text-xs text-muted-foreground">{t(`payments.sources.${p.source ?? 'advice'}`)}</span></div>
         <div className="mt-1 text-sm"><span className="font-medium">{p.customerName}</span> · {t(`payments.methods.${p.method}`)} <span className="font-mono text-xs">{p.reference}</span> · {fmtDate(p.date)}</div>
         <div className="text-xs text-muted-foreground">{p.invoiceNumbers.length ? p.invoiceNumbers.join(', ') : t('payments.onAccount')} · {t('payments.enteredBy', { name: p.enteredBy?.name ?? '' })}{p.note ? ` · ${p.note}` : ''}</div>
       </div>
@@ -168,7 +169,7 @@ function CustomerPanel({ customerId, row, onClose }: { customerId: string | null
   return (
     <Sheet open={!!customerId} onOpenChange={(v) => !v && onClose()}>
       <SheetContent className="w-full overflow-y-auto sm:max-w-lg" data-testid="col-panel">
-        <SheetHeader className="text-start"><SheetTitle>{row?.customerName ?? ''}</SheetTitle><SheetDescription>{row ? t('collections.panelSummary', { total: fmtMoney(row.total), overdue: fmtMoney(row.overdue) }) : ''}</SheetDescription></SheetHeader>
+        <SheetHeader className="text-start"><SheetTitle><Link href={`/customers/${customerId}?tab=finance`} className="hover:text-primary" data-testid="col-panel-customer">{row?.customerName ?? ''}</Link></SheetTitle><SheetDescription>{row ? t('collections.panelSummary', { total: fmtMoney(row.total), overdue: fmtMoney(row.overdue) }) : ''}</SheetDescription></SheetHeader>
         <div className="mt-4 grid grid-cols-3 gap-2">
           <Button size="sm" onClick={() => setRecordOpen(true)} data-testid="col-record"><HandCoins className="me-1.5 h-4 w-4" aria-hidden="true" />{t('collections.record')}</Button>
           <Button size="sm" variant="outline" onClick={() => setMode('promise')} data-testid="col-promise"><CalendarCheck className="me-1.5 h-4 w-4" aria-hidden="true" />{t('collections.promise')}</Button>
@@ -188,7 +189,7 @@ function CustomerPanel({ customerId, row, onClose }: { customerId: string | null
           <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('collections.openInvoices')}</h3>
           {open.length ? <ul className="divide-y rounded-md border">{open.map((i) => {
             const days = Math.floor((Date.now() - new Date(i.dueDate).getTime()) / 86400000);
-            return <li key={i.id} className="flex items-center justify-between gap-2 px-3 py-2 text-sm"><div><div className="font-mono text-xs font-semibold">{i.number}</div><div className={cn('text-xs', days > 0 ? 'text-rose-600' : 'text-muted-foreground')}>{days > 0 ? t('collections.daysOverdue', { count: days }) : t('invoices.due', { date: fmtDate(i.dueDate) })}</div></div><span className="font-semibold tabular">{fmtMoney(i.amount - i.paid)}</span></li>;
+            return <li key={i.id} className="flex items-center justify-between gap-2 px-3 py-2 text-sm"><div><Link href={`/invoices/${i.id}`} className="font-mono text-xs font-semibold text-primary hover:underline" data-testid={`col-inv-${i.number}`}>{i.number}</Link><div className={cn('text-xs', days > 0 ? 'text-rose-600' : 'text-muted-foreground')}>{days > 0 ? t('collections.daysOverdue', { count: days }) : t('invoices.due', { date: fmtDate(i.dueDate) })}</div></div><span className="font-semibold tabular">{fmtMoney(i.amount - i.paid)}</span></li>;
           })}</ul> : <p className="text-sm text-muted-foreground">{t('account.noDues')}</p>}
         </section>
         <section className="mt-5">

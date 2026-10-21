@@ -283,6 +283,23 @@ Online payments are confirmed by the payment provider (configured per client: Ra
 
 Errors: `errors.quotes.*`, `errors.deliveries.*`, `errors.payments.*` (see the translation files for the full list).
 
+## Detail pages
+
+Every document and master record has its own page. These endpoints back them; all apply the same data scope as the lists (customers see only their own records, reps only their customers', suppliers only their own purchasing).
+
+| Method | Path | Returns |
+| --- | --- | --- |
+| GET | `/invoices/{id}` | `{invoice, order, delivery?, customer, payments[{payment, amount}], pending[], daysOverdue}`: lines and totals from the order, payments allocated to this invoice, advices waiting for verification |
+| GET | `/payments/{id}` | `{payment, invoices[]}`: method, reference, source, who entered and verified it, allocations |
+| GET | `/suppliers/{id}/summary` | `{supplier, openPos, openPoValue, openRequests, receivedValue, onTimePct?, users[]}` for the current site |
+| GET | `/inventory/{productId}/movements` | Recent stock journal at the site: `{at, kind: receipt\|transfer_in\|transfer_out\|sale\|consignment_in\|consignment_out, quantity, ref, href, party}` |
+| GET | `/sales-reps/{id}/performance` | Target, month sales, orders, customers, 6-month trend (existing) |
+| GET | `/users/{id}` | `User` (admin only) |
+| GET | `/offers/{id}` | `Offer` |
+| GET | `/announcements/{id}` | `Announcement` (published and addressed to the viewer, or any for managers) |
+
+Unknown or out-of-scope ids return 404 with `errors.notFound` (or the module's own `notFound` code); the page shows "doesn't exist or you can't see it" for both, so nothing leaks.
+
 ## Not yet in the contract
 
 The offer engine (percent, BOGO and slab offers) is added with phase 2D of the frontend.

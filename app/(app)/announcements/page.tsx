@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pin, Pencil, Trash2, Megaphone, Eye, EyeOff, CalendarClock } from 'lucide-react';
@@ -84,8 +85,8 @@ export default function AnnouncementsPage() {
                       <span className="text-muted-foreground">{a.status === 'scheduled' ? <span className="flex items-center gap-1"><CalendarClock className="h-3 w-3" />Scheduled for {fmtDate(a.publishAt)}</span> : fmtDate(a.publishAt)} · {a.createdBy}</span>
                       {manage && <StatusBadge status={a.status} />}
                     </div>
-                    <h2 className="mt-2 font-semibold">{a.title}</h2>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{a.body}</p>
+                    <h2 className="mt-2 font-semibold"><Link href={`/announcements/${a.id}`} className="hover:text-primary" data-testid={`ann-link-${a.id}`}>{a.title}</Link></h2>
+                    <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{a.body}</p>
                     {manage && <p className="mt-2 text-xs text-muted-foreground">Audience: {a.audience.includes('all') ? 'Everyone' : a.audience.join(', ')}</p>}
                   </div>
                   {manage && <div className="flex shrink-0 gap-1">

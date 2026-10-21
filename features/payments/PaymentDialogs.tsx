@@ -92,13 +92,13 @@ export function PayOnlineDialog({ open, onOpenChange, customerId, invoices, pres
 }
 
 /** Tell us about a bank transfer or cheque (customer), or record a collection (rep). Finance verifies it. */
-export function RecordPaymentDialog({ open, onOpenChange, customerId, invoices, staff }: { open: boolean; onOpenChange: (v: boolean) => void; customerId: string; invoices: Invoice[]; staff: boolean }) {
+export function RecordPaymentDialog({ open, onOpenChange, customerId, invoices, staff, preselect }: { open: boolean; onOpenChange: (v: boolean) => void; customerId: string; invoices: Invoice[]; staff: boolean; preselect?: string[] }) {
   const { t } = useT();
   const errorText = useErrorText();
   const user = useUser();
   const qc = useQueryClient();
   const open_ = useMemo(() => invoices.filter((i) => i.status !== 'paid').sort((a, b) => a.dueDate.localeCompare(b.dueDate)), [invoices]);
-  const [sel, setSel] = useState<string[]>([]);
+  const [sel, setSel] = useState<string[]>(preselect ?? []);
   const suggested = open_.filter((i) => sel.includes(i.id)).reduce((s, i) => s + bal(i), 0);
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState<PaymentMethod>(staff ? 'Cheque' : 'NEFT');
@@ -108,7 +108,7 @@ export function RecordPaymentDialog({ open, onOpenChange, customerId, invoices, 
   const value = amount === '' ? suggested : Number(amount) || 0;
   const save = useMutation({
     mutationFn: () => paymentService.record({ customerId, invoiceIds: sel, amount: value, method, reference, date: new Date(date).toISOString(), note, actor: { id: user.id, name: user.name, role: user.role } }),
-    onSuccess: (p) => { qc.invalidateQueries(); onOpenChange(false); setSel([]); setAmount(''); setReference(''); setNote(''); toast.success(t('payments.msg.recorded', { number: p.number ?? '' })); },
+    onSuccess: (p) => { qc.invalidateQueries(); onOpenChange(false); setSel(preselect ?? []); setAmount(''); setReference(''); setNote(''); toast.success(t('payments.msg.recorded', { number: p.number ?? '' })); },
     onError: (e) => toast.error(errorText(e)),
   });
   const methods: PaymentMethod[] = staff ? ['Cheque', 'NEFT', 'RTGS', 'UPI', 'Cash'] : ['NEFT', 'RTGS', 'Cheque', 'UPI'];

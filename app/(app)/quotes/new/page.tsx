@@ -1,7 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ChevronLeft, Search } from 'lucide-react';
 import { toast } from 'sonner';
@@ -18,13 +18,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { isCustomerRole } from '@/types/domain';
 
 /** Customer: ask for prices. Staff: start a quote for a customer and price it next. */
-export default function NewQuotePage() {
+function NewQuote() {
   const { t } = useT();
   const errorText = useErrorText();
   const user = useUser();
   const router = useRouter();
   const customer = isCustomerRole(user.role);
-  const [customerId, setCustomerId] = useState(customer ? user.customerId ?? '' : '');
+  const pre = useSearchParams().get('customer');
+  const [customerId, setCustomerId] = useState(customer ? user.customerId ?? '' : pre ?? '');
   const custs = useQuery({ queryKey: ['customers', 'quote', user.id], queryFn: () => customerService.getCustomers(user.role === 'SALES_REP' ? { salesRepId: user.id } : {}), enabled: !customer });
   const products = useQuery({ queryKey: ['products', 'all'], queryFn: productService.getAll });
   const [qty, setQty] = useState<Record<string, number>>({});
@@ -88,3 +89,5 @@ export default function NewQuotePage() {
     </div>
   );
 }
+
+export default function NewQuotePage() { return <Suspense><NewQuote /></Suspense>; }

@@ -20,17 +20,19 @@ export const announcementService = {
     }, () => (a.id ? http.patch(`/announcements/${a.id}`, a) : http.post('/announcements', a))),
   setStatus: (id: string, status: Announcement['status']) =>
     source(() => { const a = getDb().announcements.find((x) => x.id === id)!; a.status = status; if (status === 'published') { a.publishAt = new Date().toISOString(); notifyAnnouncement(a); } commit(); return a; }, () => http.patch(`/announcements/${id}`, { status })),
+  get: (id: string) => source<Announcement>(() => { const a = getDb().announcements.find((x) => x.id === id); if (!a) throw new Error('errors.notFound'); return a; }, () => http.get(`/announcements/${id}`)),
   remove: (id: string) => source(() => { const db = getDb(); db.announcements = db.announcements.filter((a) => a.id !== id); commit(); return true; }, () => http.del(`/announcements/${id}`)),
 };
 
 function notifyAnnouncement(a: Announcement) {
   const roles: Role[] = a.audience.includes('all') ? ['CUSTOMER_B2B', 'CUSTOMER_B2C', 'SALES_REP', 'SUPERVISOR', 'SUPPLIER'] : (a.audience as Role[]);
-  pushNotification({ roles }, 'announcement', a.title, a.body.slice(0, 90), '/announcements');
+  pushNotification({ roles }, 'announcement', a.title, a.body.slice(0, 90), `/announcements/${a.id}`);
 }
 
 export const offerService = {
   list: (opts: { manage?: boolean; tier?: 'A' | 'B' | 'C' } = {}) =>
     source<Offer[]>(() => getDb().offers.filter((o) => opts.manage || (o.status === 'active' && (o.audience === 'all' || o.audience === `tier_${opts.tier}`))), () => http.get('/offers', opts)),
+  get: (id: string) => source<Offer>(() => { const o = getDb().offers.find((x) => x.id === id); if (!o) throw new Error('errors.notFound'); return o; }, () => http.get(`/offers/${id}`)),
   activeOffers: () => getDb().offers.filter((o) => o.status === 'active'),
   save: (o: Partial<Offer> & { title: string }) =>
     source<Offer>(() => {
@@ -41,7 +43,7 @@ export const offerService = {
         item = { id: uid('off'), code: o.title.toUpperCase().replace(/[^A-Z0-9]+/g, '-').slice(0, 12), description: '', productIds: [], discountPct: 5, validFrom: new Date().toISOString(), validTo: new Date(Date.now() + 14 * 86400000).toISOString(), status: 'draft', audience: 'all', ...o } as Offer;
         db.offers.unshift(item);
       }
-      if (item.status === 'active') pushNotification({ roles: ['CUSTOMER_B2B', 'CUSTOMER_B2C', 'SALES_REP'] }, 'offer', `New offer: ${item.title}`, item.description.slice(0, 90), '/offers');
+      if (item.status === 'active') pushNotification({ roles: ['CUSTOMER_B2B', 'CUSTOMER_B2C', 'SALES_REP'] }, 'offer', `New offer: ${item.title}`, item.description.slice(0, 90), `/offers/${item.id}`);
       commit(); return item;
     }, () => (o.id ? http.patch(`/offers/${o.id}`, o) : http.post('/offers', o))),
   setStatus: (id: string, status: Offer['status']) =>

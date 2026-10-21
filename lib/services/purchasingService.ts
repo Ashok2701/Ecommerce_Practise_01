@@ -55,6 +55,37 @@ export const supplierService = {
     }, () => http.get(`/suppliers/${supplierId}/catalog`)),
 };
 
+export interface SupplierSummary {
+  supplier: Supplier;
+  openPoValue: number;
+  openPos: number;
+  receivedValue: number;
+  openRequests: number;
+  /** Received purchase orders that arrived by the expected date. */
+  onTimePct?: number;
+  users: { id: string; name: string; email: string; status: string }[];
+}
+
+/** Supplier header numbers for the supplier page. Backend: GET /suppliers/{id}/summary */
+export const supplierSummary = (id: string) =>
+  source<SupplierSummary>(() => {
+    const db = getDb();
+    const supplier = db.suppliers.find((s) => s.id === id);
+    if (!supplier) throw new Error('errors.purchasing.notFound');
+    // same site scope as the purchase order and request lists
+    const pos = db.purchaseOrders.filter((o) => o.supplierId === id && inSite(o));
+    const open = pos.filter((o) => OPEN_PO.includes(o.status));
+    const received = pos.filter((o) => o.status === 'received');
+    const onTime = received.filter((o) => { const last = o.receipts.at(-1); return last && new Date(last.at).getTime() <= new Date(o.expectedDate).getTime() + DAY; }).length;
+    return {
+      supplier, openPos: open.length, openPoValue: Math.round(open.reduce((s, o) => s + o.total, 0)),
+      receivedValue: Math.round(received.reduce((s, o) => s + o.total, 0)),
+      openRequests: db.purchaseRequests.filter((r) => r.supplierId === id && inSite(r) && OPEN_PR.includes(r.status)).length,
+      onTimePct: received.length ? Math.round((onTime / received.length) * 100) : undefined,
+      users: db.users.filter((u) => u.supplierId === id).map((u) => ({ id: u.id, name: u.name, email: u.email, status: u.status })),
+    };
+  }, () => http.get(`/suppliers/${id}/summary`));
+
 export const purchaseRequestService = {
   list: (q: PurchaseQuery = {}) =>
     source<PurchaseRequest[]>(() => getDb().purchaseRequests.filter((r) => inSite(r) && (!q.supplierId || r.supplierId === q.supplierId) &&

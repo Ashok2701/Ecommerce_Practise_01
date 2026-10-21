@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { CreditCard, Download, Eye, FileText } from 'lucide-react';
 import { toast } from 'sonner';
@@ -23,6 +24,7 @@ export default function InvoicesPage() {
   const user = useUser();
   const settings = useSettings();
   const [tab, setTab] = useState<(typeof TABS)[number]>('all');
+  const router = useRouter();
   const [payFor, setPayFor] = useState<string[] | null>(null);
   const q = useQuery({ queryKey: ['invoices', user.customerId], queryFn: () => invoiceService.getInvoices(user.customerId) });
   const all = q.data ?? [];
@@ -30,7 +32,7 @@ export default function InvoicesPage() {
   const bal = (i: Invoice) => i.amount - i.paid;
   const pdf = (i: Invoice) => toast.info(t('invoices.pdfInfo', { number: i.number, erp: settings.erpName }));
   const Actions = ({ i }: { i: Invoice }) => (
-    <div className="flex justify-end gap-1">
+    <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
       {i.status !== 'paid' && user.customerId && <Button size="sm" className="h-8" onClick={() => setPayFor([i.id])} data-testid={`pay-${i.number}`}>{t('invoices.pay')}</Button>}
       <Button asChild size="sm" variant="ghost" className="h-8"><Link href={`/orders/${i.orderId}`} aria-label={t('invoices.viewOrder', { number: i.number })}><Eye className="h-4 w-4" aria-hidden="true" /></Link></Button>
       <Button size="sm" variant="outline" className="h-8" onClick={() => pdf(i)}><Download className="me-1 h-3.5 w-3.5" aria-hidden="true" />PDF</Button>
@@ -55,9 +57,9 @@ export default function InvoicesPage() {
       </div>
       <QueryView query={q}>
         {() => (
-          <DataTable<Invoice> testId="invoices-table" rows={rows} rowKey={(i) => i.id}
+          <DataTable<Invoice> testId="invoices-table" rows={rows} rowKey={(i) => i.id} onRowClick={(i) => router.push(`/invoices/${i.id}`)}
             columns={[
-              { key: 'n', header: t('invoices.col.invoice'), cell: (i) => <div><div className="font-mono text-xs font-semibold">{i.number}</div><div className="font-mono text-[11px] text-muted-foreground">{i.orderNumber}</div></div> },
+              { key: 'n', header: t('invoices.col.invoice'), cell: (i) => <div><Link href={`/invoices/${i.id}`} className="font-mono text-xs font-semibold hover:text-primary" onClick={(e) => e.stopPropagation()} data-testid={`inv-link-${i.number}`}>{i.number}</Link><div className="font-mono text-[11px] text-muted-foreground">{i.orderNumber}</div></div> },
               { key: 'd', header: t('invoices.col.date'), cell: (i) => fmtDate(i.date) },
               { key: 'due', header: t('invoices.col.due'), cell: (i) => <span className={i.status === 'overdue' ? 'font-medium text-rose-600' : ''}>{fmtDate(i.dueDate)}</span> },
               { key: 'a', header: t('invoices.col.amount'), cell: (i) => fmtMoney(i.amount, true), align: 'right' },
@@ -66,7 +68,7 @@ export default function InvoicesPage() {
               { key: 'x', header: '', cell: (i) => <Actions i={i} />, align: 'right' },
             ]}
             mobileCard={(i) => (
-              <div><div className="flex items-start justify-between"><div><div className="font-mono text-xs font-semibold">{i.number}</div><div className="text-xs text-muted-foreground">{t('invoices.issuedDue', { issued: fmtDate(i.date), due: fmtDate(i.dueDate) })}</div></div><StatusBadge status={i.status} /></div>
+              <div><div className="flex items-start justify-between"><div><Link href={`/invoices/${i.id}`} className="font-mono text-xs font-semibold text-primary">{i.number}</Link><div className="text-xs text-muted-foreground">{t('invoices.issuedDue', { issued: fmtDate(i.date), due: fmtDate(i.dueDate) })}</div></div><StatusBadge status={i.status} /></div>
                 <div className="mt-2 flex items-center justify-between gap-2"><span className="text-sm">{t('invoices.balanceOf', { balance: fmtMoney(bal(i)), amount: fmtMoney(i.amount) })}</span><Actions i={i} /></div></div>
             )}
           />

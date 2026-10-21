@@ -82,6 +82,9 @@ function positionFor(productId: string, site: string): StockPosition {
   };
 }
 
+/** One line of a product's stock journal at a site (negative = out of free stock). */
+export interface StockMovement { at: string; kind: 'receipt' | 'transfer_in' | 'transfer_out' | 'sale' | 'consignment_in' | 'consignment_out'; quantity: number; ref: string; href: string; party: string }
+
 export type StockFilter = 'all' | 'low' | 'reserved' | 'incoming' | 'consignment';
 export interface StockQuery { search?: string; category?: string; filter?: StockFilter }
 
@@ -104,6 +107,35 @@ export const inventoryService = {
   detail: (productId: string) =>
     source<{ position: StockPosition; detail: StockDetail }>(() => ({ position: positionFor(productId, siteOrMain()), detail: detailFor(productId, siteOrMain()) }),
       () => http.get(`/inventory/${productId}`)),
+
+  /**
+   * Recent movements of a product at the current site: goods receipts,
+   * transfers in and out, sales orders and consignment top-ups.
+   * Backend: GET /inventory/{productId}/movements (ERP stock journal).
+   */
+  movements: (productId: string) =>
+    source<StockMovement[]>(() => {
+      const db = getDb();
+      const site = siteOrMain();
+      const out: StockMovement[] = [];
+      db.purchaseOrders.filter((o) => o.site === site).forEach((o) => o.receipts.forEach((g) => g.lines.filter((l) => l.productId === productId)
+        .forEach((l) => out.push({ at: g.at, kind: 'receipt', quantity: l.quantity, ref: g.number, href: `/purchase-orders/${o.id}`, party: o.supplierName }))));
+      db.transfers.forEach((t) => t.lines.filter((l) => l.productId === productId).forEach((l) => {
+        const shipped = t.timeline.find((e) => e.status === 'initiated');
+        const arrived = t.timeline.find((e) => e.status === 'transferred');
+        if (t.fromSite === site && shipped) out.push({ at: shipped.at, kind: 'transfer_out', quantity: -l.quantity, ref: t.number, href: `/transfers/${t.id}`, party: t.toSite });
+        if (t.toSite === site && arrived) out.push({ at: arrived.at, kind: 'transfer_in', quantity: l.receivedQty, ref: t.number, href: `/transfers/${t.id}`, party: t.fromSite });
+      }));
+      db.orders.filter((o) => o.site === site && !['cancelled', 'rejected', 'pending_sync', 'draft', 'pending_approval', 'changes_requested'].includes(o.status)).forEach((o) => {
+        const fromConsignment = !!(o.requestId && db.requests.find((r) => r.id === o.requestId)?.consignmentId);
+        o.lines.filter((l) => l.productId === productId).forEach((l) => out.push({
+          at: o.timeline.find((e) => e.status === 'confirmed')?.at ?? o.date, kind: fromConsignment ? 'consignment_out' : 'sale', quantity: -l.quantity, ref: o.number, href: `/orders/${o.id}`, party: o.customerName,
+        }));
+      });
+      db.consignments.filter((c) => c.site === site).forEach((c) => c.movements.filter((m) => m.productId === productId && m.kind === 'top_up')
+        .forEach((m) => out.push({ at: m.at, kind: 'consignment_in', quantity: -m.quantity, ref: c.number, href: `/consignment/${c.id}`, party: c.customerName })));
+      return out.sort((a, b) => b.at.localeCompare(a.at)).slice(0, 40);
+    }, () => http.get(`/inventory/${productId}/movements`)),
 
   /** Free-to-promise at a site; used by the transfer form. */
   availableAt: (productId: string, site: string) => source<number>(() => freeAt(productId, site), () => http.get(`/inventory/${productId}/available`, { site })),

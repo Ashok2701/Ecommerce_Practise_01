@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { ProductRef, RefLink } from '@/features/detail/DetailBits';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -60,20 +61,20 @@ function Detail({ r }: { r: PurchaseRequest }) {
         <div>
           <div className="flex flex-wrap items-center gap-2"><h1 className="font-mono text-xl font-semibold" data-testid="pr-number">{r.number}</h1><StatusBadge status={r.status} />
             <span className="rounded-md border px-2 py-0.5 text-xs text-muted-foreground">{t(`purchaseRequests.source.${r.source}`)}</span>{r.site && <span className="rounded-md border px-2 py-0.5 text-xs text-muted-foreground">{t('sites.label')} {r.site}</span>}</div>
-          <p className="mt-1 text-sm text-muted-foreground">{r.supplierName} · {t('requests.detail.createdBy', { name: r.createdBy.name })} · {fmtDateTime(r.date)}</p>
+          <p className="mt-1 text-sm text-muted-foreground"><RefLink href={`/suppliers/${r.supplierId}`}>{r.supplierName}</RefLink> · {t('requests.detail.createdBy', { name: r.createdBy.name })} · {fmtDateTime(r.date)}</p>
           {r.proposedDate && <p className="mt-1 text-sm">{t('purchaseRequests.proposedDate')}: <span className="font-medium">{fmtDate(r.proposedDate)}</span></p>}
           {r.orderId && <Link href={`/purchase-orders/${r.orderId}`} className="mt-1 inline-block text-sm font-medium text-primary hover:underline" data-testid="pr-po-link">{r.orderNumber}</Link>}
         </div>
         {supplier && open && <Button variant="outline" className="text-destructive" onClick={() => cancel.mutate()} data-testid="pr-cancel"><XCircle className="me-2 h-4 w-4" aria-hidden="true" />{t('purchaseRequests.cancel')}</Button>}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
+      <div className="grid gap-4 lg:grid-cols-[1fr_360px] [&>*]:min-w-0">
         <div className="space-y-4">
           <Card className="overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-muted/40 text-xs text-muted-foreground"><tr><th className="px-4 py-2 text-start font-medium">{t('requests.detail.lines')}</th><th className="px-3 py-2 text-end font-medium">{t('requests.detail.qty')}</th><th className="px-3 py-2 text-end font-medium">{t('purchaseRequests.cost')}</th><th className="px-4 py-2 text-end font-medium">{t('requests.detail.lineTotal')}</th></tr></thead>
               <tbody className="divide-y">{r.lines.map((l) => (
-                <tr key={l.productId}><td className="px-4 py-2.5"><div className="font-medium">{l.name}</div><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td><td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.quantity)} {l.uom}</td><td className="px-3 py-2.5 text-end tabular">{fmtMoney(l.unitCost, true)}</td><td className="px-4 py-2.5 text-end font-medium tabular">{fmtMoney(l.lineTotal, true)}</td></tr>
+                <tr key={l.productId}><td className="px-4 py-2.5"><ProductRef id={l.productId} name={l.name} /><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td><td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.quantity)} {l.uom}</td><td className="px-3 py-2.5 text-end tabular">{fmtMoney(l.unitCost, true)}</td><td className="px-4 py-2.5 text-end font-medium tabular">{fmtMoney(l.lineTotal, true)}</td></tr>
               ))}</tbody>
               <tfoot className="border-t bg-muted/20"><tr><td className="px-4 py-2.5 font-semibold" colSpan={3}>{t('common.total')}</td><td className="px-4 py-2.5 text-end font-semibold tabular">{fmtMoney(r.total, true)}</td></tr></tfoot>
             </table>

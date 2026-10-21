@@ -542,7 +542,7 @@ export function createSeed(): MockDb {
     { id: 'cn_3', customerId: 'cus_002', at: ago(2), by: ravi, kind: 'promise', text: 'Accounts will release NEFT after month-end reconciliation.', promiseDate: ahead(4), promiseAmount: 45000 },
   ];
 
-  return { version: 10, quotes, deliveries, collectionNotes, consignments, transfers, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), requests, workflow: structuredClone(DEFAULT_WORKFLOW), suppliers, purchaseRequests, purchaseOrders, users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
+  return { version: 11, quotes, deliveries, collectionNotes, consignments, transfers, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), requests, workflow: structuredClone(DEFAULT_WORKFLOW), suppliers, purchaseRequests, purchaseOrders, users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
     { id: 'vr_1', visitId: 'vis_1', customerId: 'cus_001', salesRepId: 'usr_rep_1', salesRepName: 'Ravi Kumar', at: ago(0, 3), outcome: 'quote_requested', contactMet: 'Venkat Rao (Purchase Head)', notes: 'Plant shutdown planned for next Monday. Needs 200 bearings (6205/6308) and 6 buckets of EP2 grease. Competitor quoted 4% lower on grease.', nextSteps: 'Send revised grease quote; confirm bearing stock with Hyderabad DC.', followUpDate: ahead(1), photos: [] },
   ], seq: { order: seqOrder, invoice: seqInv, request: seqReq, pr: seqPr, po: seqPo, grn: seqGrn, transfer: seqTr, quote: seqQuote, delivery: seqDel, payment: 900 } };
 }
