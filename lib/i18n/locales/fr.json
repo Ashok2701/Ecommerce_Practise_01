@@ -50,6 +50,31 @@
       "empty": "Ajoutez au moins un produit avec une quantité.",
       "reasonRequired": "Indiquez pourquoi le stock est nécessaire.",
       "noStock": "Le stock libre du site d'origine est insuffisant."
+    },
+    "quotes": {
+      "notFound": "Ce devis n'existe pas ou vous ne pouvez pas le voir.",
+      "notOpen": "Ce devis ne peut plus être modifié.",
+      "empty": "Ajoutez au moins un produit avec une quantité.",
+      "validity": "Indiquez une date de validité dans le futur.",
+      "discountNeedsApproval": "Certains prix sont inférieurs à ce que vous pouvez accorder seul. Demandez à un superviseur d'envoyer ce devis.",
+      "expired": "Ce devis a expiré. Demandez-en un nouveau.",
+      "reasonRequired": "Dites-nous pourquoi."
+    },
+    "deliveries": {
+      "notFound": "Cette livraison n'existe pas ou vous ne pouvez pas la voir.",
+      "notOpen": "Cette livraison ne peut plus être modifiée.",
+      "receivedBy": "Indiquez qui a réceptionné la marchandise.",
+      "proof": "Ajoutez une signature ou une photo.",
+      "reasonRequired": "Indiquez pourquoi la livraison a échoué."
+    },
+    "payments": {
+      "notFound": "Ce paiement n'existe pas.",
+      "noInvoices": "Choisissez au moins une facture ouverte.",
+      "amount": "Saisissez un montant supérieur à zéro.",
+      "reference": "Saisissez la référence de la transaction ou du chèque.",
+      "notPending": "Ce paiement a déjà été traité.",
+      "reasonRequired": "Saisissez un motif.",
+      "promiseDetails": "Saisissez la date et le montant promis."
     }
   },
   "login": {
@@ -181,7 +206,10 @@
     "purchaseOrders": "Commandes d’achat",
     "inventory": "Stock",
     "consignment": "Stock en consignation",
-    "transfers": "Transferts de stock"
+    "transfers": "Transferts de stock",
+    "quotes": "Devis",
+    "deliveries": "Livraisons",
+    "collections": "Recouvrement"
   },
   "common": {
     "search": "Rechercher",
@@ -274,7 +302,17 @@
     "partly_received": "Reçue en partie",
     "received": "Reçue",
     "initiated": "Transfert lancé",
-    "transferred": "Transféré"
+    "transferred": "Transféré",
+    "requested": "Demandé",
+    "sent": "Envoyé",
+    "accepted": "Accepté",
+    "declined": "Refusé",
+    "out_for_delivery": "En cours de livraison",
+    "failed": "Échec",
+    "pending_verification": "À vérifier",
+    "posted": "Comptabilisé",
+    "kept": "Tenue",
+    "broken": "Non tenue"
   },
   "dashboard": {
     "admin": "Vue d’ensemble de la plateforme",
@@ -295,7 +333,23 @@
     "empty": "Votre panier est vide",
     "emptyHint": "Parcourez le catalogue pour ajouter des produits.",
     "checkout": "Vérifier la commande",
-    "deliveryInfo": "Informations de livraison"
+    "deliveryInfo": "Informations de livraison",
+    "products": {
+      "one": "{count} produit",
+      "other": "{count} produits"
+    },
+    "clear": "Vider le panier",
+    "browse": "Parcourir le catalogue",
+    "continue": "Continuer mes achats",
+    "belowMoq": "Commande minimum {moq}",
+    "perUom": "par {uom}",
+    "qtyFor": "Quantité pour {name}",
+    "remove": "Retirer {name}",
+    "deliveryText": "La date et les frais de livraison sont confirmés avec votre commande.",
+    "overCredit": "Cette commande dépasse votre crédit disponible ({available}). Elle sera examinée avant confirmation.",
+    "requestQuote": "Demander un devis",
+    "startQuote": "Faire un devis",
+    "quoteText": "Nous chiffrons ces produits et vous envoyons un devis. Acceptez-le pour commander aux prix du devis."
   },
   "checkout": {
     "title": "Vérifier et envoyer la demande",
@@ -843,5 +897,302 @@
     "nowMin": "Actuel {now} · minimum {min}",
     "topUpConfirm": "Comptabiliser le réapprovisionnement",
     "toppedUp": "Consignation réapprovisionnée"
+  },
+  "account": {
+    "title": "Compte et finances",
+    "intro": "Les soldes proviennent du grand livre clients de {erp}.",
+    "statement": "Télécharger le relevé",
+    "statementInfo": "{erp} génère le relevé de compte en PDF.",
+    "outstanding": "Solde dû",
+    "creditLimit": "Plafond de crédit",
+    "available": "Crédit disponible",
+    "overdue": "En retard",
+    "dueSoon": "{amount} à payer dans les 7 prochains jours",
+    "utilisation": "Crédit utilisé",
+    "used": "{pct} % de votre plafond de crédit utilisé",
+    "dueInvoices": "Factures à payer",
+    "allInvoices": "Toutes les factures",
+    "noDues": "Rien à payer",
+    "noDuesText": "Toutes vos factures sont payées.",
+    "bankDetails": "Payer par virement",
+    "bankHint": "Après un virement ou un chèque, utilisez « J'ai payé » pour que nous rapprochions rapidement votre paiement.",
+    "paymentHistory": "Paiements",
+    "noPayments": "Aucun paiement pour l'instant",
+    "profile": "Informations société",
+    "field": {
+      "company": "Société",
+      "code": "Code client",
+      "gstin": "GSTIN",
+      "contact": "Contact",
+      "email": "E-mail",
+      "address": "Adresse",
+      "tier": "Niveau de prix"
+    },
+    "tierValue": "Niveau {tier}",
+    "requestChange": "Demander une modification"
+  },
+  "invoices": {
+    "title": "Factures",
+    "intro": "Factures émises par {erp}. Payez en ligne ou signalez-nous un virement.",
+    "accountSummary": "Résumé du compte",
+    "kpi": {
+      "total": "Factures",
+      "open": "Solde ouvert",
+      "overdue": "En retard",
+      "paid": "Payées"
+    },
+    "col": {
+      "invoice": "Facture",
+      "date": "Date",
+      "due": "Échéance",
+      "amount": "Montant",
+      "balance": "Solde"
+    },
+    "due": "Échéance {date}",
+    "issuedDue": "Émise le {issued} · échéance {due}",
+    "balanceOf": "Solde {balance} sur {amount}",
+    "pay": "Payer",
+    "viewOrder": "Voir la commande {number}",
+    "pdfInfo": "{erp} génère le PDF de la facture {number}."
+  },
+  "quotes": {
+    "title": "Devis",
+    "introCustomer": "Demandez des prix pour des commandes importantes ou spéciales. Acceptez un devis pour commander aux prix proposés.",
+    "introStaff": "Demandes de devis des clients et devis en préparation.",
+    "request": "Demander un devis",
+    "new": "Nouveau devis",
+    "requestTitle": "Demander un devis",
+    "newTitle": "Nouveau devis",
+    "requestIntro": "Choisissez les produits et les quantités. Ajoutez un prix cible si vous en avez un.",
+    "newIntro": "Choisissez le client et les produits. Vous fixez les prix à l'écran suivant.",
+    "chooseCustomer": "Choisir un client",
+    "noteCustomer": "Message aux commerciaux",
+    "noteStaff": "Note interne",
+    "notePlaceholder": "Date de livraison, projet, prix concurrent…",
+    "sendRequest": "Envoyer la demande de devis",
+    "startPricing": "Passer au chiffrage",
+    "requested": "Demande de devis {number} envoyée",
+    "started": "Devis {number} créé",
+    "col": {
+      "number": "Devis",
+      "customer": "Client",
+      "date": "Date",
+      "validUntil": "Valable jusqu'au",
+      "items": "Produits",
+      "total": "Total",
+      "status": "Statut"
+    },
+    "empty": "Aucun devis",
+    "emptyCustomer": "Demandez un devis depuis le panier ou ici.",
+    "emptyStaff": "Les demandes de devis des clients apparaissent ici.",
+    "version": "Version {n}",
+    "validUntilDate": "Valable jusqu'au {date}",
+    "becameRequest": "Accepté comme demande de vente {number}",
+    "revise": "Réviser",
+    "cancel": "Annuler le devis",
+    "customerAsked": "Message du client",
+    "waiting": "Nous chiffrons votre demande. Vous serez notifié quand le devis sera prêt.",
+    "yourPrice": "Prix habituel",
+    "targetPrice": "Prix cible",
+    "quotedPrice": "Prix proposé",
+    "tax": "TVA/GST (18 %)",
+    "terms": "Conditions",
+    "termsPlaceholder": "Délai de livraison, conditions de paiement, transport…",
+    "overLimit": "Certains prix sont inférieurs de plus de {pct} % au prix habituel du client. Un superviseur doit envoyer ce devis.",
+    "saveDraft": "Enregistrer le brouillon",
+    "send": "Envoyer le devis",
+    "sendRevised": "Envoyer le devis révisé",
+    "decideText": "Acceptez pour commander à ces prix, demandez des modifications ou refusez.",
+    "accept": "Accepter",
+    "askRevision": "Demander des modifications",
+    "decline": "Refuser",
+    "acceptTitle": "Accepter {number} ?",
+    "acceptText": "Une demande de vente de {total} est créée aux prix du devis et suit l'approbation habituelle.",
+    "acceptConfirm": "Accepter et commander",
+    "declineText": "Dites-nous pourquoi pour que nous fassions mieux la prochaine fois.",
+    "reviseText": "Indiquez ce que vous souhaitez modifier : prix, quantités ou conditions.",
+    "sendRevisionRequest": "Envoyer la demande",
+    "msg": {
+      "saved": "Brouillon enregistré",
+      "sent": "Devis envoyé au client",
+      "accepted": "Devis accepté – demande {number} créée",
+      "declined": "Devis refusé",
+      "revisionAsked": "Demande de modification envoyée",
+      "cancelled": "Devis annulé"
+    }
+  },
+  "deliveries": {
+    "title": "Livraisons",
+    "intro": "Bons de livraison de {site} : ce qui part et les preuves de livraison.",
+    "tabs": {
+      "open": "En cours",
+      "today": "Aujourd'hui",
+      "delivered": "Livrées",
+      "all": "Toutes"
+    },
+    "col": {
+      "number": "Bon de livraison",
+      "customer": "Client",
+      "planned": "Prévue",
+      "carrier": "Transporteur",
+      "status": "Statut",
+      "shipped": "Expédié"
+    },
+    "empty": "Aucune livraison",
+    "plannedFor": "Prévue le {date}",
+    "address": "Adresse de livraison",
+    "outForDelivery": "En cours de livraison",
+    "dispatchText": "Le client est informé que la marchandise est en route.",
+    "recordPod": "Enregistrer la preuve de livraison",
+    "podText": "Qui a réceptionné, ce qui est arrivé et une signature ou une photo.",
+    "markFailed": "Livraison échouée",
+    "failText": "Le client est informé et la livraison peut être reprogrammée.",
+    "failPlaceholder": "Client fermé, adresse introuvable, refus…",
+    "reschedule": "Reprogrammer",
+    "rescheduleText": "Choisissez la nouvelle date de livraison.",
+    "msg": {
+      "out": "Marquée en cours de livraison",
+      "delivered": "Livraison confirmée",
+      "failed": "Livraison marquée en échec",
+      "rescheduled": "Livraison reprogrammée"
+    },
+    "pod": {
+      "title": "Preuve de livraison",
+      "receivedBy": "Réceptionné par",
+      "receivedByPlaceholder": "Nom de la personne qui a signé",
+      "quantities": "Quantités reçues",
+      "sent": "{qty} {uom} envoyés",
+      "received": "Reçu",
+      "damaged": "Endommagé",
+      "issueHint": "Les lignes manquantes ou endommagées sont signalées à l'équipe commerciale.",
+      "issueLine": "{received} reçus sur {sent}, {damaged} endommagés",
+      "signature": "Signature",
+      "signHere": "Signez ici",
+      "clear": "Effacer",
+      "photo": "Photo",
+      "takePhoto": "Prendre une photo",
+      "addLocation": "Ajouter la position",
+      "location": "Position",
+      "notes": "Remarques",
+      "proofHint": "Ajoutez une signature ou une photo pour confirmer la livraison.",
+      "submit": "Confirmer la livraison",
+      "confirmReceipt": "Confirmer la réception",
+      "at": "Reçu le",
+      "recordedBy": "Enregistré par"
+    },
+    "cardTitle": "Livraison",
+    "afterDispatch": "Un bon de livraison est créé à l'expédition de la commande."
+  },
+  "payments": {
+    "payOnline": "Payer en ligne",
+    "payOnlineText": "Choisissez les factures à payer. Vous serez redirigé vers notre prestataire de paiement.",
+    "method": "Moyen de paiement",
+    "methods": {
+      "NEFT": "Virement bancaire",
+      "RTGS": "RTGS",
+      "Cheque": "Chèque",
+      "UPI": "UPI",
+      "Card": "Carte",
+      "Cash": "Espèces"
+    },
+    "secure": "Paiement sécurisé via notre prestataire",
+    "payAmount": "Payer {amount}",
+    "provider": "Connexion au prestataire de paiement…",
+    "thanks": "Paiement reçu",
+    "thanksText": "Vos factures sont marquées payées. Un reçu vous est envoyé.",
+    "tellUs": "J'ai payé",
+    "tellUsText": "Signalez-nous un virement ou un chèque pour que nous le rapprochions de vos factures.",
+    "recordCollection": "Enregistrer un encaissement",
+    "recordCollectionText": "Enregistrez un chèque, un virement ou des espèces encaissés. La comptabilité le vérifie avec la banque avant comptabilisation.",
+    "date": "Date",
+    "reference": "Référence",
+    "chequeNo": "Numéro de chèque",
+    "referencePlaceholder": "UTR ou identifiant de transaction",
+    "amount": "Montant",
+    "note": "Remarque",
+    "verifyHint": "Les factures sont marquées payées dès que la comptabilité retrouve l'argent sur le compte.",
+    "saveCollection": "Enregistrer l'encaissement",
+    "sendAdvice": "Envoyer",
+    "receipt": "Reçu",
+    "source": "Origine",
+    "sources": {
+      "online": "En ligne",
+      "advice": "Avis du client",
+      "collection": "Encaissé par le commercial",
+      "erp": "Banque / ERP"
+    },
+    "onAccount": "En compte",
+    "enteredBy": "saisi par {name}",
+    "verify": "Trouvé en banque",
+    "notFound": "Absent en banque",
+    "rejectTitle": "Rejeter {number} ?",
+    "rejectText": "Le client et la personne qui l'a saisi sont informés du motif.",
+    "msg": {
+      "paid": "Paiement {number} reçu",
+      "recorded": "Paiement {number} envoyé pour vérification",
+      "verified": "Paiement {number} comptabilisé",
+      "rejected": "Paiement rejeté"
+    }
+  },
+  "collections": {
+    "title": "Recouvrement",
+    "introRep": "Ce que vos clients doivent, les promesses de paiement et les encaissements.",
+    "introManager": "Créances par ancienneté, paiements à vérifier et relances.",
+    "tabs": {
+      "aging": "Balance âgée",
+      "verify": "À vérifier",
+      "payments": "Paiements"
+    },
+    "kpi": {
+      "outstanding": "Encours",
+      "overdue": "En retard",
+      "over90": "Plus de 90 jours",
+      "toVerify": "Paiements à vérifier",
+      "toVerifyHint": {
+        "one": "{count} paiement",
+        "other": "{count} paiements"
+      }
+    },
+    "bucket": {
+      "current": "Non échu",
+      "d1_30": "1–30 jours",
+      "d31_60": "31–60",
+      "d61_90": "61–90",
+      "d90": "90+"
+    },
+    "followUp": "Suivi",
+    "promised": "Promis {amount} pour le {date}",
+    "broken": {
+      "one": "{count} promesse non tenue",
+      "other": "{count} promesses non tenues"
+    },
+    "lastPaid": "Dernier paiement le {date}",
+    "pendingAmount": "{amount} à vérifier",
+    "empty": "Aucun encours",
+    "nothingToVerify": "Aucun paiement en attente de vérification",
+    "panelSummary": "{total} d'encours · {overdue} en retard",
+    "record": "Enregistrer un paiement",
+    "promise": "Promesse de paiement",
+    "remind": "Envoyer une relance",
+    "addNote": "Ajouter une note",
+    "promiseDate": "Date promise",
+    "note": "Note",
+    "notePlaceholder": "Ce qui a été convenu lors de l'appel…",
+    "openInvoices": "Factures ouvertes",
+    "daysOverdue": {
+      "one": "{count} jour de retard",
+      "other": "{count} jours de retard"
+    },
+    "history": "Suivi",
+    "noHistory": "Aucun suivi pour l'instant",
+    "kind": {
+      "promise": "Promesse de paiement",
+      "reminder": "Relance",
+      "note": "Note"
+    },
+    "msg": {
+      "saved": "Enregistré",
+      "reminded": "Relance envoyée"
+    }
   }
 }

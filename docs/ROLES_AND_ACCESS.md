@@ -35,8 +35,11 @@ Defined in `lib/access/modules.ts` (`MODULES`, `DEFAULT_ROLE_MODULES`).
 | catalog | /catalog | | | ✓ | | ✓ | ✓ |
 | quick_order | /quick-order | | | ✓ | | ✓ | |
 | cart | /cart, /checkout | | | ✓ | | ✓ | ✓ |
+| quotes | /quotes | | ✓ | ✓ | | ✓ | |
 | requests | /requests | | ✓ | ✓ | | ✓ | ✓ |
 | orders | /orders | | ✓ | ✓ | | ✓ | ✓ |
+| deliveries | /deliveries | | ✓ | ✓ | | | |
+| collections | /collections | | ✓ | ✓ | | | |
 | invoices | /invoices | | | | | ✓ | ✓ |
 | account | /account | | | | | ✓ | ✓ |
 | offers | /offers | | ✓ | ✓ | | ✓ | ✓ |
@@ -65,6 +68,9 @@ Defined in `lib/access/modules.ts` (`MODULES`, `DEFAULT_ROLE_MODULES`).
 - `SUPPLIER` sees no sales data (orders, customers, invoices of customers), and only purchase requests and orders for their own `supplier_id`. Suppliers may acknowledge, confirm pickup, dispatch and cancel their own open pickup requests; only buyers convert, receive and cancel purchase orders.
 - Customers see only their own consignment; sales reps only their customers' consignments.
 - Transfers: anyone with the module can request one; only supervisors approve, reject, ship, receive and complete.
+- Quotes: reps may price at most 15% below the customer's normal price; deeper discounts need a supervisor to send the quote.
+- Customers confirm receipt of their own deliveries from the order page (they don't have the Deliveries module).
+- Only supervisors (finance) verify or reject payments; reps record collections, customers send remittance advice.
 - Site access (`allowed_sites`, below) applies on top of modules.
 
 ## Sites

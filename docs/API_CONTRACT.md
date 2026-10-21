@@ -235,7 +235,54 @@ Flow: `pending → approved → initiated → transferred → completed`, or `re
 Errors: `errors.transfers.notFound | notOpen | sameSite | empty | reasonRequired | noStock`, `errors.forbidden`.
 Notifications use type `stock_update`.
 
+## Quotes
+
+Flow: `requested` (customer asked) or `draft` (staff started) → `sent` → `accepted` (a Sales Request is raised at the quoted prices) or `declined` / `expired` / `cancelled`. A customer asking for changes puts a sent quote back to `requested`; sending again bumps `version`.
+
+| Method | Path | Who | Body / query | Notes |
+| --- | --- | --- | --- | --- |
+| GET | `/quotes` | customer (own), rep (own customers), supervisor | `view=open\|closed\|all` | Sent quotes past `validUntil` are returned as `expired` |
+| GET | `/quotes/{id}` | same scope | | `Quote` |
+| POST | `/quotes` | customer, rep, supervisor | `{customerId, items[{productId, quantity, targetPrice?}], note?}` | Lines start at the customer's normal price (contract/tier) |
+| PUT | `/quotes/{id}` | rep, supervisor | `{lines[{productId, quantity, unitPrice}], validUntil, terms?}` | Editing a sent quote makes it a draft again |
+| POST | `/quotes/{id}/send` | rep, supervisor | | Requires `validUntil` in the future. A rep can't send prices more than `REP_MAX_DISCOUNT_PCT` (15%) below the normal price: `errors.quotes.discountNeedsApproval` |
+| POST | `/quotes/{id}/accept` | customer, rep | `{poNumber?}` | Returns `{quote, request}`. The request carries `quoteId`; its lines keep the quoted prices through conversion (no price-change check) |
+| POST | `/quotes/{id}/decline` | customer | `{reason}` | Reason required |
+| POST | `/quotes/{id}/revision` | customer | `{comment}` | Back to `requested` |
+| POST | `/quotes/{id}/cancel` | staff | | Open quotes only |
+| POST | `/quotes/{id}/comments` | | `{text}` | |
+
+## Deliveries and proof of delivery
+
+The ERP creates the tax invoice and the delivery note when an order is dispatched. Flow: `scheduled → out_for_delivery → delivered`, or `failed → scheduled` (rescheduled). Recording proof of delivery sets the order to `delivered`.
+
+| Method | Path | Who | Body | Notes |
+| --- | --- | --- | --- | --- |
+| GET | `/deliveries` | staff (site), rep (own customers) | `view?` | |
+| GET | `/deliveries/{id}` | staff, the customer (via their order) | | `Delivery` |
+| POST | `/deliveries/{id}/out-for-delivery` | staff | `{driver?, vehicle?}` | Customer notified |
+| POST | `/deliveries/{id}/pod` | staff, the customer | `{receivedBy, lines[{productId, receivedQty, damagedQty}], signature?, photo?, notes?, location?}` | Staff must send a signature or a photo (`errors.deliveries.proof`); customers confirm in their own login. Short or damaged lines notify the supervisor and rep. Signature and photo are images (data URLs in the prototype; store them as documents) |
+| POST | `/deliveries/{id}/fail` | staff | `{reason}` | |
+| POST | `/deliveries/{id}/reschedule` | staff | `{date}` | Only failed deliveries |
+
+## Payments and collections
+
+Online payments are confirmed by the payment provider (configured per client: Razorpay, Stripe, …) and posted at once. Remittance advice from customers and collections recorded by reps wait as `pending_verification` until finance finds the money in the bank; verifying posts the receipt in the ERP and allocates it to the named invoices first, then the oldest open ones; anything left is on account.
+
+| Method | Path | Who | Body / query | Notes |
+| --- | --- | --- | --- | --- |
+| GET | `/payments` | customer (own), staff | `customerId?`, `status?` | |
+| POST | `/payments/online` | customer | `{invoiceIds, method}` | Backend creates the provider session; the provider webhook posts the receipt |
+| POST | `/payments` | customer (advice), rep (collection) | `{customerId, invoiceIds, amount, method, reference, date, note?}` | Reference required except cash |
+| POST | `/payments/{id}/verify` | supervisor / finance | | `posted`, with `allocations` |
+| POST | `/payments/{id}/reject` | supervisor / finance | `{reason}` | Customer and the person who entered it are told |
+| GET | `/collections/aging` | rep (own customers), supervisor | `salesRepId?` | Per customer: not due, 1–30, 31–60, 61–90, 90+, overdue, last payment, amount to verify, open promise, broken promises |
+| GET | `/collections/{customerId}/notes` | staff | | Promises (with outcome open / kept / broken), reminders, notes |
+| POST | `/collections/{customerId}/notes` | staff | `{kind: promise\|note, text, promiseDate?, promiseAmount?}` | |
+| POST | `/collections/{customerId}/reminders` | staff | | Sends the customer their overdue invoices |
+
+Errors: `errors.quotes.*`, `errors.deliveries.*`, `errors.payments.*` (see the translation files for the full list).
+
 ## Not yet in the contract
 
-Quotes, deliveries, payments and the offer
-engine are added with phase 2 of the frontend.
+The offer engine (percent, BOGO and slab offers) is added with phase 2D of the frontend.

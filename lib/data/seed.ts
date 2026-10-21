@@ -2,9 +2,9 @@ import type {
   Announcement, AppNotification, Conversation, Customer, FollowUp, Invoice, VisitReport, Offer, Order, OrderStatus, Payment, Product, User, Visit, ActivityItem,
 } from '@/types/domain';
 import { PRODUCTS } from './catalog';
-import { buildOrderTotals } from '@/lib/domain/pricing';
+import { buildOrderTotals, customerUnitPrice } from '@/lib/domain/pricing';
 import { DEFAULT_ROLE_MODULES, type ModuleId } from '@/lib/access/modules';
-import type { Role, Site, SalesRequest, WorkflowSettings, Supplier, PurchaseRequest, PurchaseOrder, PurchaseLine, Consignment, ConsignmentLine, StockTransfer, TransferLine, TransferStatus } from '@/types/domain';
+import type { Role, Site, SalesRequest, WorkflowSettings, Supplier, PurchaseRequest, PurchaseOrder, PurchaseLine, Consignment, ConsignmentLine, StockTransfer, TransferLine, TransferStatus, Quote, QuoteLine, QuoteStatus, Delivery, CollectionNote } from '@/types/domain';
 import { creditCheck } from '@/lib/domain/credit';
 
 export interface MockDb {
@@ -37,7 +37,11 @@ export interface MockDb {
   consignments: Consignment[];
   /** Stock transfers between sites. */
   transfers: StockTransfer[];
-  seq: { order: number; invoice: number; request: number; pr: number; po: number; grn: number; transfer: number };
+  quotes: Quote[];
+  deliveries: Delivery[];
+  /** Promises to pay, reminders and call notes for collections. */
+  collectionNotes: CollectionNote[];
+  seq: { order: number; invoice: number; request: number; pr: number; po: number; grn: number; transfer: number; quote: number; delivery: number; payment: number };
 }
 
 // deterministic PRNG so the demo looks the same for everyone
@@ -233,6 +237,8 @@ export function createSeed(): MockDb {
   const payments: Payment[] = invoices.filter((i) => i.paid > 0).map((i, k) => ({
     id: `pay_${k + 1}`, customerId: i.customerId, date: new Date(new Date(i.date).getTime() + (10 + (k % 20)) * DAY).toISOString(), amount: i.paid,
     method: (['NEFT', 'RTGS', 'Cheque', 'UPI'] as const)[k % 4], reference: `UTR${88120000 + k * 917}`, invoiceNumbers: [i.number],
+    status: 'posted' as const, source: 'erp' as const, customerName: customers.find((c) => c.id === i.customerId)?.name,
+    allocations: [{ invoiceId: i.id, invoiceNumber: i.number, amount: i.paid }],
   })).filter((p) => new Date(p.date).getTime() < Date.now());
 
   const announcements: Announcement[] = [
@@ -473,7 +479,70 @@ export function createSeed(): MockDb {
     tr('BLR-BR', 'MAIN', 'rejected', [tline(b[3], 50)], 5, 'Return slow movers', { id: 'usr_rep_3', name: 'Arjun Reddy', role: 'SALES_REP' }),
   ];
 
-  return { version: 9, consignments, transfers, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), requests, workflow: structuredClone(DEFAULT_WORKFLOW), suppliers, purchaseRequests, purchaseOrders, users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
+  // ---------- deliveries (one per dispatched or delivered order) ----------
+  let seqDel = 5300;
+  const deliveries: Delivery[] = [];
+  for (const o of orders.filter((x) => x.status === 'dispatched' || x.status === 'delivered')) {
+    const disp = o.timeline.find((e) => e.status === 'dispatched');
+    const done = o.timeline.find((e) => e.status === 'delivered');
+    const dispAt = disp?.at ?? o.date;
+    const cust = customers.find((c) => c.id === o.customerId)!;
+    const n = seqDel++;
+    const d: Delivery = {
+      id: `del_${n}`, number: `DN-26-${String(n).padStart(5, '0')}`, orderId: o.id, orderNumber: o.number, customerId: o.customerId, customerName: o.customerName, site: o.site,
+      address: o.deliveryAddress, status: o.status === 'delivered' ? 'delivered' : new Date(o.expectedDelivery).getTime() - Date.now() < DAY ? 'out_for_delivery' : 'scheduled',
+      plannedDate: o.expectedDelivery, carrier: o.customerId === 'cus_b2c_1' ? 'BlueDart' : 'VRL Logistics', vehicle: `TS 09 UB ${4100 + (n % 900)}`, driver: ['Mahesh', 'Srinu', 'Raju', 'Anwar'][n % 4],
+      trackingRef: disp?.note?.match(/VRL\d+/)?.[0] ?? `BD${77000000 + n}`,
+      lines: o.lines.map((l) => ({ productId: l.productId, sku: l.sku, name: l.name, uom: l.uom, quantity: l.quantity, receivedQty: o.status === 'delivered' ? l.quantity : undefined })),
+      timeline: [{ status: 'scheduled', at: dispAt, by: 'Sage X3', note: 'Delivery note created at dispatch' }],
+    };
+    if (d.status !== 'scheduled') d.timeline.push({ status: 'out_for_delivery', at: new Date(new Date(dispAt).getTime() + DAY).toISOString(), by: d.driver! });
+    if (done) {
+      d.timeline.push({ status: 'delivered', at: done.at, by: d.driver! });
+      d.pod = { receivedBy: cust.contactName, at: done.at, recordedBy: { id: 'drv', name: d.driver!, role: 'SUPERVISOR' }, notes: 'Signed on the paper delivery note' };
+    }
+    o.deliveryId = d.id;
+    deliveries.push(d);
+  }
+
+  // ---------- quotes ----------
+  let seqQuote = 640;
+  const qline = (cust: Customer, pid: string, quantity: number, discountPct = 0, target?: number): QuoteLine => {
+    const x = products.find((y) => y.id === pid)!;
+    const listPrice = customerUnitPrice(x, cust);
+    const unitPrice = Math.round(listPrice * (1 - discountPct / 100) * 100) / 100;
+    return { productId: pid, sku: x.sku, name: x.name, uom: x.uom, image: x.image, quantity, listPrice, unitPrice, targetPrice: target, lineTotal: Math.round(unitPrice * quantity * 100) / 100 };
+  };
+  const quote = (custId: string, status: QuoteStatus, lines: QuoteLine[], days: number, by: { id: string; name: string; role: Role }, extra: Partial<Quote> = {}): Quote => {
+    const cust = customers.find((c) => c.id === custId)!;
+    const n = seqQuote++;
+    const subtotal = Math.round(lines.reduce((a, l) => a + l.lineTotal, 0) * 100) / 100;
+    const tax = Math.round(subtotal * 0.18 * 100) / 100;
+    const steps: QuoteStatus[] = status === 'requested' ? ['requested'] : status === 'draft' ? ['draft'] : status === 'sent' ? ['requested', 'sent'] : ['requested', 'sent', status];
+    return {
+      id: `quo_${n}`, number: `QT-26-${String(n).padStart(5, '0')}`, site: custSite(custId), customerId: custId, customerName: cust.name, salesRepId: cust.salesRepId, createdBy: by,
+      date: ago(days), status, version: 1, lines, subtotal, tax, total: Math.round((subtotal + tax) * 100) / 100, comments: [],
+      timeline: steps.map((st, k) => ({ status: st, at: ago(days - k * 0.6), by: k === 0 ? by.name : st === 'sent' ? 'Ravi Kumar' : cust.contactName })),
+      ...extra,
+    };
+  };
+  const venkat = { id: 'usr_cus_1', name: 'Venkat Rao', role: 'CUSTOMER_B2B' as const };
+  const abc = customers.find((c) => c.id === 'cus_001')!;
+  const quotes: Quote[] = [
+    quote('cus_001', 'requested', [qline(abc, 'prd_001', 200, 0, 150), qline(abc, l[0], 6)], 0.3, venkat, { customerNote: 'Plant shutdown next Monday. Need your best price for 200 bearings and 6 buckets of EP2 grease.' }),
+    quote('cus_001', 'sent', [qline(abc, b[3], 40, 6), qline(abc, f[0], 20, 4)], 2, ravi, { validUntil: ahead(8), terms: 'Delivery in 5 working days from Hyderabad DC. Payment Net 45. Prices exclude GST.', pricedBy: 'Ravi Kumar' }),
+    quote('cus_002', 'expired', [qline(customers.find((c) => c.id === 'cus_002')!, byCat('Valves & Fittings')[0], 30, 5)], 25, ravi, { validUntil: ago(10), pricedBy: 'Ravi Kumar' }),
+    quote('cus_004', 'draft', [qline(customers.find((c) => c.id === 'cus_004')!, byCat('Power Tools')[0], 12, 8)], 1, { id: 'usr_rep_2', name: 'Priya Sharma', role: 'SALES_REP' }),
+  ];
+
+  // ---------- collections ----------
+  const collectionNotes: CollectionNote[] = [
+    { id: 'cn_1', customerId: 'cus_006', at: ago(12), by: ravi, kind: 'promise', text: 'Owner promised to clear the two oldest invoices by cheque.', promiseDate: ago(5), promiseAmount: 60000 },
+    { id: 'cn_2', customerId: 'cus_006', at: ago(4), by: ravi, kind: 'reminder', text: 'Payment reminder sent for overdue invoices.' },
+    { id: 'cn_3', customerId: 'cus_002', at: ago(2), by: ravi, kind: 'promise', text: 'Accounts will release NEFT after month-end reconciliation.', promiseDate: ahead(4), promiseAmount: 45000 },
+  ];
+
+  return { version: 10, quotes, deliveries, collectionNotes, consignments, transfers, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), requests, workflow: structuredClone(DEFAULT_WORKFLOW), suppliers, purchaseRequests, purchaseOrders, users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
     { id: 'vr_1', visitId: 'vis_1', customerId: 'cus_001', salesRepId: 'usr_rep_1', salesRepName: 'Ravi Kumar', at: ago(0, 3), outcome: 'quote_requested', contactMet: 'Venkat Rao (Purchase Head)', notes: 'Plant shutdown planned for next Monday. Needs 200 bearings (6205/6308) and 6 buckets of EP2 grease. Competitor quoted 4% lower on grease.', nextSteps: 'Send revised grease quote; confirm bearing stock with Hyderabad DC.', followUpDate: ahead(1), photos: [] },
-  ], seq: { order: seqOrder, invoice: seqInv, request: seqReq, pr: seqPr, po: seqPo, grn: seqGrn, transfer: seqTr } };
+  ], seq: { order: seqOrder, invoice: seqInv, request: seqReq, pr: seqPr, po: seqPo, grn: seqGrn, transfer: seqTr, quote: seqQuote, delivery: seqDel, payment: 900 } };
 }

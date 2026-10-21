@@ -5,7 +5,7 @@ import { buildOrderTotals } from '@/lib/domain/pricing';
 import { creditCheck } from '@/lib/domain/credit';
 import { pushNotification } from './notificationService';
 import { OPEN_REQUEST, REVIEWABLE_REQUEST } from '@/types/domain';
-import type { ActorRef, Order, RequestStatus, SalesRequest, WorkflowSettings } from '@/types/domain';
+import type { ActorRef, Order, RequestLine, RequestStatus, SalesRequest, WorkflowSettings } from '@/types/domain';
 
 /**
  * Sales requests (request-first ordering)
@@ -24,6 +24,8 @@ export interface SubmitInput {
   offline?: boolean;
   /** Call-off from this customer consignment (stock comes from the consignment location). */
   consignmentId?: string;
+  /** Accepting a quote: the quote's lines and prices are used as they are. */
+  quoteId?: string;
 }
 export interface RequestQuery { customerId?: string; salesRepId?: string; view?: 'open' | 'review' | 'closed' | 'all'; search?: string; }
 export interface ConvertOptions {
@@ -75,9 +77,19 @@ const notifyRequester = (r: SalesRequest, title: string, body: string) =>
 
 function creditMode(w: WorkflowSettings, customerId: string) { return w.creditOverrides[customerId] ?? w.creditMode; }
 
-/** Remaining (not yet converted) lines priced at today's prices for the request's site. */
+/** Totals for lines at agreed (quoted) prices. */
+function fixedTotals(lines: { line: RequestLine; qty: number }[]) {
+  const out = lines.map(({ line, qty }) => ({ ...line, quantity: qty, discountPct: 0, lineTotal: Math.round(line.unitPrice * qty * 100) / 100 }))
+    .map(({ convertedQty, ...l }) => l); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const subtotal = Math.round(out.reduce((s, l) => s + l.lineTotal, 0) * 100) / 100;
+  const tax = Math.round(subtotal * 0.18 * 100) / 100;
+  return { lines: out, subtotal, discount: 0, tax, total: Math.round((subtotal + tax) * 100) / 100 };
+}
+
+/** Remaining (not yet converted) lines priced at today's prices for the request's site (quoted prices for an accepted quote). */
 function priceNow(r: SalesRequest) {
   const db = getDb();
+  if (r.quoteId) return fixedTotals(r.lines.filter((l) => l.quantity > l.convertedQty).map((l) => ({ line: l, qty: l.quantity - l.convertedQty })));
   const cust = db.customers.find((c) => c.id === r.customerId)!;
   const items = r.lines.filter((l) => l.quantity > l.convertedQty)
     .map((l) => ({ product: atSite(db.products.find((p) => p.id === l.productId)!, r.site), quantity: l.quantity - l.convertedQty }));
@@ -119,7 +131,9 @@ function convertNow(r: SalesRequest, actor: ActorRef, opts: Omit<ConvertOptions,
   const take = p.lines.map((l) => ({ ...l, qty: opts.onlyAvailable ? Math.min(l.open, Math.max(0, l.stock)) : l.open })).filter((l) => l.qty > 0);
   if (!take.length) throw new Error('errors.requests.nothingInStock');
   const items = take.map((l) => ({ product: atSite(db.products.find((x) => x.id === l.productId)!, r.site), quantity: l.qty }));
-  const totals = buildOrderTotals(items, cust, db.offers);
+  const totals = r.quoteId
+    ? fixedTotals(take.map((l) => ({ line: r.lines.find((x) => x.productId === l.productId)!, qty: l.qty })))
+    : buildOrderTotals(items, cust, db.offers);
   const seq = db.seq.order++;
   const at = now();
   const order: Order = {
@@ -196,7 +210,9 @@ export const requestService = {
       const cust = db.customers.find((c) => c.id === input.customerId)!;
       const cons = input.consignmentId ? db.consignments.find((c) => c.id === input.consignmentId && c.customerId === cust.id) : undefined;
       if (input.consignmentId && !cons) throw new Error('errors.consignment.notFound');
-      const site = cons?.site ?? getCurrentSite() ?? undefined;
+      const quote = input.quoteId ? db.quotes.find((q) => q.id === input.quoteId && q.customerId === cust.id) : undefined;
+      if (input.quoteId && !quote) throw new Error('errors.quotes.notFound');
+      const site = cons?.site ?? quote?.site ?? getCurrentSite() ?? undefined;
       const items = input.items.map((i) => ({ product: db.products.find((p) => p.id === i.productId)!, quantity: i.quantity }))
         .filter((i) => i.product && i.quantity > 0).map((i) => ({ ...i, product: atSite(i.product, site) }));
       if (!items.length) throw new Error('errors.requests.empty');
@@ -208,11 +224,13 @@ export const requestService = {
           if (!line || line.quantity - reserved(i.product.id) < i.quantity) throw new Error('errors.consignment.notEnough');
         }
       }
-      const totals = buildOrderTotals(items, cust, db.offers);
+      const totals = quote
+        ? fixedTotals(quote.lines.map((l) => ({ line: { productId: l.productId, sku: l.sku, name: l.name, uom: l.uom, image: l.image, quantity: l.quantity, listPrice: l.listPrice, unitPrice: l.unitPrice, discountPct: 0, lineTotal: l.lineTotal, convertedQty: 0 }, qty: l.quantity })))
+        : buildOrderTotals(items, cust, db.offers);
       const at = now();
       const r: SalesRequest = {
         id: `req_${uid('').slice(1)}`, number: input.offline ? `DRAFT-${uid('').slice(1, 7).toUpperCase()}` : `SR-26-${String(db.seq.request++).padStart(5, '0')}`,
-        site, consignmentId: cons?.id, customerId: cust.id, customerName: cust.name, salesRepId: cust.salesRepId, createdBy: input.actor,
+        site, consignmentId: cons?.id, quoteId: quote?.id, quoteNumber: quote?.number, customerId: cust.id, customerName: cust.name, salesRepId: cust.salesRepId, createdBy: input.actor,
         source: input.offline ? 'offline' : input.actor.role === 'SALES_REP' ? 'sales_app' : 'portal', date: at, status: 'draft',
         lines: totals.lines.map((l) => ({ ...l, convertedQty: 0 })), subtotal: totals.subtotal, discount: totals.discount, tax: totals.tax, total: totals.total,
         poNumber: input.poNumber, notes: input.notes, deliveryAddress: cust.address, billingAddress: cust.billingAddress,

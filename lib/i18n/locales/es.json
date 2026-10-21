@@ -50,6 +50,31 @@
       "empty": "Añada al menos un producto con cantidad.",
       "reasonRequired": "Indique para qué se necesita el stock.",
       "noStock": "No hay suficiente stock libre en el centro de origen."
+    },
+    "quotes": {
+      "notFound": "Este presupuesto no existe o no puede verlo.",
+      "notOpen": "Este presupuesto ya no se puede modificar.",
+      "empty": "Añada al menos un producto con cantidad.",
+      "validity": "Indique una fecha de validez futura.",
+      "discountNeedsApproval": "Algunos precios están por debajo de lo que puede conceder por su cuenta. Pida a un supervisor que envíe este presupuesto.",
+      "expired": "Este presupuesto ha caducado. Solicite uno nuevo.",
+      "reasonRequired": "Indíquenos el motivo."
+    },
+    "deliveries": {
+      "notFound": "Esta entrega no existe o no puede verla.",
+      "notOpen": "Esta entrega ya no se puede modificar.",
+      "receivedBy": "Indique quién recibió la mercancía.",
+      "proof": "Capture una firma o una foto.",
+      "reasonRequired": "Indique por qué falló la entrega."
+    },
+    "payments": {
+      "notFound": "Este pago no existe.",
+      "noInvoices": "Elija al menos una factura pendiente.",
+      "amount": "Indique un importe mayor que cero.",
+      "reference": "Indique la referencia de la transferencia o del cheque.",
+      "notPending": "Este pago ya se ha tramitado.",
+      "reasonRequired": "Indique un motivo.",
+      "promiseDetails": "Indique la fecha y el importe prometidos."
     }
   },
   "login": {
@@ -181,7 +206,10 @@
     "purchaseOrders": "Pedidos de compra",
     "inventory": "Inventario",
     "consignment": "Stock en consignación",
-    "transfers": "Traspasos de stock"
+    "transfers": "Traspasos de stock",
+    "quotes": "Presupuestos",
+    "deliveries": "Entregas",
+    "collections": "Cobros"
   },
   "common": {
     "search": "Buscar",
@@ -274,7 +302,17 @@
     "partly_received": "Recibido en parte",
     "received": "Recibido",
     "initiated": "Traspaso iniciado",
-    "transferred": "Traspasado"
+    "transferred": "Traspasado",
+    "requested": "Solicitado",
+    "sent": "Enviado",
+    "accepted": "Aceptado",
+    "declined": "Rechazado",
+    "out_for_delivery": "En reparto",
+    "failed": "Fallida",
+    "pending_verification": "Por verificar",
+    "posted": "Contabilizado",
+    "kept": "Cumplida",
+    "broken": "Incumplida"
   },
   "dashboard": {
     "admin": "Resumen de la plataforma",
@@ -295,7 +333,23 @@
     "empty": "Su carrito está vacío",
     "emptyHint": "Explore el catálogo para añadir productos.",
     "checkout": "Revisar pedido",
-    "deliveryInfo": "Información de entrega"
+    "deliveryInfo": "Información de entrega",
+    "products": {
+      "one": "{count} producto",
+      "other": "{count} productos"
+    },
+    "clear": "Vaciar carrito",
+    "browse": "Ver el catálogo",
+    "continue": "Seguir comprando",
+    "belowMoq": "Pedido mínimo {moq}",
+    "perUom": "por {uom}",
+    "qtyFor": "Cantidad de {name}",
+    "remove": "Quitar {name}",
+    "deliveryText": "La fecha y los gastos de entrega se confirman con su pedido.",
+    "overCredit": "Este pedido supera su crédito disponible ({available}). Se revisará antes de confirmarlo.",
+    "requestQuote": "Solicitar presupuesto",
+    "startQuote": "Hacer presupuesto",
+    "quoteText": "Valoramos estos productos y le enviamos un presupuesto. Acéptelo para pedir a los precios presupuestados."
   },
   "checkout": {
     "title": "Revisar y enviar la solicitud",
@@ -843,5 +897,302 @@
     "nowMin": "Ahora {now} · mínimo {min}",
     "topUpConfirm": "Contabilizar reposición",
     "toppedUp": "Consignación repuesta"
+  },
+  "account": {
+    "title": "Cuenta y finanzas",
+    "intro": "Los saldos proceden del libro de clientes de {erp}.",
+    "statement": "Descargar extracto",
+    "statementInfo": "{erp} genera el extracto de cuenta en PDF.",
+    "outstanding": "Saldo pendiente",
+    "creditLimit": "Límite de crédito",
+    "available": "Crédito disponible",
+    "overdue": "Vencido",
+    "dueSoon": "{amount} vence en los próximos 7 días",
+    "utilisation": "Crédito usado",
+    "used": "{pct} % de su límite de crédito usado",
+    "dueInvoices": "Facturas por pagar",
+    "allInvoices": "Todas las facturas",
+    "noDues": "Nada que pagar",
+    "noDuesText": "Todas sus facturas están pagadas.",
+    "bankDetails": "Pagar por transferencia",
+    "bankHint": "Tras pagar por transferencia o cheque, use «He pagado» para que podamos conciliar su pago rápidamente.",
+    "paymentHistory": "Pagos",
+    "noPayments": "Aún no hay pagos",
+    "profile": "Datos de la empresa",
+    "field": {
+      "company": "Empresa",
+      "code": "Código de cliente",
+      "gstin": "GSTIN",
+      "contact": "Contacto",
+      "email": "Correo",
+      "address": "Dirección",
+      "tier": "Nivel de precios"
+    },
+    "tierValue": "Nivel {tier}",
+    "requestChange": "Solicitar un cambio"
+  },
+  "invoices": {
+    "title": "Facturas",
+    "intro": "Facturas de {erp}. Pague en línea o avísenos de una transferencia.",
+    "accountSummary": "Resumen de la cuenta",
+    "kpi": {
+      "total": "Facturas",
+      "open": "Saldo pendiente",
+      "overdue": "Vencido",
+      "paid": "Pagado"
+    },
+    "col": {
+      "invoice": "Factura",
+      "date": "Fecha",
+      "due": "Vencimiento",
+      "amount": "Importe",
+      "balance": "Saldo"
+    },
+    "due": "Vence el {date}",
+    "issuedDue": "Emitida el {issued} · vence el {due}",
+    "balanceOf": "Saldo {balance} de {amount}",
+    "pay": "Pagar",
+    "viewOrder": "Ver pedido {number}",
+    "pdfInfo": "{erp} genera el PDF de la factura {number}."
+  },
+  "quotes": {
+    "title": "Presupuestos",
+    "introCustomer": "Solicite precios para pedidos grandes o especiales. Acepte un presupuesto para pedir a esos precios.",
+    "introStaff": "Solicitudes de presupuesto de clientes y presupuestos en preparación.",
+    "request": "Solicitar presupuesto",
+    "new": "Nuevo presupuesto",
+    "requestTitle": "Solicitar presupuesto",
+    "newTitle": "Nuevo presupuesto",
+    "requestIntro": "Elija los productos y las cantidades. Añada un precio objetivo si lo tiene.",
+    "newIntro": "Elija el cliente y los productos. Los precios se fijan en la siguiente pantalla.",
+    "chooseCustomer": "Elija un cliente",
+    "noteCustomer": "Mensaje para ventas",
+    "noteStaff": "Nota interna",
+    "notePlaceholder": "Fecha de entrega, proyecto, precio de la competencia…",
+    "sendRequest": "Enviar solicitud de presupuesto",
+    "startPricing": "Continuar a la valoración",
+    "requested": "Solicitud de presupuesto {number} enviada",
+    "started": "Presupuesto {number} creado",
+    "col": {
+      "number": "Presupuesto",
+      "customer": "Cliente",
+      "date": "Fecha",
+      "validUntil": "Válido hasta",
+      "items": "Productos",
+      "total": "Total",
+      "status": "Estado"
+    },
+    "empty": "No hay presupuestos",
+    "emptyCustomer": "Solicite un presupuesto desde el carrito o aquí.",
+    "emptyStaff": "Aquí aparecen las solicitudes de presupuesto de los clientes.",
+    "version": "Versión {n}",
+    "validUntilDate": "Válido hasta el {date}",
+    "becameRequest": "Aceptado como solicitud de venta {number}",
+    "revise": "Revisar",
+    "cancel": "Cancelar presupuesto",
+    "customerAsked": "Mensaje del cliente",
+    "waiting": "Estamos valorando su solicitud. Recibirá un aviso cuando el presupuesto esté listo.",
+    "yourPrice": "Precio habitual",
+    "targetPrice": "Precio objetivo",
+    "quotedPrice": "Precio presupuestado",
+    "tax": "IVA/GST (18 %)",
+    "terms": "Condiciones",
+    "termsPlaceholder": "Plazo de entrega, condiciones de pago, transporte…",
+    "overLimit": "Algunos precios están más de un {pct} % por debajo del precio habitual del cliente. Un supervisor debe enviar este presupuesto.",
+    "saveDraft": "Guardar borrador",
+    "send": "Enviar presupuesto",
+    "sendRevised": "Enviar presupuesto revisado",
+    "decideText": "Acepte para pedir a estos precios, solicite cambios o rechácelo.",
+    "accept": "Aceptar",
+    "askRevision": "Solicitar cambios",
+    "decline": "Rechazar",
+    "acceptTitle": "¿Aceptar {number}?",
+    "acceptText": "Se crea una solicitud de venta de {total} a los precios presupuestados, que sigue la aprobación habitual.",
+    "acceptConfirm": "Aceptar y pedir",
+    "declineText": "Díganos el motivo para mejorar la próxima vez.",
+    "reviseText": "Indique qué quiere cambiar: precios, cantidades o condiciones.",
+    "sendRevisionRequest": "Enviar solicitud",
+    "msg": {
+      "saved": "Borrador guardado",
+      "sent": "Presupuesto enviado al cliente",
+      "accepted": "Presupuesto aceptado – solicitud {number} creada",
+      "declined": "Presupuesto rechazado",
+      "revisionAsked": "Solicitud de cambios enviada",
+      "cancelled": "Presupuesto cancelado"
+    }
+  },
+  "deliveries": {
+    "title": "Entregas",
+    "intro": "Albaranes de {site}: lo que sale y las pruebas de entrega.",
+    "tabs": {
+      "open": "Pendientes",
+      "today": "Hoy",
+      "delivered": "Entregadas",
+      "all": "Todas"
+    },
+    "col": {
+      "number": "Albarán",
+      "customer": "Cliente",
+      "planned": "Prevista",
+      "carrier": "Transportista",
+      "status": "Estado",
+      "shipped": "Enviado"
+    },
+    "empty": "No hay entregas",
+    "plannedFor": "Prevista para el {date}",
+    "address": "Dirección de entrega",
+    "outForDelivery": "En reparto",
+    "dispatchText": "Se avisa al cliente de que la mercancía está en camino.",
+    "recordPod": "Registrar prueba de entrega",
+    "podText": "Quién la recibió, qué llegó y una firma o una foto.",
+    "markFailed": "Entrega fallida",
+    "failText": "Se avisa al cliente y la entrega se puede reprogramar.",
+    "failPlaceholder": "Cliente cerrado, dirección no encontrada, rechazada…",
+    "reschedule": "Reprogramar",
+    "rescheduleText": "Elija la nueva fecha de entrega.",
+    "msg": {
+      "out": "Marcada en reparto",
+      "delivered": "Entrega confirmada",
+      "failed": "Entrega marcada como fallida",
+      "rescheduled": "Entrega reprogramada"
+    },
+    "pod": {
+      "title": "Prueba de entrega",
+      "receivedBy": "Recibido por",
+      "receivedByPlaceholder": "Nombre de quien firmó",
+      "quantities": "Cantidades recibidas",
+      "sent": "{qty} {uom} enviados",
+      "received": "Recibido",
+      "damaged": "Dañado",
+      "issueHint": "Las líneas incompletas o dañadas se comunican al equipo de ventas.",
+      "issueLine": "{received} de {sent} recibidos, {damaged} dañados",
+      "signature": "Firma",
+      "signHere": "Firme aquí",
+      "clear": "Borrar",
+      "photo": "Foto",
+      "takePhoto": "Hacer una foto",
+      "addLocation": "Añadir ubicación",
+      "location": "Ubicación",
+      "notes": "Observaciones",
+      "proofHint": "Capture una firma o una foto para confirmar la entrega.",
+      "submit": "Confirmar entrega",
+      "confirmReceipt": "Confirmar que lo he recibido",
+      "at": "Recibido el",
+      "recordedBy": "Registrado por"
+    },
+    "cardTitle": "Entrega",
+    "afterDispatch": "Se crea un albarán cuando se envía el pedido."
+  },
+  "payments": {
+    "payOnline": "Pagar en línea",
+    "payOnlineText": "Elija las facturas que va a pagar. Le llevamos a nuestro proveedor de pagos para completar el pago.",
+    "method": "Forma de pago",
+    "methods": {
+      "NEFT": "Banca en línea",
+      "RTGS": "RTGS",
+      "Cheque": "Cheque",
+      "UPI": "UPI",
+      "Card": "Tarjeta",
+      "Cash": "Efectivo"
+    },
+    "secure": "Pago seguro con nuestro proveedor de pagos",
+    "payAmount": "Pagar {amount}",
+    "provider": "Conectando con el proveedor de pagos…",
+    "thanks": "Pago recibido",
+    "thanksText": "Sus facturas figuran como pagadas. Le enviamos un recibo.",
+    "tellUs": "He pagado",
+    "tellUsText": "Avísenos de una transferencia o un cheque para que lo conciliemos con sus facturas.",
+    "recordCollection": "Registrar un cobro",
+    "recordCollectionText": "Registre un cheque, una transferencia o efectivo cobrado. Contabilidad lo comprueba con el banco antes de contabilizarlo.",
+    "date": "Fecha",
+    "reference": "Referencia",
+    "chequeNo": "Número de cheque",
+    "referencePlaceholder": "UTR o ID de transacción",
+    "amount": "Importe",
+    "note": "Nota",
+    "verifyHint": "Las facturas se marcan como pagadas cuando contabilidad encuentra el dinero en el banco.",
+    "saveCollection": "Guardar cobro",
+    "sendAdvice": "Enviar",
+    "receipt": "Recibo",
+    "source": "Origen",
+    "sources": {
+      "online": "En línea",
+      "advice": "Aviso del cliente",
+      "collection": "Cobrado por el comercial",
+      "erp": "Banco / ERP"
+    },
+    "onAccount": "A cuenta",
+    "enteredBy": "registrado por {name}",
+    "verify": "Encontrado en el banco",
+    "notFound": "No está en el banco",
+    "rejectTitle": "¿Rechazar {number}?",
+    "rejectText": "Se informa del motivo al cliente y a quien lo registró.",
+    "msg": {
+      "paid": "Pago {number} recibido",
+      "recorded": "Pago {number} enviado para verificar",
+      "verified": "Pago {number} contabilizado",
+      "rejected": "Pago rechazado"
+    }
+  },
+  "collections": {
+    "title": "Cobros",
+    "introRep": "Lo que le deben sus clientes, promesas de pago y cobros realizados.",
+    "introManager": "Deuda por antigüedad, pagos por verificar y seguimiento de cobros.",
+    "tabs": {
+      "aging": "Antigüedad",
+      "verify": "Por verificar",
+      "payments": "Pagos"
+    },
+    "kpi": {
+      "outstanding": "Pendiente",
+      "overdue": "Vencido",
+      "over90": "Más de 90 días",
+      "toVerify": "Pagos por verificar",
+      "toVerifyHint": {
+        "one": "{count} pago",
+        "other": "{count} pagos"
+      }
+    },
+    "bucket": {
+      "current": "No vencido",
+      "d1_30": "1–30 días",
+      "d31_60": "31–60",
+      "d61_90": "61–90",
+      "d90": "90+"
+    },
+    "followUp": "Seguimiento",
+    "promised": "Prometido {amount} para el {date}",
+    "broken": {
+      "one": "{count} promesa incumplida",
+      "other": "{count} promesas incumplidas"
+    },
+    "lastPaid": "Último pago el {date}",
+    "pendingAmount": "{amount} por verificar",
+    "empty": "Nada pendiente",
+    "nothingToVerify": "No hay pagos pendientes de verificar",
+    "panelSummary": "{total} pendiente · {overdue} vencido",
+    "record": "Registrar pago",
+    "promise": "Promesa de pago",
+    "remind": "Enviar recordatorio",
+    "addNote": "Añadir nota",
+    "promiseDate": "Fecha prometida",
+    "note": "Nota",
+    "notePlaceholder": "Lo acordado en la llamada…",
+    "openInvoices": "Facturas pendientes",
+    "daysOverdue": {
+      "one": "{count} día de retraso",
+      "other": "{count} días de retraso"
+    },
+    "history": "Seguimiento",
+    "noHistory": "Aún no hay seguimiento",
+    "kind": {
+      "promise": "Promesa de pago",
+      "reminder": "Recordatorio",
+      "note": "Nota"
+    },
+    "msg": {
+      "saved": "Guardado",
+      "reminded": "Recordatorio enviado"
+    }
   }
 }

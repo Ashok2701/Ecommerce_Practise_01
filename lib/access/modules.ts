@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Users, Building2, ClipboardCheck, Package, ShoppingCart, FileText, Wallet, Megaphone, BadgePercent, MessageSquare,
-  Bell, Sparkles, UserSquare2, CalendarCheck, TrendingUp, Settings, PlusCircle, Boxes, Zap, KeyRound, ClipboardList, Workflow, Truck, PackageSearch, FileInput, Warehouse, ArrowLeftRight, PackageOpen, type LucideIcon,
+  Bell, Sparkles, UserSquare2, CalendarCheck, TrendingUp, Settings, PlusCircle, Boxes, Zap, KeyRound, ClipboardList, Workflow, Truck, PackageSearch, FileInput, Warehouse, ArrowLeftRight, PackageOpen, FileSignature, PackageCheck, HandCoins, type LucideIcon,
 } from 'lucide-react';
 import type { Role } from '@/types/domain';
 
@@ -18,6 +18,7 @@ export type ModuleId =
   | 'dashboard' | 'catalog' | 'quick_order' | 'cart' | 'requests' | 'orders' | 'new_order' | 'invoices' | 'account' | 'offers'
   | 'supplier_catalog' | 'purchase_requests' | 'purchase_orders'
   | 'inventory' | 'consignment' | 'transfers'
+  | 'quotes' | 'deliveries' | 'collections'
   | 'customers' | 'approvals' | 'team' | 'follow_ups' | 'performance'
   | 'announcements' | 'messages' | 'assistant' | 'notifications'
   | 'users' | 'access' | 'workflow' | 'settings';
@@ -42,6 +43,7 @@ export const MODULES: ModuleDef[] = [
   { id: 'dashboard', label: 'nav.dashboard', icon: LayoutDashboard, group: 'overview', routes: ['/dashboard'] },
   { id: 'approvals', label: 'nav.approvals', icon: ClipboardCheck, group: 'overview', routes: ['/approvals'], badge: 'approvals' },
   { id: 'customers', label: 'nav.customers', icon: Building2, group: 'operations', routes: ['/customers'] },
+  { id: 'collections', label: 'nav.collections', icon: HandCoins, group: 'operations', routes: ['/collections'] },
   { id: 'follow_ups', label: 'nav.followUps', icon: CalendarCheck, group: 'operations', routes: ['/follow-ups'] },
   { id: 'performance', label: 'nav.performance', icon: TrendingUp, group: 'operations', routes: ['/performance'] },
   { id: 'team', label: 'nav.salesReps', icon: UserSquare2, group: 'operations', routes: ['/sales-reps'] },
@@ -49,8 +51,10 @@ export const MODULES: ModuleDef[] = [
   { id: 'catalog', label: 'nav.catalog', icon: Boxes, group: 'commerce', routes: ['/catalog'] },
   { id: 'quick_order', label: 'nav.quickOrder', icon: Zap, group: 'commerce', routes: ['/quick-order'] },
   { id: 'cart', label: 'nav.cart', icon: ShoppingCart, group: 'commerce', routes: ['/cart', '/checkout'], badge: 'cart' },
+  { id: 'quotes', label: 'nav.quotes', icon: FileSignature, group: 'commerce', routes: ['/quotes'] },
   { id: 'requests', label: 'nav.requests', icon: ClipboardList, group: 'commerce', routes: ['/requests'] },
   { id: 'orders', label: 'nav.orders', icon: Package, group: 'commerce', routes: ['/orders'] },
+  { id: 'deliveries', label: 'nav.deliveries', icon: PackageCheck, group: 'commerce', routes: ['/deliveries'] },
   { id: 'invoices', label: 'nav.invoices', icon: FileText, group: 'commerce', routes: ['/invoices'] },
   { id: 'account', label: 'nav.account', icon: Wallet, group: 'commerce', routes: ['/account'] },
   { id: 'supplier_catalog', label: 'nav.supplierCatalog', icon: PackageSearch, group: 'purchasing', routes: ['/supplier-catalog'] },
@@ -82,10 +86,10 @@ export const isLocked = (role: Role, id: ModuleId) => ALWAYS_ON.includes(id) || 
 export const DEFAULT_ROLE_MODULES: Record<Role, ModuleId[]> = {
   // Admin runs the portal; business modules are not granted automatically.
   ADMIN: ['dashboard', 'users', 'access', 'workflow', 'settings', 'customers', 'announcements', 'messages', 'assistant', 'notifications'],
-  SUPERVISOR: ['dashboard', 'approvals', 'requests', 'orders', 'workflow', 'purchase_requests', 'purchase_orders', 'inventory', 'consignment', 'transfers', 'customers', 'team', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
-  SALES_REP: ['dashboard', 'customers', 'follow_ups', 'performance', 'new_order', 'catalog', 'quick_order', 'cart', 'requests', 'orders', 'inventory', 'consignment', 'transfers', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
+  SUPERVISOR: ['dashboard', 'approvals', 'quotes', 'requests', 'orders', 'deliveries', 'collections', 'workflow', 'purchase_requests', 'purchase_orders', 'inventory', 'consignment', 'transfers', 'customers', 'team', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
+  SALES_REP: ['dashboard', 'customers', 'collections', 'follow_ups', 'performance', 'new_order', 'catalog', 'quick_order', 'cart', 'quotes', 'requests', 'orders', 'deliveries', 'inventory', 'consignment', 'transfers', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
   SUPPLIER: ['dashboard', 'supplier_catalog', 'purchase_requests', 'purchase_orders', 'announcements', 'messages', 'assistant', 'notifications'],
-  CUSTOMER_B2B: ['dashboard', 'catalog', 'quick_order', 'cart', 'requests', 'orders', 'consignment', 'invoices', 'account', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
+  CUSTOMER_B2B: ['dashboard', 'catalog', 'quick_order', 'cart', 'quotes', 'requests', 'orders', 'consignment', 'invoices', 'account', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
   CUSTOMER_B2C: ['dashboard', 'catalog', 'cart', 'requests', 'orders', 'invoices', 'account', 'offers', 'messages', 'assistant', 'notifications'],
 };
 

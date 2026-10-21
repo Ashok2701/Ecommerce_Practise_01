@@ -14,3 +14,4 @@ export * from './siteService';
 export * from './requestService';
 export * from './purchasingService';
 export * from './inventoryService';
+export * from './commerceService';

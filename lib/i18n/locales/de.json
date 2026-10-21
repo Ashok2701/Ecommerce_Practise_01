@@ -50,6 +50,31 @@
       "empty": "Fügen Sie mindestens ein Produkt mit Menge hinzu.",
       "reasonRequired": "Geben Sie an, wofür der Bestand benötigt wird.",
       "noStock": "Am Quellstandort ist nicht genug freier Bestand."
+    },
+    "quotes": {
+      "notFound": "Dieses Angebot existiert nicht oder ist für Sie nicht sichtbar.",
+      "notOpen": "Dieses Angebot kann nicht mehr geändert werden.",
+      "empty": "Fügen Sie mindestens ein Produkt mit Menge hinzu.",
+      "validity": "Geben Sie ein Gültigkeitsdatum in der Zukunft an.",
+      "discountNeedsApproval": "Einige Preise liegen unter Ihrem eigenen Spielraum. Bitten Sie einen Supervisor, dieses Angebot zu senden.",
+      "expired": "Dieses Angebot ist abgelaufen. Fordern Sie ein neues an.",
+      "reasonRequired": "Bitte nennen Sie den Grund."
+    },
+    "deliveries": {
+      "notFound": "Diese Lieferung existiert nicht oder ist für Sie nicht sichtbar.",
+      "notOpen": "Diese Lieferung kann nicht mehr geändert werden.",
+      "receivedBy": "Geben Sie an, wer die Ware angenommen hat.",
+      "proof": "Erfassen Sie eine Unterschrift oder ein Foto.",
+      "reasonRequired": "Geben Sie an, warum die Zustellung fehlgeschlagen ist."
+    },
+    "payments": {
+      "notFound": "Diese Zahlung existiert nicht.",
+      "noInvoices": "Wählen Sie mindestens eine offene Rechnung.",
+      "amount": "Geben Sie einen Betrag über null ein.",
+      "reference": "Geben Sie die Transaktions- oder Schecknummer ein.",
+      "notPending": "Diese Zahlung wurde bereits bearbeitet.",
+      "reasonRequired": "Geben Sie einen Grund ein.",
+      "promiseDetails": "Geben Sie das zugesagte Datum und den Betrag ein."
     }
   },
   "login": {
@@ -181,7 +206,10 @@
     "purchaseOrders": "Bestellungen",
     "inventory": "Bestand",
     "consignment": "Konsignationslager",
-    "transfers": "Umlagerungen"
+    "transfers": "Umlagerungen",
+    "quotes": "Angebote",
+    "deliveries": "Lieferungen",
+    "collections": "Forderungsmanagement"
   },
   "common": {
     "search": "Suchen",
@@ -274,7 +302,17 @@
     "partly_received": "Teilweise erhalten",
     "received": "Erhalten",
     "initiated": "Umlagerung gestartet",
-    "transferred": "Umgelagert"
+    "transferred": "Umgelagert",
+    "requested": "Angefragt",
+    "sent": "Gesendet",
+    "accepted": "Angenommen",
+    "declined": "Abgelehnt",
+    "out_for_delivery": "In Zustellung",
+    "failed": "Fehlgeschlagen",
+    "pending_verification": "Zu prüfen",
+    "posted": "Gebucht",
+    "kept": "Eingehalten",
+    "broken": "Nicht eingehalten"
   },
   "dashboard": {
     "admin": "Plattformübersicht",
@@ -295,7 +333,23 @@
     "empty": "Ihr Warenkorb ist leer",
     "emptyHint": "Durchsuchen Sie den Katalog, um Produkte hinzuzufügen.",
     "checkout": "Bestellung prüfen",
-    "deliveryInfo": "Lieferinformationen"
+    "deliveryInfo": "Lieferinformationen",
+    "products": {
+      "one": "{count} Produkt",
+      "other": "{count} Produkte"
+    },
+    "clear": "Warenkorb leeren",
+    "browse": "Katalog durchsuchen",
+    "continue": "Weiter einkaufen",
+    "belowMoq": "Mindestbestellmenge {moq}",
+    "perUom": "pro {uom}",
+    "qtyFor": "Menge für {name}",
+    "remove": "{name} entfernen",
+    "deliveryText": "Lieferdatum und -kosten werden mit Ihrer Bestellung bestätigt.",
+    "overCredit": "Diese Bestellung übersteigt Ihren verfügbaren Kredit ({available}). Sie wird vor der Bestätigung geprüft.",
+    "requestQuote": "Angebot anfragen",
+    "startQuote": "Angebot erstellen",
+    "quoteText": "Wir kalkulieren diese Produkte und senden Ihnen ein Angebot. Nehmen Sie es an, um zu den Angebotspreisen zu bestellen."
   },
   "checkout": {
     "title": "Anfrage prüfen und senden",
@@ -843,5 +897,302 @@
     "nowMin": "Aktuell {now} · Minimum {min}",
     "topUpConfirm": "Auffüllung buchen",
     "toppedUp": "Konsignation aufgefüllt"
+  },
+  "account": {
+    "title": "Konto & Finanzen",
+    "intro": "Die Salden stammen aus der Debitorenbuchhaltung von {erp}.",
+    "statement": "Kontoauszug herunterladen",
+    "statementInfo": "{erp} erstellt den Kontoauszug als PDF.",
+    "outstanding": "Offener Saldo",
+    "creditLimit": "Kreditlimit",
+    "available": "Verfügbarer Kredit",
+    "overdue": "Überfällig",
+    "dueSoon": "{amount} in den nächsten 7 Tagen fällig",
+    "utilisation": "Genutzter Kredit",
+    "used": "{pct} % Ihres Kreditlimits genutzt",
+    "dueInvoices": "Zu zahlende Rechnungen",
+    "allInvoices": "Alle Rechnungen",
+    "noDues": "Nichts zu zahlen",
+    "noDuesText": "Alle Ihre Rechnungen sind bezahlt.",
+    "bankDetails": "Per Überweisung zahlen",
+    "bankHint": "Nach einer Überweisung oder einem Scheck nutzen Sie bitte „Ich habe bezahlt“, damit wir Ihre Zahlung schnell zuordnen.",
+    "paymentHistory": "Zahlungen",
+    "noPayments": "Noch keine Zahlungen",
+    "profile": "Firmendaten",
+    "field": {
+      "company": "Firma",
+      "code": "Kundennummer",
+      "gstin": "GSTIN",
+      "contact": "Ansprechpartner",
+      "email": "E-Mail",
+      "address": "Adresse",
+      "tier": "Preisstufe"
+    },
+    "tierValue": "Stufe {tier}",
+    "requestChange": "Änderung anfragen"
+  },
+  "invoices": {
+    "title": "Rechnungen",
+    "intro": "Rechnungen aus {erp}. Bezahlen Sie online oder melden Sie uns eine Überweisung.",
+    "accountSummary": "Kontoübersicht",
+    "kpi": {
+      "total": "Rechnungen",
+      "open": "Offener Saldo",
+      "overdue": "Überfällig",
+      "paid": "Bezahlt"
+    },
+    "col": {
+      "invoice": "Rechnung",
+      "date": "Datum",
+      "due": "Fällig",
+      "amount": "Betrag",
+      "balance": "Saldo"
+    },
+    "due": "Fällig am {date}",
+    "issuedDue": "Ausgestellt {issued} · fällig {due}",
+    "balanceOf": "Saldo {balance} von {amount}",
+    "pay": "Bezahlen",
+    "viewOrder": "Auftrag {number} anzeigen",
+    "pdfInfo": "{erp} erstellt das PDF der Rechnung {number}."
+  },
+  "quotes": {
+    "title": "Angebote",
+    "introCustomer": "Fragen Sie Preise für größere oder besondere Bestellungen an. Nehmen Sie ein Angebot an, um zu diesen Preisen zu bestellen.",
+    "introStaff": "Angebotsanfragen von Kunden und Angebote in Bearbeitung.",
+    "request": "Angebot anfragen",
+    "new": "Neues Angebot",
+    "requestTitle": "Angebot anfragen",
+    "newTitle": "Neues Angebot",
+    "requestIntro": "Wählen Sie Produkte und Mengen. Geben Sie einen Zielpreis an, falls vorhanden.",
+    "newIntro": "Wählen Sie Kunde und Produkte. Die Preise legen Sie im nächsten Schritt fest.",
+    "chooseCustomer": "Kunden wählen",
+    "noteCustomer": "Nachricht an den Vertrieb",
+    "noteStaff": "Interne Notiz",
+    "notePlaceholder": "Liefertermin, Projekt, Wettbewerbspreis…",
+    "sendRequest": "Angebotsanfrage senden",
+    "startPricing": "Weiter zur Kalkulation",
+    "requested": "Angebotsanfrage {number} gesendet",
+    "started": "Angebot {number} angelegt",
+    "col": {
+      "number": "Angebot",
+      "customer": "Kunde",
+      "date": "Datum",
+      "validUntil": "Gültig bis",
+      "items": "Produkte",
+      "total": "Summe",
+      "status": "Status"
+    },
+    "empty": "Keine Angebote",
+    "emptyCustomer": "Fragen Sie ein Angebot über den Warenkorb oder hier an.",
+    "emptyStaff": "Angebotsanfragen von Kunden erscheinen hier.",
+    "version": "Version {n}",
+    "validUntilDate": "Gültig bis {date}",
+    "becameRequest": "Als Verkaufsanfrage {number} angenommen",
+    "revise": "Überarbeiten",
+    "cancel": "Angebot stornieren",
+    "customerAsked": "Nachricht des Kunden",
+    "waiting": "Wir kalkulieren Ihre Anfrage. Sie werden benachrichtigt, sobald das Angebot fertig ist.",
+    "yourPrice": "Normalpreis",
+    "targetPrice": "Zielpreis",
+    "quotedPrice": "Angebotspreis",
+    "tax": "GST (18 %)",
+    "terms": "Bedingungen",
+    "termsPlaceholder": "Lieferzeit, Zahlungsbedingungen, Fracht…",
+    "overLimit": "Einige Preise liegen mehr als {pct} % unter dem Normalpreis des Kunden. Ein Supervisor muss dieses Angebot senden.",
+    "saveDraft": "Entwurf speichern",
+    "send": "Angebot senden",
+    "sendRevised": "Überarbeitetes Angebot senden",
+    "decideText": "Nehmen Sie an, um zu diesen Preisen zu bestellen, bitten Sie um Änderungen oder lehnen Sie ab.",
+    "accept": "Annehmen",
+    "askRevision": "Änderungen anfragen",
+    "decline": "Ablehnen",
+    "acceptTitle": "{number} annehmen?",
+    "acceptText": "Eine Verkaufsanfrage über {total} wird zu den Angebotspreisen erstellt und durchläuft die normale Genehmigung.",
+    "acceptConfirm": "Annehmen und bestellen",
+    "declineText": "Sagen Sie uns den Grund, damit wir es beim nächsten Mal besser machen.",
+    "reviseText": "Was soll geändert werden: Preise, Mengen oder Bedingungen?",
+    "sendRevisionRequest": "Anfrage senden",
+    "msg": {
+      "saved": "Entwurf gespeichert",
+      "sent": "Angebot an den Kunden gesendet",
+      "accepted": "Angebot angenommen – Anfrage {number} erstellt",
+      "declined": "Angebot abgelehnt",
+      "revisionAsked": "Änderungswunsch gesendet",
+      "cancelled": "Angebot storniert"
+    }
+  },
+  "deliveries": {
+    "title": "Lieferungen",
+    "intro": "Lieferscheine aus {site}: was rausgeht und Liefernachweise.",
+    "tabs": {
+      "open": "Offen",
+      "today": "Heute",
+      "delivered": "Zugestellt",
+      "all": "Alle"
+    },
+    "col": {
+      "number": "Lieferschein",
+      "customer": "Kunde",
+      "planned": "Geplant",
+      "carrier": "Spediteur",
+      "status": "Status",
+      "shipped": "Versendet"
+    },
+    "empty": "Keine Lieferungen",
+    "plannedFor": "Geplant für {date}",
+    "address": "Lieferadresse",
+    "outForDelivery": "In Zustellung",
+    "dispatchText": "Der Kunde wird informiert, dass die Ware unterwegs ist.",
+    "recordPod": "Liefernachweis erfassen",
+    "podText": "Wer angenommen hat, was angekommen ist und eine Unterschrift oder ein Foto.",
+    "markFailed": "Zustellung fehlgeschlagen",
+    "failText": "Der Kunde wird informiert und die Lieferung kann neu geplant werden.",
+    "failPlaceholder": "Kunde geschlossen, Adresse nicht gefunden, Annahme verweigert…",
+    "reschedule": "Neu planen",
+    "rescheduleText": "Wählen Sie das neue Lieferdatum.",
+    "msg": {
+      "out": "Als in Zustellung markiert",
+      "delivered": "Zustellung bestätigt",
+      "failed": "Zustellung als fehlgeschlagen markiert",
+      "rescheduled": "Lieferung neu geplant"
+    },
+    "pod": {
+      "title": "Liefernachweis",
+      "receivedBy": "Angenommen von",
+      "receivedByPlaceholder": "Name der unterschreibenden Person",
+      "quantities": "Erhaltene Mengen",
+      "sent": "{qty} {uom} versendet",
+      "received": "Erhalten",
+      "damaged": "Beschädigt",
+      "issueHint": "Fehlende oder beschädigte Positionen werden dem Vertrieb gemeldet.",
+      "issueLine": "{received} von {sent} erhalten, {damaged} beschädigt",
+      "signature": "Unterschrift",
+      "signHere": "Hier unterschreiben",
+      "clear": "Löschen",
+      "photo": "Foto",
+      "takePhoto": "Foto aufnehmen",
+      "addLocation": "Standort hinzufügen",
+      "location": "Standort",
+      "notes": "Anmerkungen",
+      "proofHint": "Erfassen Sie eine Unterschrift oder ein Foto, um die Zustellung zu bestätigen.",
+      "submit": "Zustellung bestätigen",
+      "confirmReceipt": "Empfang bestätigen",
+      "at": "Erhalten am",
+      "recordedBy": "Erfasst von"
+    },
+    "cardTitle": "Lieferung",
+    "afterDispatch": "Ein Lieferschein wird beim Versand des Auftrags erstellt."
+  },
+  "payments": {
+    "payOnline": "Online bezahlen",
+    "payOnlineText": "Wählen Sie die zu zahlenden Rechnungen. Sie werden zu unserem Zahlungsanbieter weitergeleitet.",
+    "method": "Zahlungsart",
+    "methods": {
+      "NEFT": "Onlinebanking",
+      "RTGS": "RTGS",
+      "Cheque": "Scheck",
+      "UPI": "UPI",
+      "Card": "Karte",
+      "Cash": "Bar"
+    },
+    "secure": "Sichere Zahlung über unseren Zahlungsanbieter",
+    "payAmount": "{amount} bezahlen",
+    "provider": "Verbindung zum Zahlungsanbieter…",
+    "thanks": "Zahlung erhalten",
+    "thanksText": "Ihre Rechnungen sind als bezahlt markiert. Eine Quittung ist unterwegs.",
+    "tellUs": "Ich habe bezahlt",
+    "tellUsText": "Melden Sie uns eine Überweisung oder einen Scheck, damit wir sie Ihren Rechnungen zuordnen können.",
+    "recordCollection": "Inkasso erfassen",
+    "recordCollectionText": "Erfassen Sie einen kassierten Scheck, eine Überweisung oder Bargeld. Die Buchhaltung prüft den Eingang bei der Bank vor der Buchung.",
+    "date": "Datum",
+    "reference": "Referenz",
+    "chequeNo": "Schecknummer",
+    "referencePlaceholder": "UTR oder Transaktions-ID",
+    "amount": "Betrag",
+    "note": "Anmerkung",
+    "verifyHint": "Rechnungen werden als bezahlt markiert, sobald die Buchhaltung den Eingang auf dem Konto findet.",
+    "saveCollection": "Inkasso speichern",
+    "sendAdvice": "Senden",
+    "receipt": "Beleg",
+    "source": "Quelle",
+    "sources": {
+      "online": "Online",
+      "advice": "Zahlungsavis des Kunden",
+      "collection": "Vom Vertrieb kassiert",
+      "erp": "Bank / ERP"
+    },
+    "onAccount": "Auf Konto",
+    "enteredBy": "erfasst von {name}",
+    "verify": "Auf Konto gefunden",
+    "notFound": "Nicht auf Konto",
+    "rejectTitle": "{number} ablehnen?",
+    "rejectText": "Der Kunde und die erfassende Person erfahren den Grund.",
+    "msg": {
+      "paid": "Zahlung {number} erhalten",
+      "recorded": "Zahlung {number} zur Prüfung gesendet",
+      "verified": "Zahlung {number} gebucht",
+      "rejected": "Zahlung abgelehnt"
+    }
+  },
+  "collections": {
+    "title": "Forderungsmanagement",
+    "introRep": "Was Ihre Kunden schulden, Zahlungszusagen und kassierte Zahlungen.",
+    "introManager": "Forderungen nach Alter, zu prüfende Zahlungen und Mahnaktivitäten.",
+    "tabs": {
+      "aging": "Altersstruktur",
+      "verify": "Zu prüfen",
+      "payments": "Zahlungen"
+    },
+    "kpi": {
+      "outstanding": "Offen",
+      "overdue": "Überfällig",
+      "over90": "Über 90 Tage",
+      "toVerify": "Zu prüfende Zahlungen",
+      "toVerifyHint": {
+        "one": "{count} Zahlung",
+        "other": "{count} Zahlungen"
+      }
+    },
+    "bucket": {
+      "current": "Nicht fällig",
+      "d1_30": "1–30 Tage",
+      "d31_60": "31–60",
+      "d61_90": "61–90",
+      "d90": "90+"
+    },
+    "followUp": "Nachverfolgung",
+    "promised": "{amount} zugesagt bis {date}",
+    "broken": {
+      "one": "{count} nicht eingehaltene Zusage",
+      "other": "{count} nicht eingehaltene Zusagen"
+    },
+    "lastPaid": "Zuletzt bezahlt am {date}",
+    "pendingAmount": "{amount} zu prüfen",
+    "empty": "Keine offenen Forderungen",
+    "nothingToVerify": "Keine Zahlungen warten auf Prüfung",
+    "panelSummary": "{total} offen · {overdue} überfällig",
+    "record": "Zahlung erfassen",
+    "promise": "Zahlungszusage",
+    "remind": "Erinnerung senden",
+    "addNote": "Notiz hinzufügen",
+    "promiseDate": "Zugesagtes Datum",
+    "note": "Notiz",
+    "notePlaceholder": "Was im Gespräch vereinbart wurde…",
+    "openInvoices": "Offene Rechnungen",
+    "daysOverdue": {
+      "one": "{count} Tag überfällig",
+      "other": "{count} Tage überfällig"
+    },
+    "history": "Nachverfolgung",
+    "noHistory": "Noch keine Einträge",
+    "kind": {
+      "promise": "Zahlungszusage",
+      "reminder": "Erinnerung",
+      "note": "Notiz"
+    },
+    "msg": {
+      "saved": "Gespeichert",
+      "reminded": "Erinnerung gesendet"
+    }
   }
 }

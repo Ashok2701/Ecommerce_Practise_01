@@ -67,3 +67,10 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - Inventory overview per site: on hand, allocated (open sales orders), held (stock-hold requests), available, incoming (POs and transfers on the way), consignment; low/reserved/incoming/consignment filters; drill-down sheet showing the orders, requests, POs, transfers and consignments behind each number, plus availability at other sites
 - Consignment stock: customer sees their consignment location with available quantities and calls stock off, which raises a sales request (normal workflow; conversion takes stock from the consignment, not free stock); staff see every consignment at the site, below-minimum flags, movements and top-ups from free stock
 - Stock transfers between sites: request (reason, needed by, availability at both sites), approve / reject with comment, ship (stock leaves the source), receive with short quantities recorded (stock arrives at destination), complete; stepper and history
+
+## Iteration 9 – Quotes, deliveries, payments and collections (Oct 2026)
+- Quotes: customer asks from the cart or Quotes (target price, message); rep or supervisor prices it (normal price, target, quoted price, discount %, validity, terms; reps capped at 15% below normal price), sends it; customer accepts (raises a Sales Request at the quoted prices, kept through conversion), asks for changes or declines; versions, expiry, history
+- Deliveries: invoice and delivery note created at dispatch; out for delivery, proof of delivery with received/damaged quantities, signature pad, photo and location (staff) or simple confirmation (customer, from the order page); failed and rescheduled deliveries; shortages notify sales
+- Payments: pay online (provider step simulated), remittance advice from customers, collections recorded by reps; finance verifies against the bank, then the receipt posts and is allocated
+- Collections: ageing by customer (not due, 1–30, 31–60, 61–90, 90+), payments to verify, promises to pay (kept/broken), reminders and call notes
+- Account, Invoices and Cart pages moved fully onto translations

@@ -5,6 +5,7 @@ import { buildOrderTotals } from '@/lib/domain/pricing';
 import { creditCheck } from '@/lib/domain/credit';
 import { fmtMoney } from '@/lib/format';
 import { pushNotification } from './notificationService';
+import { onDispatch } from './commerceService';
 import type { ActorRef, Order, OrderStatus } from '@/types/domain';
 
 export interface OrderQuery { customerId?: string; salesRepId?: string; status?: OrderStatus | 'all' | 'open'; search?: string; }
@@ -36,13 +37,19 @@ export const orderService = {
   addComment: (id: string, actor: ActorRef, text: string) =>
     source<Order>(() => { const o = find(id); o.comments.push({ by: actor.name, at: new Date().toISOString(), text }); commit(); return o; }, () => http.post(`/orders/${id}/comments`, { text })),
 
-  /** Demo helper: move an order to its next fulfilment stage (ERP would drive this). */
+  /**
+   * Demo helper: move an order to its next fulfilment stage (the ERP drives this).
+   * Stops at dispatched: delivery is confirmed with proof of delivery on the delivery note.
+   */
   advance: (id: string, by: string) =>
     source<Order>(() => {
       const o = find(id); const i = ORDER_FLOW.indexOf(o.status);
-      if (i >= 0 && i < ORDER_FLOW.length - 1) {
+      if (i >= 0 && i < ORDER_FLOW.indexOf('dispatched')) {
         log(o, ORDER_FLOW[i + 1], by);
-        if (o.status === 'dispatched') pushNotification({ userIds: [customerUserId(o.customerId)!] }, 'order_dispatched', 'Your order has been dispatched', o.number, `/orders/${o.id}`);
+        if (o.status === 'dispatched') {
+          onDispatch(o, by);
+          pushNotification({ userIds: [customerUserId(o.customerId)!] }, 'order_dispatched', 'Your order has been dispatched', o.number, `/orders/${o.id}`);
+        }
       }
       commit(); return o;
     }, () => Promise.reject(new Error('Not supported via API'))),

@@ -175,6 +175,8 @@ export interface Order {
   timeline: OrderEvent[];
   comments: { by: string; at: ISODate; text: string }[];
   invoiceId?: ID;
+  /** Delivery note created at dispatch. */
+  deliveryId?: ID;
   erpRef?: string; // Sage X3 SOHNUM once accepted
   creditOverride?: { by: string; at: ISODate; exceededBy: number; reason?: string };
 }
@@ -194,14 +196,43 @@ export interface Invoice {
   status: InvoiceStatus;
 }
 
+export type PaymentMethod = 'NEFT' | 'RTGS' | 'Cheque' | 'UPI' | 'Card' | 'Cash';
+/** posted: in the ERP ledger. pending: told to us (remittance advice or rep collection), finance still has to match it to the bank. */
+export type PaymentStatus = 'pending_verification' | 'posted' | 'rejected';
+
 export interface Payment {
   id: ID;
+  number?: string;
   customerId: ID;
+  customerName?: string;
   date: ISODate;
   amount: number;
-  method: 'NEFT' | 'RTGS' | 'Cheque' | 'UPI';
+  method: PaymentMethod;
   reference: string;
   invoiceNumbers: string[];
+  /** Missing on older records, which are all posted. */
+  status?: PaymentStatus;
+  /** online: paid through the payment provider. advice: customer told us. collection: a rep collected it. */
+  source?: 'online' | 'advice' | 'collection' | 'erp';
+  allocations?: { invoiceId: ID; invoiceNumber: string; amount: number }[];
+  enteredBy?: ActorRef;
+  verifiedBy?: string;
+  verifiedAt?: ISODate;
+  note?: string;
+}
+
+/** A collection follow-up: promise to pay, reminder, call notes. */
+export interface CollectionNote {
+  id: ID;
+  customerId: ID;
+  at: ISODate;
+  by: ActorRef;
+  kind: 'promise' | 'reminder' | 'note';
+  text: string;
+  promiseDate?: ISODate;
+  promiseAmount?: number;
+  /** Promise kept, broken or still open (computed for promises). */
+  outcome?: 'open' | 'kept' | 'broken';
 }
 
 export type Audience = 'all' | Role;
@@ -386,6 +417,9 @@ export interface SalesRequest {
   expiresAt?: ISODate;
   /** Call-off from customer consignment stock: lines are taken from this consignment, not free stock. */
   consignmentId?: ID;
+  /** Accepted quote: lines carry the quoted prices, which conversion keeps. */
+  quoteId?: ID;
+  quoteNumber?: string;
   orderIds: ID[];
   orderNumbers: string[];
   timeline: RequestEvent[];
@@ -579,4 +613,112 @@ export interface StockDetail {
   incoming: { kind: 'po' | 'transfer'; id: ID; number: string; from: string; quantity: number; status: string; expected?: ISODate }[];
   consignment: { id: ID; number: string; customerName: string; location: string; quantity: number }[];
   otherSites: { site: string; available: number }[];
+}
+
+/* ------------------------------------------------------------------ */
+/* Quotes                                                              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * requested: customer asked, we haven't priced it. draft: being priced. sent: with the customer.
+ * accepted: turned into a sales request. declined / expired / cancelled: closed.
+ */
+export type QuoteStatus = 'requested' | 'draft' | 'sent' | 'accepted' | 'declined' | 'expired' | 'cancelled';
+export const OPEN_QUOTE: QuoteStatus[] = ['requested', 'draft', 'sent'];
+
+export interface QuoteLine {
+  productId: ID;
+  sku: string;
+  name: string;
+  uom: string;
+  image: string;
+  quantity: number;
+  /** Customer's normal price (contract or tier) when the quote was made. */
+  listPrice: number;
+  /** Price we quote. */
+  unitPrice: number;
+  /** Customer's target price, if they gave one. */
+  targetPrice?: number;
+  lineTotal: number;
+}
+
+export interface Quote {
+  id: ID;
+  number: string;
+  site?: string;
+  customerId: ID;
+  customerName: string;
+  salesRepId: ID;
+  createdBy: ActorRef;
+  date: ISODate;
+  status: QuoteStatus;
+  /** Bumps every time a revised quote is sent. */
+  version: number;
+  lines: QuoteLine[];
+  subtotal: number;
+  tax: number;
+  total: number;
+  validUntil?: ISODate;
+  /** Customer's message with the request. */
+  customerNote?: string;
+  /** Delivery, payment and other terms shown on the quote. */
+  terms?: string;
+  pricedBy?: string;
+  requestId?: ID;
+  requestNumber?: string;
+  declineReason?: string;
+  timeline: { status: QuoteStatus; at: ISODate; by: string; note?: string }[];
+  comments: { by: string; at: ISODate; text: string }[];
+}
+
+/* ------------------------------------------------------------------ */
+/* Deliveries                                                          */
+/* ------------------------------------------------------------------ */
+
+export type DeliveryStatus = 'scheduled' | 'out_for_delivery' | 'delivered' | 'failed';
+export const DELIVERY_FLOW: DeliveryStatus[] = ['scheduled', 'out_for_delivery', 'delivered'];
+
+export interface DeliveryLine {
+  productId: ID;
+  sku: string;
+  name: string;
+  uom: string;
+  quantity: number;
+  /** From the proof of delivery. */
+  receivedQty?: number;
+  damagedQty?: number;
+}
+
+export interface ProofOfDelivery {
+  receivedBy: string;
+  at: ISODate;
+  /** PNG data URL of the signature (the backend stores it as a document). */
+  signature?: string;
+  /** Photo of the delivered goods (data URL, resized on the device). */
+  photo?: string;
+  notes?: string;
+  /** Who recorded it: driver, rep, warehouse or the customer themselves. */
+  recordedBy: ActorRef;
+  location?: { lat: number; lng: number };
+}
+
+export interface Delivery {
+  id: ID;
+  number: string;
+  orderId: ID;
+  orderNumber: string;
+  customerId: ID;
+  customerName: string;
+  site?: string;
+  address: Address;
+  status: DeliveryStatus;
+  plannedDate: ISODate;
+  carrier: string;
+  vehicle?: string;
+  driver?: string;
+  trackingRef?: string;
+  lines: DeliveryLine[];
+  pod?: ProofOfDelivery;
+  failReason?: string;
+  timeline: { status: DeliveryStatus; at: ISODate; by: string; note?: string }[];
 }

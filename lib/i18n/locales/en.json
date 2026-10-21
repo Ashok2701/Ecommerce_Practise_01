@@ -50,6 +50,31 @@
       "empty": "Add at least one product with a quantity.",
       "reasonRequired": "Say why the stock is needed.",
       "noStock": "There isn't enough free stock at the source site."
+    },
+    "quotes": {
+      "notFound": "This quote doesn't exist or you can't see it.",
+      "notOpen": "This quote can no longer be changed.",
+      "empty": "Add at least one product with a quantity.",
+      "validity": "Set a valid-until date in the future.",
+      "discountNeedsApproval": "Some prices are below what you can give on your own. Ask a supervisor to send this quote.",
+      "expired": "This quote has expired. Ask for a new one.",
+      "reasonRequired": "Tell us why."
+    },
+    "deliveries": {
+      "notFound": "This delivery doesn't exist or you can't see it.",
+      "notOpen": "This delivery can no longer be changed.",
+      "receivedBy": "Enter who received the goods.",
+      "proof": "Capture a signature or a photo.",
+      "reasonRequired": "Enter why the delivery failed."
+    },
+    "payments": {
+      "notFound": "This payment doesn't exist.",
+      "noInvoices": "Choose at least one open invoice.",
+      "amount": "Enter an amount above zero.",
+      "reference": "Enter the transaction or cheque reference.",
+      "notPending": "This payment has already been handled.",
+      "reasonRequired": "Enter a reason.",
+      "promiseDetails": "Enter the promised date and amount."
     }
   },
   "login": {
@@ -181,7 +206,10 @@
     "purchaseOrders": "Purchase orders",
     "inventory": "Inventory",
     "consignment": "Consignment stock",
-    "transfers": "Stock transfers"
+    "transfers": "Stock transfers",
+    "quotes": "Quotes",
+    "deliveries": "Deliveries",
+    "collections": "Collections"
   },
   "common": {
     "search": "Search",
@@ -274,7 +302,17 @@
     "partly_received": "Partly received",
     "received": "Received",
     "initiated": "Transfer initiated",
-    "transferred": "Transferred"
+    "transferred": "Transferred",
+    "requested": "Requested",
+    "sent": "Sent",
+    "accepted": "Accepted",
+    "declined": "Declined",
+    "out_for_delivery": "Out for delivery",
+    "failed": "Failed",
+    "pending_verification": "To verify",
+    "posted": "Posted",
+    "kept": "Kept",
+    "broken": "Broken"
   },
   "dashboard": {
     "admin": "Platform overview",
@@ -295,7 +333,23 @@
     "empty": "Your cart is empty",
     "emptyHint": "Browse the catalog to add products.",
     "checkout": "Review order",
-    "deliveryInfo": "Delivery information"
+    "deliveryInfo": "Delivery information",
+    "products": {
+      "one": "{count} product",
+      "other": "{count} products"
+    },
+    "clear": "Empty cart",
+    "browse": "Browse the catalog",
+    "continue": "Continue shopping",
+    "belowMoq": "Minimum order {moq}",
+    "perUom": "per {uom}",
+    "qtyFor": "Quantity for {name}",
+    "remove": "Remove {name}",
+    "deliveryText": "Delivery date and charges are confirmed with your order.",
+    "overCredit": "This order is more than your available credit ({available}). It goes to review before it is confirmed.",
+    "requestQuote": "Ask for a quote",
+    "startQuote": "Make a quote",
+    "quoteText": "We price these products for you and send a quote. Accept it to order at the quoted prices."
   },
   "checkout": {
     "title": "Review and submit request",
@@ -843,5 +897,302 @@
     "nowMin": "Now {now} · minimum {min}",
     "topUpConfirm": "Post top-up",
     "toppedUp": "Consignment topped up"
+  },
+  "account": {
+    "title": "Account & finance",
+    "intro": "Balances come from the {erp} receivables ledger.",
+    "statement": "Download statement",
+    "statementInfo": "{erp} generates the statement of account as a PDF.",
+    "outstanding": "Outstanding balance",
+    "creditLimit": "Credit limit",
+    "available": "Available credit",
+    "overdue": "Overdue",
+    "dueSoon": "{amount} due in the next 7 days",
+    "utilisation": "Credit used",
+    "used": "{pct}% of your credit limit used",
+    "dueInvoices": "Invoices to pay",
+    "allInvoices": "All invoices",
+    "noDues": "Nothing to pay",
+    "noDuesText": "All your invoices are paid.",
+    "bankDetails": "Pay by bank transfer",
+    "bankHint": "After paying by transfer or cheque, use “I've paid” so we can match your payment quickly.",
+    "paymentHistory": "Payments",
+    "noPayments": "No payments yet",
+    "profile": "Company details",
+    "field": {
+      "company": "Company",
+      "code": "Customer code",
+      "gstin": "GSTIN",
+      "contact": "Contact",
+      "email": "Email",
+      "address": "Address",
+      "tier": "Price tier"
+    },
+    "tierValue": "Tier {tier}",
+    "requestChange": "Ask for a change"
+  },
+  "invoices": {
+    "title": "Invoices",
+    "intro": "Tax invoices from {erp}. Pay online or tell us about a transfer.",
+    "accountSummary": "Account summary",
+    "kpi": {
+      "total": "Invoices",
+      "open": "Open balance",
+      "overdue": "Overdue",
+      "paid": "Paid"
+    },
+    "col": {
+      "invoice": "Invoice",
+      "date": "Date",
+      "due": "Due",
+      "amount": "Amount",
+      "balance": "Balance"
+    },
+    "due": "Due {date}",
+    "issuedDue": "Issued {issued} · due {due}",
+    "balanceOf": "Balance {balance} of {amount}",
+    "pay": "Pay",
+    "viewOrder": "View order {number}",
+    "pdfInfo": "{erp} generates the PDF of invoice {number}."
+  },
+  "quotes": {
+    "title": "Quotes",
+    "introCustomer": "Ask for prices on larger or special orders. Accept a quote to order at the quoted prices.",
+    "introStaff": "Quote requests from customers and quotes you are preparing.",
+    "request": "Ask for a quote",
+    "new": "New quote",
+    "requestTitle": "Ask for a quote",
+    "newTitle": "New quote",
+    "requestIntro": "Choose the products and quantities. Add a target price if you have one.",
+    "newIntro": "Choose the customer and products. You set the prices on the next screen.",
+    "chooseCustomer": "Choose a customer",
+    "noteCustomer": "Message to sales",
+    "noteStaff": "Internal note",
+    "notePlaceholder": "Delivery date, project, competitor price…",
+    "sendRequest": "Send quote request",
+    "startPricing": "Continue to pricing",
+    "requested": "Quote request {number} sent",
+    "started": "Quote {number} started",
+    "col": {
+      "number": "Quote",
+      "customer": "Customer",
+      "date": "Date",
+      "validUntil": "Valid until",
+      "items": "Products",
+      "total": "Total",
+      "status": "Status"
+    },
+    "empty": "No quotes",
+    "emptyCustomer": "Ask for a quote from the cart or here.",
+    "emptyStaff": "Quote requests from customers appear here.",
+    "version": "Version {n}",
+    "validUntilDate": "Valid until {date}",
+    "becameRequest": "Accepted as sales request {number}",
+    "revise": "Revise",
+    "cancel": "Cancel quote",
+    "customerAsked": "Customer's message",
+    "waiting": "We are pricing your request. You'll get a notification when the quote is ready.",
+    "yourPrice": "Normal price",
+    "targetPrice": "Target price",
+    "quotedPrice": "Quoted price",
+    "tax": "GST (18%)",
+    "terms": "Terms",
+    "termsPlaceholder": "Delivery time, payment terms, freight…",
+    "overLimit": "Some prices are more than {pct}% below the customer's normal price. A supervisor has to send this quote.",
+    "saveDraft": "Save draft",
+    "send": "Send quote",
+    "sendRevised": "Send revised quote",
+    "decideText": "Accept to order at these prices, ask for changes or decline.",
+    "accept": "Accept",
+    "askRevision": "Ask for changes",
+    "decline": "Decline",
+    "acceptTitle": "Accept {number}?",
+    "acceptText": "A sales request for {total} is raised at the quoted prices and follows the normal approval.",
+    "acceptConfirm": "Accept and order",
+    "declineText": "Tell us why, so we can do better next time.",
+    "reviseText": "Say what you'd like changed: prices, quantities or terms.",
+    "sendRevisionRequest": "Send request",
+    "msg": {
+      "saved": "Draft saved",
+      "sent": "Quote sent to the customer",
+      "accepted": "Quote accepted – request {number} raised",
+      "declined": "Quote declined",
+      "revisionAsked": "Change request sent",
+      "cancelled": "Quote cancelled"
+    }
+  },
+  "deliveries": {
+    "title": "Deliveries",
+    "intro": "Delivery notes from {site}: what is going out and proof of delivery.",
+    "tabs": {
+      "open": "Open",
+      "today": "Today",
+      "delivered": "Delivered",
+      "all": "All"
+    },
+    "col": {
+      "number": "Delivery note",
+      "customer": "Customer",
+      "planned": "Planned",
+      "carrier": "Carrier",
+      "status": "Status",
+      "shipped": "Shipped"
+    },
+    "empty": "No deliveries",
+    "plannedFor": "Planned for {date}",
+    "address": "Delivery address",
+    "outForDelivery": "Out for delivery",
+    "dispatchText": "The customer is told the goods are on the way.",
+    "recordPod": "Record proof of delivery",
+    "podText": "Who received it, what arrived and a signature or photo.",
+    "markFailed": "Delivery failed",
+    "failText": "The customer is told and the delivery can be rescheduled.",
+    "failPlaceholder": "Customer closed, address not found, refused…",
+    "reschedule": "Reschedule",
+    "rescheduleText": "Choose the new delivery date.",
+    "msg": {
+      "out": "Marked out for delivery",
+      "delivered": "Delivery confirmed",
+      "failed": "Delivery marked failed",
+      "rescheduled": "Delivery rescheduled"
+    },
+    "pod": {
+      "title": "Proof of delivery",
+      "receivedBy": "Received by",
+      "receivedByPlaceholder": "Name of the person who signed",
+      "quantities": "Quantities received",
+      "sent": "{qty} {uom} sent",
+      "received": "Received",
+      "damaged": "Damaged",
+      "issueHint": "Short or damaged lines are reported to the sales team.",
+      "issueLine": "{received} of {sent} received, {damaged} damaged",
+      "signature": "Signature",
+      "signHere": "Sign here",
+      "clear": "Clear",
+      "photo": "Photo",
+      "takePhoto": "Take a photo",
+      "addLocation": "Add location",
+      "location": "Location",
+      "notes": "Notes",
+      "proofHint": "Capture a signature or a photo to confirm delivery.",
+      "submit": "Confirm delivery",
+      "confirmReceipt": "Confirm I received it",
+      "at": "Received on",
+      "recordedBy": "Recorded by"
+    },
+    "cardTitle": "Delivery",
+    "afterDispatch": "A delivery note is created when the order is dispatched."
+  },
+  "payments": {
+    "payOnline": "Pay online",
+    "payOnlineText": "Choose the invoices to pay. You are taken to our payment provider to complete the payment.",
+    "method": "Payment method",
+    "methods": {
+      "NEFT": "Net banking",
+      "RTGS": "RTGS",
+      "Cheque": "Cheque",
+      "UPI": "UPI",
+      "Card": "Card",
+      "Cash": "Cash"
+    },
+    "secure": "Secure payment through our payment provider",
+    "payAmount": "Pay {amount}",
+    "provider": "Connecting to the payment provider…",
+    "thanks": "Payment received",
+    "thanksText": "Your invoices are marked paid. A receipt is on its way.",
+    "tellUs": "I've paid",
+    "tellUsText": "Tell us about a bank transfer or cheque so we can match it to your invoices.",
+    "recordCollection": "Record a collection",
+    "recordCollectionText": "Record a cheque, transfer or cash you collected. Finance checks it against the bank before it is posted.",
+    "date": "Date",
+    "reference": "Reference",
+    "chequeNo": "Cheque number",
+    "referencePlaceholder": "UTR or transaction ID",
+    "amount": "Amount",
+    "note": "Note",
+    "verifyHint": "Invoices are marked paid once finance finds the money in the bank.",
+    "saveCollection": "Save collection",
+    "sendAdvice": "Send",
+    "receipt": "Receipt",
+    "source": "Source",
+    "sources": {
+      "online": "Online",
+      "advice": "Customer advice",
+      "collection": "Collected by rep",
+      "erp": "Bank / ERP"
+    },
+    "onAccount": "On account",
+    "enteredBy": "entered by {name}",
+    "verify": "Found in bank",
+    "notFound": "Not in bank",
+    "rejectTitle": "Reject {number}?",
+    "rejectText": "The customer and whoever entered it are told why.",
+    "msg": {
+      "paid": "Payment {number} received",
+      "recorded": "Payment {number} sent for verification",
+      "verified": "Payment {number} posted",
+      "rejected": "Payment rejected"
+    }
+  },
+  "collections": {
+    "title": "Collections",
+    "introRep": "What your customers owe, promises to pay and payments you collected.",
+    "introManager": "Receivables by age, payments to verify and collection follow-ups.",
+    "tabs": {
+      "aging": "Ageing",
+      "verify": "To verify",
+      "payments": "Payments"
+    },
+    "kpi": {
+      "outstanding": "Outstanding",
+      "overdue": "Overdue",
+      "over90": "Over 90 days",
+      "toVerify": "Payments to verify",
+      "toVerifyHint": {
+        "one": "{count} payment",
+        "other": "{count} payments"
+      }
+    },
+    "bucket": {
+      "current": "Not due",
+      "d1_30": "1–30 days",
+      "d31_60": "31–60",
+      "d61_90": "61–90",
+      "d90": "90+"
+    },
+    "followUp": "Follow-up",
+    "promised": "Promised {amount} by {date}",
+    "broken": {
+      "one": "{count} broken promise",
+      "other": "{count} broken promises"
+    },
+    "lastPaid": "Last paid {date}",
+    "pendingAmount": "{amount} to verify",
+    "empty": "Nothing outstanding",
+    "nothingToVerify": "No payments waiting for verification",
+    "panelSummary": "{total} outstanding · {overdue} overdue",
+    "record": "Record payment",
+    "promise": "Promise to pay",
+    "remind": "Send reminder",
+    "addNote": "Add note",
+    "promiseDate": "Promised date",
+    "note": "Note",
+    "notePlaceholder": "What was agreed on the call…",
+    "openInvoices": "Open invoices",
+    "daysOverdue": {
+      "one": "{count} day overdue",
+      "other": "{count} days overdue"
+    },
+    "history": "Follow-ups",
+    "noHistory": "No follow-ups yet",
+    "kind": {
+      "promise": "Promise to pay",
+      "reminder": "Reminder",
+      "note": "Note"
+    },
+    "msg": {
+      "saved": "Saved",
+      "reminded": "Reminder sent"
+    }
   }
 }
