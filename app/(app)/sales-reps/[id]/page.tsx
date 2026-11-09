@@ -26,7 +26,7 @@ export default function SalesRepPage() {
   const quotes = useQuery({ queryKey: ['quotes', { salesRepId: id }], queryFn: () => quoteService.list({ salesRepId: id, view: 'open' }) });
   const follow = useQuery({ queryKey: ['follow-ups', id], queryFn: () => salesService.getFollowUps(id) });
   const aging = useQuery({ queryKey: ['aging', { salesRepId: id }], queryFn: () => paymentService.aging({ salesRepId: id }) });
-  const nameOf = (cid: string) => customerService.peek(cid)?.name ?? cid;
+  const nameOf = (cid: string) => custs.data?.find((c) => c.id === cid)?.name ?? customerService.peek(cid)?.name ?? cid;
   const overdue = (aging.data ?? []).reduce((s, r) => s + r.overdue, 0);
   return (
     <div>

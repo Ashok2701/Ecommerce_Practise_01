@@ -17,6 +17,7 @@ import { useUI } from '@/lib/ui/UIProvider';
 import { useNotifications } from '@/lib/notifications/useNotifications';
 import { messageService, orderService, productService, customerService, requestService } from '@/lib/services';
 import { resetDb } from '@/lib/data/mockDb';
+import { appConfig } from '@/lib/config';
 import { initials, timeAgo } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -210,7 +211,7 @@ function UserMenu() {
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         <DropdownMenuCheckboxItem checked={ui.simulateOffline} onCheckedChange={(v) => ui.setSimulateOffline(!!v)} data-testid="toggle-offline"><WifiOff className="mr-2 h-4 w-4" />{t('common.simulateOffline')}</DropdownMenuCheckboxItem>
-        <DropdownMenuItem onClick={() => { resetDb(); toast.success(t('shell.demoReset')); setTimeout(() => window.location.reload(), 400); }}><RotateCcw className="mr-2 h-4 w-4" />{t('common.resetDemo')}</DropdownMenuItem>
+        {appConfig.dataSource === 'mock' && <DropdownMenuItem onClick={() => { resetDb(); toast.success(t('shell.demoReset')); setTimeout(() => window.location.reload(), 400); }}><RotateCcw className="mr-2 h-4 w-4" />{t('common.resetDemo')}</DropdownMenuItem>}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => { logout(); router.replace('/login'); }} data-testid="logout"><LogOut className="mr-2 h-4 w-4" />{t('common.signOut')}</DropdownMenuItem>
       </DropdownMenuContent>

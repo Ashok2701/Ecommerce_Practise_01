@@ -95,3 +95,12 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - Settings page rebuilt: ERP connection with a real health check in live mode, link to Workflow rules (the earlier dummy approval switches were removed), language, app install and notification preferences
 - Offline: requests saved on the device are now sent automatically when the connection returns on any page (not only on Sales requests); verified with the network actually switched off (pages load from the service worker, order saved as draft, sent on reconnect)
 - Right-to-left safe spacing (start/end instead of left/right) on the touched screens
+
+## Iteration 13 – Backend and database (Nov 2026)
+- `backend/`: NestJS API implementing every endpoint the portal calls (about 125), with JWT sign-in (bcrypt, lock after 8 failures), X-Site checked against the user's sites, module access enforced per route, data scope (customers: own; reps: their customers; suppliers: own purchasing), audit log, translated error codes
+- Portal database (SQL Server; SQLite for development and tests): users, module access, settings, sequences, one table per portal document (indexed columns + JSON document, optimistic concurrency), audit_log, idempotency, erp_calls
+- Sage X3: reads only through the NX_* views (`backend/src/x3/views.sql`, one file that runs on SQL Server and on the simulated X3); writes only through X3 SOAP web services (sales orders, close order, POs, close PO, goods receipts, customer receipts, inter-site transfers, consignment location moves), each with the portal reference for safe retries, every call logged
+- Simulated X3 (same tables and views, SQLite) loaded from the portal's demo data with X3-style keys; `POST /sim/orders/{id}/advance` stands in for the warehouse
+- Portal changes for live mode: catalogue filters from loaded products, simulated "advance status" only when NEXT_PUBLIC_X3_SIM=true, offline orders kept in a device outbox and sent on reconnect, service worker keeps catalogue/customers/offers for offline use (cleared on sign-out), demo reset hidden in live mode, module rules split into a UI-free file shared with the backend
+- Tests: 20 backend end-to-end tests (Jest); all 10 browser suites re-run with the portal on the live API
+- Go-live checklist and X3 field mapping: `docs/X3_INTEGRATION.md`

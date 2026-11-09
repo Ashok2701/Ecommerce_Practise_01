@@ -323,5 +323,31 @@ Pricing rules (the frontend preview in `lib/domain/pricing.ts` follows the same 
 5. Quotes: an accepted quote's prices replace offers (no stacking). Consignment call-offs get no offers.
 6. On conversion of a request, free lines are not copied: the engine adds them again for what is converted, so a partial conversion gets the free goods it earns. Free goods take stock like any other line.
 
+## Implementation notes (backend/)
+
+The contract is implemented in `backend/` (NestJS). See `backend/README.md` and
+`docs/X3_INTEGRATION.md`.
+
+- **Ids are X3 keys** for ERP records: product id = item code (`ITMREF`), customer id = BP
+  code, supplier id = supplier code, order / invoice / delivery / PO / receipt ids = the X3
+  document numbers. Portal documents (requests, quotes, transfers, consignments, …) keep
+  portal ids.
+- `GET /health` (no sign-in): API, portal database and X3 views status.
+- `GET /auth/me`: the signed-in user.
+- `GET /offers?pricing=true`: every offer, hidden ones included, for the cart preview.
+- `GET /offers/sync-status` and `POST /offers/sync` return a JSON string (ISO time).
+- `POST /requests` accepts `fromDevice: true` for a request taken offline and sent later
+  (kept as source `offline`).
+- `POST /purchase-requests/{id}/request-changes` and `/reject` (as the portal calls them),
+  and `/review` with `{decision, comment}`.
+- Simulation only (`X3_MODE=sim`): `POST /sim/orders/{id}/advance` moves an order through
+  allocation, preparation and dispatch (delivery note + invoice), standing in for the
+  warehouse working in X3.
+- New error codes: `errors.auth.unauthorized`, `errors.sites.notAllowed`, `errors.conflict`
+  (someone else changed the record), `errors.erp.unavailable`, `errors.erp.rejected`,
+  `errors.orders.cannotCancel`, `errors.requests.idempotencyKey`, `errors.deliveries.date`,
+  `errors.announcements.title`, `errors.messages.empty`, `errors.followUps.customer`,
+  `errors.users.self`.
+
 ## Not yet in the contract
 

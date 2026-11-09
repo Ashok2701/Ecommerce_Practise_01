@@ -108,8 +108,8 @@ function CatalogInner() {
   const { site } = useSite();
   // badge the first offer the portal shows for this customer (hidden offers still price, but get no badge)
   const badgeFor = (p: Product) => offersFor(p, { customer, site }, offers.data ?? []).find((o) => !o.presentation.hidden);
-  const categories = productService.getCategories();
-  const allBrands = useMemo(() => productService.getBrands(), []);
+  const categories = useMemo(() => productService.getCategories(allProducts.data), [allProducts.data]);
+  const allBrands = useMemo(() => productService.getBrands(allProducts.data), [allProducts.data]);
   const activeFilters = (category !== 'all' ? 1 : 0) + brands.length + (stock !== 'all' ? 1 : 0);
 
   if (user.role === 'SALES_REP' && !customer) {

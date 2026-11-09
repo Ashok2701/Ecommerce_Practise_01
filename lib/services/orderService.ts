@@ -1,4 +1,5 @@
 import { source, http } from '@/lib/api/httpClient';
+import { appConfig } from '@/lib/config';
 import { getDb, atSite, inSite, commit, uid } from '@/lib/data/mockDb';
 import { getCurrentSite } from '@/lib/sites/current';
 import { buildOrderTotals } from '@/lib/domain/pricing';
@@ -52,7 +53,8 @@ export const orderService = {
         }
       }
       commit(); return o;
-    }, () => Promise.reject(new Error('Not supported via API'))),
+    // the backend's ERP simulation (X3_MODE=sim) stands in for the warehouse; a live X3 moves orders on itself
+    }, () => (appConfig.simulateErp ? http.post(`/sim/orders/${id}/advance`).then(() => http.get<Order>(`/orders/${id}`)) : Promise.reject(new Error('errors.generic')))),
 
   cancel: (id: string, by: string) =>
     source<Order>(() => { const o = find(id); log(o, 'cancelled', by, 'Cancelled by user'); commit(); return o; }, () => http.post(`/orders/${id}/cancel`)),

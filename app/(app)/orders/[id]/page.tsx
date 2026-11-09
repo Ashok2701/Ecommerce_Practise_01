@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronLeft, RotateCcw, XCircle, FileText, Truck, MapPin, Check, Circle, MessageSquare, Cpu, Download, ClipboardCheck, FastForward } from 'lucide-react';
 import { toast } from 'sonner';
+import { appConfig } from '@/lib/config';
 import { orderService, invoiceService, ORDER_FLOW } from '@/lib/services';
 import { useUser } from '@/lib/auth/AuthProvider';
 import { useT } from '@/lib/i18n';
@@ -75,7 +76,7 @@ export default function OrderDetailPage() {
         {(o) => {
           const invoice = inv.data?.find((i) => i.id === o.invoiceId);
           const canCancel = ['pending_approval', 'pending_sync', 'changes_requested'].includes(o.status) && (isCustomerRole(user.role) || user.role === 'SALES_REP');
-          const canAdvance = (user.role === 'ADMIN' || user.role === 'SUPERVISOR') && ['confirmed', 'processing', 'packed'].includes(o.status);
+          const canAdvance = appConfig.simulateErp && (user.role === 'ADMIN' || user.role === 'SUPERVISOR') && ['confirmed', 'processing', 'packed'].includes(o.status);
           return (
             <div className="space-y-4">
               <Card className="p-5">

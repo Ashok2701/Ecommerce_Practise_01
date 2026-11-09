@@ -13,10 +13,12 @@
     "auth": {
       "invalidCredentials": "El correo o la contraseña no son correctos.",
       "pendingApproval": "Tu cuenta está pendiente de aprobación por un administrador.",
-      "inactive": "Tu cuenta ha sido desactivada. Contacta con tu administrador."
+      "inactive": "Tu cuenta ha sido desactivada. Contacta con tu administrador.",
+      "unauthorized": "Tu sesión ha caducado. Vuelve a iniciar sesión."
     },
     "sites": {
-      "atLeastOne": "Elige al menos una sede."
+      "atLeastOne": "Elige al menos una sede.",
+      "notAllowed": "No puedes trabajar en este centro."
     },
     "requests": {
       "notFound": "Esta solicitud no existe o no puedes verla.",
@@ -27,7 +29,8 @@
       "creditOverrideNeeded": "Esta solicitud supera el límite de crédito. Apruébala con una excepción.",
       "priceChanged": "Los precios han cambiado desde el envío. Confirma que el solicitante los aceptó.",
       "commentRequired": "Añade primero un comentario.",
-      "nothingInStock": "Nada de esta solicitud está en stock en esta sede."
+      "nothingInStock": "Nada de esta solicitud está en stock en esta sede.",
+      "idempotencyKey": "Algo salió mal al convertir. Inténtalo de nuevo."
     },
     "purchasing": {
       "notFound": "Este documento de compra no existe o no puedes verlo.",
@@ -65,7 +68,8 @@
       "notOpen": "Esta entrega ya no se puede modificar.",
       "receivedBy": "Indique quién recibió la mercancía.",
       "proof": "Capture una firma o una foto.",
-      "reasonRequired": "Indique por qué falló la entrega."
+      "reasonRequired": "Indique por qué falló la entrega.",
+      "date": "Elige una fecha válida."
     },
     "payments": {
       "notFound": "Este pago no existe.",
@@ -76,7 +80,27 @@
       "reasonRequired": "Indique un motivo.",
       "promiseDetails": "Indique la fecha y el importe prometidos."
     },
-    "notFound": "Este registro no existe o no puede verlo."
+    "notFound": "Este registro no existe o no puede verlo.",
+    "conflict": "Otra persona acaba de cambiar esto. Recarga e inténtalo de nuevo.",
+    "erp": {
+      "unavailable": "No se puede acceder al ERP en este momento. Inténtalo de nuevo en unos minutos.",
+      "rejected": "El ERP rechazó este cambio. Pide a un administrador que revise el registro del ERP."
+    },
+    "orders": {
+      "cannotCancel": "Este pedido ya no se puede cancelar."
+    },
+    "announcements": {
+      "title": "Añade un título."
+    },
+    "messages": {
+      "empty": "Escribe primero un mensaje."
+    },
+    "followUps": {
+      "customer": "Elige un cliente."
+    },
+    "users": {
+      "self": "No puedes desactivar tu propia cuenta."
+    }
   },
   "login": {
     "title": "Iniciar sesión",

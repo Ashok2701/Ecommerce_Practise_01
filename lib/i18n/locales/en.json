@@ -13,10 +13,12 @@
     "auth": {
       "invalidCredentials": "Email or password is incorrect.",
       "pendingApproval": "Your account is waiting for administrator approval.",
-      "inactive": "Your account has been deactivated. Contact your administrator."
+      "inactive": "Your account has been deactivated. Contact your administrator.",
+      "unauthorized": "Your session has ended. Please sign in again."
     },
     "sites": {
-      "atLeastOne": "Choose at least one site."
+      "atLeastOne": "Choose at least one site.",
+      "notAllowed": "You can’t work in this site."
     },
     "requests": {
       "notFound": "This request doesn't exist or you can't see it.",
@@ -27,7 +29,8 @@
       "creditOverrideNeeded": "This request is over the credit limit. Approve it with an override.",
       "priceChanged": "Prices changed since submission. Confirm that the requester accepted them.",
       "commentRequired": "Add a comment first.",
-      "nothingInStock": "Nothing on this request is in stock at this site."
+      "nothingInStock": "Nothing on this request is in stock at this site.",
+      "idempotencyKey": "Something went wrong while converting. Please try again."
     },
     "purchasing": {
       "notFound": "This purchasing document doesn't exist or you can't see it.",
@@ -65,7 +68,8 @@
       "notOpen": "This delivery can no longer be changed.",
       "receivedBy": "Enter who received the goods.",
       "proof": "Capture a signature or a photo.",
-      "reasonRequired": "Enter why the delivery failed."
+      "reasonRequired": "Enter why the delivery failed.",
+      "date": "Choose a valid date."
     },
     "payments": {
       "notFound": "This payment doesn't exist.",
@@ -76,7 +80,27 @@
       "reasonRequired": "Enter a reason.",
       "promiseDetails": "Enter the promised date and amount."
     },
-    "notFound": "This record doesn't exist or you can't see it."
+    "notFound": "This record doesn't exist or you can't see it.",
+    "conflict": "Someone else changed this just now. Reload and try again.",
+    "erp": {
+      "unavailable": "The ERP can’t be reached right now. Try again in a few minutes.",
+      "rejected": "The ERP refused this change. Ask an administrator to check the ERP log."
+    },
+    "orders": {
+      "cannotCancel": "This order can’t be cancelled any more."
+    },
+    "announcements": {
+      "title": "Add a title."
+    },
+    "messages": {
+      "empty": "Write a message first."
+    },
+    "followUps": {
+      "customer": "Choose a customer."
+    },
+    "users": {
+      "self": "You can’t deactivate your own account."
+    }
   },
   "login": {
     "title": "Sign in",

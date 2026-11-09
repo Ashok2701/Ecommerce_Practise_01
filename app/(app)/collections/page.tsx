@@ -130,7 +130,7 @@ function VerifyRow({ p, canVerify }: { p: Payment; canVerify: boolean }) {
         <div className="mt-1 text-sm"><span className="font-medium">{p.customerName}</span> · {t(`payments.methods.${p.method}`)} <span className="font-mono text-xs">{p.reference}</span> · {fmtDate(p.date)}</div>
         <div className="text-xs text-muted-foreground">{p.invoiceNumbers.length ? p.invoiceNumbers.join(', ') : t('payments.onAccount')} · {t('payments.enteredBy', { name: p.enteredBy?.name ?? '' })}{p.note ? ` · ${p.note}` : ''}</div>
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
         <span className="me-2 text-lg font-semibold tabular">{fmtMoney(p.amount, true)}</span>
         {canVerify && <><Button variant="outline" className="text-destructive" onClick={() => setRejectOpen(true)} data-testid={`reject-${p.number}`}><XCircle className="me-1.5 h-4 w-4" aria-hidden="true" />{t('payments.notFound')}</Button>
           <Button onClick={() => verify.mutate()} disabled={verify.isPending} data-testid={`verify-btn-${p.number}`}><CheckCircle2 className="me-1.5 h-4 w-4" aria-hidden="true" />{t('payments.verify')}</Button></>}

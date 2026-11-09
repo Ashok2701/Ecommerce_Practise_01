@@ -1,0 +1,46 @@
+{
+  "name": "nexus-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nexus B2B portal API: NestJS, SQL Server portal database, Sage X3 via SQL views (read) and web services (write).",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node -e \"require('fs').copyFileSync('src/x3/views.sql','dist/backend/src/x3/views.sql')\"",
+    "start": "node dist/backend/src/main.js",
+    "dev": "npm run build && node dist/backend/src/main.js",
+    "db:migrate": "npm run build && node dist/backend/src/cli.js migrate",
+    "db:seed": "npm run build && node dist/backend/src/cli.js seed",
+    "x3:views": "npm run build && node dist/backend/src/cli.js views",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "jest --runInBand"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.4.22",
+    "@nestjs/core": "^10.4.22",
+    "@nestjs/platform-express": "^10.4.22",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "jsonwebtoken": "^9.0.3",
+    "knex": "^3.3.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "tedious": "^20.3.8"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^10.4.22",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^22.20.5",
+    "@types/supertest": "^7.2.1",
+    "jest": "^29.7.0",
+    "supertest": "^7.3.2",
+    "ts-jest": "^29.4.15",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

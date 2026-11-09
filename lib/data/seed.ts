@@ -3,7 +3,7 @@ import type {
 } from '@/types/domain';
 import { PRODUCTS } from './catalog';
 import { buildOrderTotals, customerUnitPrice, offerStatus } from '@/lib/domain/pricing';
-import { DEFAULT_ROLE_MODULES, type ModuleId } from '@/lib/access/modules';
+import { DEFAULT_ROLE_MODULES, type ModuleId } from '@/lib/access/moduleRules';
 import type { Role, Site, SalesRequest, WorkflowSettings, Supplier, PurchaseRequest, PurchaseOrder, PurchaseLine, Consignment, ConsignmentLine, StockTransfer, TransferLine, TransferStatus, Quote, QuoteLine, QuoteStatus, Delivery, CollectionNote } from '@/types/domain';
 import { creditCheck } from '@/lib/domain/credit';
 

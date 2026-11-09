@@ -3,6 +3,7 @@ import { getDb, atSite } from '@/lib/data/mockDb';
 import { getCurrentSite } from '@/lib/sites/current';
 import { stockStatus } from '@/lib/domain/pricing';
 import { CATEGORIES } from '@/lib/data/catalog';
+import { appConfig } from '@/lib/config';
 import type { Paginated, Product } from '@/types/domain';
 
 export interface ProductQuery {
@@ -46,6 +47,11 @@ export const productService = {
       return p;
     }, () => http.get(`/products/${id}`)),
   getAll: () => source<Product[]>(() => getDb().products.map((p) => atSite(p)), () => http.get('/products', { pageSize: 1000 }).then((r: any) => r.items)),
-  getCategories: () => [...CATEGORIES],
-  getBrands: () => [...new Set(getDb().products.map((p) => p.brand))].sort(),
+  /** Categories in the catalogue's order; from the loaded products when the ERP is live (item categories). */
+  getCategories: (products?: Product[]) => {
+    if (appConfig.dataSource !== 'api' || !products) return [...CATEGORIES] as string[];
+    const order = (c: string) => { const i = (CATEGORIES as readonly string[]).indexOf(c); return i < 0 ? 999 : i; };
+    return [...new Set(products.map((p) => p.category).filter(Boolean))].sort((a, b) => order(a) - order(b) || a.localeCompare(b));
+  },
+  getBrands: (products?: Product[]) => [...new Set((products ?? (appConfig.dataSource === 'api' ? [] : getDb().products)).map((p) => p.brand).filter(Boolean))].sort(),
 };

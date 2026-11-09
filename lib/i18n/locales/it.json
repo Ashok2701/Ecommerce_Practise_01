@@ -13,10 +13,12 @@
     "auth": {
       "invalidCredentials": "Email o password non corretti.",
       "pendingApproval": "Il tuo account è in attesa di approvazione da parte di un amministratore.",
-      "inactive": "Il tuo account è stato disattivato. Contatta il tuo amministratore."
+      "inactive": "Il tuo account è stato disattivato. Contatta il tuo amministratore.",
+      "unauthorized": "La sessione è scaduta. Accedi di nuovo."
     },
     "sites": {
-      "atLeastOne": "Scegli almeno una sede."
+      "atLeastOne": "Scegli almeno una sede.",
+      "notAllowed": "Non puoi lavorare in questa sede."
     },
     "requests": {
       "notFound": "Questa richiesta non esiste o non puoi vederla.",
@@ -27,7 +29,8 @@
       "creditOverrideNeeded": "Questa richiesta supera il fido. Approvala con una deroga.",
       "priceChanged": "I prezzi sono cambiati dall’invio. Conferma che il richiedente li ha accettati.",
       "commentRequired": "Aggiungi prima un commento.",
-      "nothingInStock": "Nessun articolo di questa richiesta è disponibile in questa sede."
+      "nothingInStock": "Nessun articolo di questa richiesta è disponibile in questa sede.",
+      "idempotencyKey": "Si è verificato un problema durante la conversione. Riprova."
     },
     "purchasing": {
       "notFound": "Questo documento d’acquisto non esiste o non puoi vederlo.",
@@ -65,7 +68,8 @@
       "notOpen": "Questa consegna non può più essere modificata.",
       "receivedBy": "Indica chi ha ricevuto la merce.",
       "proof": "Acquisisci una firma o una foto.",
-      "reasonRequired": "Indica perché la consegna non è riuscita."
+      "reasonRequired": "Indica perché la consegna non è riuscita.",
+      "date": "Scegli una data valida."
     },
     "payments": {
       "notFound": "Questo pagamento non esiste.",
@@ -76,7 +80,27 @@
       "reasonRequired": "Inserisci un motivo.",
       "promiseDetails": "Inserisci data e importo promessi."
     },
-    "notFound": "Questo record non esiste o non puoi vederlo."
+    "notFound": "Questo record non esiste o non puoi vederlo.",
+    "conflict": "Qualcun altro ha appena modificato questo elemento. Ricarica e riprova.",
+    "erp": {
+      "unavailable": "L’ERP non è raggiungibile in questo momento. Riprova tra qualche minuto.",
+      "rejected": "L’ERP ha rifiutato questa modifica. Chiedi a un amministratore di controllare il registro dell’ERP."
+    },
+    "orders": {
+      "cannotCancel": "Questo ordine non può più essere annullato."
+    },
+    "announcements": {
+      "title": "Aggiungi un titolo."
+    },
+    "messages": {
+      "empty": "Scrivi prima un messaggio."
+    },
+    "followUps": {
+      "customer": "Scegli un cliente."
+    },
+    "users": {
+      "self": "Non puoi disattivare il tuo account."
+    }
   },
   "login": {
     "title": "Accedi",

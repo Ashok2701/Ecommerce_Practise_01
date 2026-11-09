@@ -3,6 +3,10 @@ import {
   Bell, Sparkles, UserSquare2, CalendarCheck, TrendingUp, Settings, PlusCircle, Boxes, Zap, KeyRound, ClipboardList, Workflow, Truck, PackageSearch, FileInput, Warehouse, ArrowLeftRight, PackageOpen, FileSignature, PackageCheck, HandCoins, Factory, type LucideIcon,
 } from 'lucide-react';
 import type { Role } from '@/types/domain';
+import type { ModuleId } from './moduleRules';
+
+export { ALWAYS_ON, ADMIN_LOCKED, isLocked, DEFAULT_ROLE_MODULES, normaliseModules, MODULE_IDS } from './moduleRules';
+export type { ModuleId } from './moduleRules';
 
 /**
  * Module access (YES/NO per role)
@@ -14,15 +18,6 @@ import type { Role } from '@/types/domain';
  * The backend must enforce the same assignments on every API call. Hiding a
  * menu here is for convenience only, never security.
  */
-export type ModuleId =
-  | 'dashboard' | 'catalog' | 'quick_order' | 'cart' | 'requests' | 'orders' | 'new_order' | 'invoices' | 'account' | 'offers'
-  | 'supplier_catalog' | 'purchase_requests' | 'purchase_orders'
-  | 'inventory' | 'consignment' | 'transfers' | 'suppliers'
-  | 'quotes' | 'deliveries' | 'collections'
-  | 'customers' | 'approvals' | 'team' | 'follow_ups' | 'performance'
-  | 'announcements' | 'messages' | 'assistant' | 'notifications'
-  | 'users' | 'access' | 'workflow' | 'settings';
-
 export type ModuleGroup = 'overview' | 'commerce' | 'purchasing' | 'inventory' | 'operations' | 'engage' | 'admin';
 
 export interface ModuleDef {
@@ -82,23 +77,6 @@ export const MODULES: ModuleDef[] = [
 
 export const GROUP_ORDER: ModuleGroup[] = ['overview', 'operations', 'commerce', 'purchasing', 'inventory', 'engage', 'admin'];
 
-/** Every role always has these. */
-export const ALWAYS_ON: ModuleId[] = ['dashboard', 'notifications'];
-/** ADMIN can never lose these, so nobody gets locked out of administration. */
-export const ADMIN_LOCKED: ModuleId[] = ['users', 'access', 'settings'];
-
-export const isLocked = (role: Role, id: ModuleId) => ALWAYS_ON.includes(id) || (role === 'ADMIN' && ADMIN_LOCKED.includes(id));
-
-export const DEFAULT_ROLE_MODULES: Record<Role, ModuleId[]> = {
-  // Admin runs the portal; business modules are not granted automatically.
-  ADMIN: ['dashboard', 'users', 'access', 'workflow', 'settings', 'customers', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
-  SUPERVISOR: ['dashboard', 'approvals', 'quotes', 'requests', 'orders', 'deliveries', 'collections', 'workflow', 'purchase_requests', 'purchase_orders', 'suppliers', 'inventory', 'consignment', 'transfers', 'customers', 'team', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
-  SALES_REP: ['dashboard', 'customers', 'collections', 'follow_ups', 'performance', 'new_order', 'catalog', 'quick_order', 'cart', 'quotes', 'requests', 'orders', 'deliveries', 'inventory', 'consignment', 'transfers', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
-  SUPPLIER: ['dashboard', 'supplier_catalog', 'purchase_requests', 'purchase_orders', 'announcements', 'messages', 'assistant', 'notifications'],
-  CUSTOMER_B2B: ['dashboard', 'catalog', 'quick_order', 'cart', 'quotes', 'requests', 'orders', 'consignment', 'invoices', 'account', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
-  CUSTOMER_B2C: ['dashboard', 'catalog', 'cart', 'requests', 'orders', 'invoices', 'account', 'offers', 'messages', 'assistant', 'notifications'],
-};
-
 /** Preferred mobile bottom-bar items per role (the first four the role can use are shown). */
 export const BOTTOM_PREFERENCE: Record<Role, ModuleId[]> = {
   ADMIN: ['dashboard', 'users', 'access', 'messages', 'customers'],
@@ -108,14 +86,6 @@ export const BOTTOM_PREFERENCE: Record<Role, ModuleId[]> = {
   CUSTOMER_B2B: ['dashboard', 'catalog', 'cart', 'requests', 'orders'],
   CUSTOMER_B2C: ['dashboard', 'catalog', 'cart', 'requests', 'orders', 'account'],
 };
-
-/** Normalise a stored assignment: drop unknown ids and re-add the locked ones. */
-export function normaliseModules(role: Role, ids: string[] | undefined): ModuleId[] {
-  const known = new Set(MODULES.map((m) => m.id));
-  const set = new Set((ids ?? DEFAULT_ROLE_MODULES[role]).filter((id): id is ModuleId => known.has(id as ModuleId)));
-  MODULES.forEach((m) => { if (isLocked(role, m.id)) set.add(m.id); });
-  return MODULES.map((m) => m.id).filter((id) => set.has(id));
-}
 
 const under = (path: string, r: string) => (r.endsWith('/') ? path.startsWith(r) : path === r || path.startsWith(r + '/'));
 

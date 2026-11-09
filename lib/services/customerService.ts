@@ -1,5 +1,6 @@
 import { source, http } from '@/lib/api/httpClient';
 import { getDb } from '@/lib/data/mockDb';
+import { appConfig } from '@/lib/config';
 import type { Customer, CustomerStatus } from '@/types/domain';
 
 export const customerService = {
@@ -13,5 +14,5 @@ export const customerService = {
   getCustomer: (id: string) =>
     source<Customer>(() => { const c = getDb().customers.find((x) => x.id === id); if (!c) throw new Error('Customer not found'); return c; }, () => http.get(`/customers/${id}`)),
   /** Synchronous lookup for pricing in the cart (mock only; API mode uses cached query). */
-  peek: (id?: string | null) => (id ? getDb().customers.find((c) => c.id === id) ?? null : null),
+  peek: (id?: string | null) => (id && appConfig.dataSource !== 'api' ? getDb().customers.find((c) => c.id === id) ?? null : null),
 };

@@ -13,10 +13,12 @@
     "auth": {
       "invalidCredentials": "E-Mail oder Passwort ist falsch.",
       "pendingApproval": "Ihr Konto wartet auf die Freigabe durch einen Administrator.",
-      "inactive": "Ihr Konto wurde deaktiviert. Wenden Sie sich an Ihren Administrator."
+      "inactive": "Ihr Konto wurde deaktiviert. Wenden Sie sich an Ihren Administrator.",
+      "unauthorized": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an."
     },
     "sites": {
-      "atLeastOne": "Wählen Sie mindestens einen Standort."
+      "atLeastOne": "Wählen Sie mindestens einen Standort.",
+      "notAllowed": "Sie können an diesem Standort nicht arbeiten."
     },
     "requests": {
       "notFound": "Diese Anfrage existiert nicht oder Sie können sie nicht sehen.",
@@ -27,7 +29,8 @@
       "creditOverrideNeeded": "Diese Anfrage überschreitet das Kreditlimit. Geben Sie sie mit einer Ausnahme frei.",
       "priceChanged": "Die Preise haben sich seit dem Einreichen geändert. Bestätigen Sie, dass der Anfragende sie akzeptiert hat.",
       "commentRequired": "Fügen Sie zuerst einen Kommentar hinzu.",
-      "nothingInStock": "Nichts aus dieser Anfrage ist an diesem Standort vorrätig."
+      "nothingInStock": "Nichts aus dieser Anfrage ist an diesem Standort vorrätig.",
+      "idempotencyKey": "Bei der Umwandlung ist etwas schiefgelaufen. Bitte versuchen Sie es erneut."
     },
     "purchasing": {
       "notFound": "Dieser Einkaufsbeleg existiert nicht oder Sie können ihn nicht sehen.",
@@ -65,7 +68,8 @@
       "notOpen": "Diese Lieferung kann nicht mehr geändert werden.",
       "receivedBy": "Geben Sie an, wer die Ware angenommen hat.",
       "proof": "Erfassen Sie eine Unterschrift oder ein Foto.",
-      "reasonRequired": "Geben Sie an, warum die Zustellung fehlgeschlagen ist."
+      "reasonRequired": "Geben Sie an, warum die Zustellung fehlgeschlagen ist.",
+      "date": "Wählen Sie ein gültiges Datum."
     },
     "payments": {
       "notFound": "Diese Zahlung existiert nicht.",
@@ -76,7 +80,27 @@
       "reasonRequired": "Geben Sie einen Grund ein.",
       "promiseDetails": "Geben Sie das zugesagte Datum und den Betrag ein."
     },
-    "notFound": "Dieser Datensatz existiert nicht oder ist für Sie nicht sichtbar."
+    "notFound": "Dieser Datensatz existiert nicht oder ist für Sie nicht sichtbar.",
+    "conflict": "Jemand anderes hat dies gerade geändert. Laden Sie neu und versuchen Sie es noch einmal.",
+    "erp": {
+      "unavailable": "Das ERP ist gerade nicht erreichbar. Versuchen Sie es in ein paar Minuten noch einmal.",
+      "rejected": "Das ERP hat diese Änderung abgelehnt. Bitten Sie einen Administrator, das ERP-Protokoll zu prüfen."
+    },
+    "orders": {
+      "cannotCancel": "Dieser Auftrag kann nicht mehr storniert werden."
+    },
+    "announcements": {
+      "title": "Fügen Sie einen Titel hinzu."
+    },
+    "messages": {
+      "empty": "Schreiben Sie zuerst eine Nachricht."
+    },
+    "followUps": {
+      "customer": "Wählen Sie einen Kunden."
+    },
+    "users": {
+      "self": "Sie können Ihr eigenes Konto nicht deaktivieren."
+    }
   },
   "login": {
     "title": "Anmelden",

@@ -1,4 +1,4 @@
-import { source, http } from '@/lib/api/httpClient';
+import { source, http, ApiError } from '@/lib/api/httpClient';
 import { getDb, commit, uid, atSite, inSite } from '@/lib/data/mockDb';
 import { getCurrentSite } from '@/lib/sites/current';
 import { buildOrderTotals } from '@/lib/domain/pricing';
@@ -26,6 +26,8 @@ export interface SubmitInput {
   consignmentId?: string;
   /** Accepting a quote: the quote's lines and prices are used as they are. */
   quoteId?: string;
+  /** Live API, offline: the cart's indicative lines and totals, shown on the draft kept on the device. */
+  preview?: { customerName: string; lines: SalesRequest['lines'] | Omit<RequestLine, 'convertedQty'>[]; subtotal: number; discount: number; tax: number; total: number };
 }
 export interface RequestQuery { customerId?: string; salesRepId?: string; view?: 'open' | 'review' | 'closed' | 'all'; search?: string; }
 export interface ConvertOptions {
@@ -193,6 +195,48 @@ function submitDraft(r: SalesRequest, actor: ActorRef) {
   return r;
 }
 
+/* ---- live API: offline drafts wait on the device (outbox) and are sent when the connection returns ---- */
+
+const OUTBOX = 'nexus.outbox';
+interface OutboxItem { request: SalesRequest; input: Omit<SubmitInput, 'actor' | 'offline' | 'preview'>; blocked?: string }
+function readOutbox(): OutboxItem[] { try { return JSON.parse(localStorage.getItem(OUTBOX) || '[]'); } catch { return []; } }
+function writeOutbox(x: OutboxItem[]) { try { localStorage.setItem(OUTBOX, JSON.stringify(x)); } catch { /* storage full: the draft stays in memory only */ } }
+
+function queueOffline(input: SubmitInput): SalesRequest {
+  const at = now();
+  const { actor, offline, preview, ...rest } = input; void offline;
+  const r: SalesRequest = {
+    id: `local_${uid('').slice(1)}`, number: `DRAFT-${uid('').slice(1, 7).toUpperCase()}`, site: getCurrentSite() ?? undefined, customerId: input.customerId,
+    customerName: preview?.customerName ?? input.customerId, salesRepId: '', createdBy: actor, source: 'offline', date: at, status: 'draft',
+    lines: (preview?.lines ?? []).map((l) => ({ ...l, convertedQty: 0 })), subtotal: preview?.subtotal ?? 0, discount: preview?.discount ?? 0, tax: preview?.tax ?? 0, total: preview?.total ?? 0,
+    poNumber: input.poNumber, notes: input.notes, deliveryAddress: { line1: '', city: '', state: '', postalCode: '', country: '' }, billingAddress: { line1: '', city: '', state: '', postalCode: '', country: '' },
+    orderIds: [], orderNumbers: [], comments: [], timeline: [{ status: 'draft', at, by: actor.name, note: 'Saved on device – sent when back online' }],
+  };
+  writeOutbox([{ request: r, input: rest }, ...readOutbox()]);
+  return r;
+}
+
+const localDrafts = (q: RequestQuery = {}) => readOutbox().map((x) => x.request).filter((r) =>
+  (!q.customerId || r.customerId === q.customerId) && (!q.view || q.view === 'all' || q.view === 'open') &&
+  (!q.search || [r.number, r.customerName, r.poNumber ?? ''].some((v) => v.toLowerCase().includes(q.search!.trim().toLowerCase()))));
+
+async function sendOutbox(): Promise<{ sent: number; blocked: number }> {
+  let sent = 0, blocked = 0;
+  for (const item of readOutbox().filter((x) => !x.blocked)) {
+    try {
+      await http.post('/requests', { ...item.input, fromDevice: true });
+      sent++;
+      writeOutbox(readOutbox().filter((x) => x.request.id !== item.request.id));
+    } catch (e) {
+      if (!(e instanceof ApiError) || e.status >= 500) break; // still offline or the server is down: try again later
+      blocked++;
+      writeOutbox(readOutbox().map((x) => x.request.id === item.request.id ? { ...x, blocked: e.message, request: { ...x.request, comments: [...x.request.comments, { by: 'System', at: now(), text: e.message }] } } : x));
+    }
+  }
+  const server = await http.post<{ sent: number; blocked: number }>('/requests/sync').catch(() => ({ sent: 0, blocked: 0 }));
+  return { sent: sent + server.sent, blocked: blocked + server.blocked };
+}
+
 export const requestService = {
   list: (q: RequestQuery = {}) =>
     source<SalesRequest[]>(() => {
@@ -203,9 +247,9 @@ export const requestService = {
         (!s || [r.number, r.customerName, r.poNumber ?? '', ...r.orderNumbers, ...r.lines.map((l) => l.name)].some((v) => v.toLowerCase().includes(s))));
       commit();
       return rows.sort((a, b) => b.date.localeCompare(a.date));
-    }, () => http.get('/requests', q)),
+    }, () => http.get<SalesRequest[]>('/requests', q).then((rows) => [...localDrafts(q), ...rows])),
 
-  get: (id: string) => source<SalesRequest>(() => { const r = expire(find(id)); commit(); return r; }, () => http.get(`/requests/${id}`)),
+  get: (id: string) => source<SalesRequest>(() => { const r = expire(find(id)); commit(); return r; }, () => (id.startsWith('local_') ? Promise.resolve(readOutbox().find((x) => x.request.id === id)?.request ?? Promise.reject(new Error('errors.requests.notFound'))) : http.get(`/requests/${id}`))),
 
   /** Submit from the cart. Returns the request (already converted when auto-approval applies). */
   submit: (input: SubmitInput) =>
@@ -248,7 +292,7 @@ export const requestService = {
       db.activity.unshift({ id: uid('act'), at, actor: input.actor.name, text: `submitted request ${r.number} for ${cust.name}`, kind: 'order' });
       commit();
       return r;
-    }, () => http.post('/requests', input)),
+    }, () => { const { preview, actor, ...body } = input; void preview; void actor; return input.offline ? Promise.resolve(queueOffline(input)) : http.post('/requests', body); }),
 
   /** Send offline drafts. Each is checked exactly like an online submission. */
   syncDrafts: (actor: ActorRef) =>
@@ -259,7 +303,7 @@ export const requestService = {
       });
       commit();
       return { sent, blocked };
-    }, () => http.post('/requests/sync')),
+    }, () => sendOutbox()),
 
   preview: (id: string) => source<ConversionPreview>(() => preview(find(id)), () => http.get(`/requests/${id}/conversion-preview`)),
 
@@ -295,7 +339,7 @@ export const requestService = {
       r.holdUntil = undefined;
       commit();
       return r;
-    }, () => http.post(`/requests/${id}/cancel`, { note })),
+    }, () => (id.startsWith('local_') ? Promise.resolve().then(() => { const x = readOutbox().find((o) => o.request.id === id); writeOutbox(readOutbox().filter((o) => o.request.id !== id)); return { ...x!.request, status: 'cancelled' as const }; }) : http.post(`/requests/${id}/cancel`, { note }))),
 
   comment: (id: string, actor: ActorRef, text: string) =>
     source<SalesRequest>(() => { const r = find(id); r.comments.push({ by: actor.name, at: now(), text }); commit(); return r; }, () => http.post(`/requests/${id}/comments`, { text })),

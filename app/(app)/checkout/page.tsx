@@ -76,7 +76,8 @@ export default function CheckoutPage() {
   const [error, setError] = useState('');
   const retail = customer?.type === 'B2C';
   const m = useMutation({
-    mutationFn: () => requestService.submit({ customerId: customer!.id, items: cart.items, notes, poNumber: po || undefined, actor: { id: user.id, name: user.name, role: user.role }, offline: !ui.online }),
+    mutationFn: () => requestService.submit({ customerId: customer!.id, items: cart.items, notes, poNumber: po || undefined, actor: { id: user.id, name: user.name, role: user.role }, offline: !ui.online,
+      preview: { customerName: customer!.name, lines: totals.lines, subtotal: totals.subtotal, discount: totals.discount, tax: totals.tax, total: totals.total } }),
     onSuccess: (r) => { setPlaced(r); cart.clear(); qc.invalidateQueries(); window.scrollTo({ top: 0 }); },
     onError: (e) => { setError(errorText(e)); toast.error(t('checkout.blockedTitle')); },
   });

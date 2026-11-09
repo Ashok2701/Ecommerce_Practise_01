@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Search, Send, Plus, ChevronLeft, MessageSquare, Package } from 'lucide-react';
 import { toast } from 'sonner';
+import { appConfig } from '@/lib/config';
 import { messageService } from '@/lib/services';
 import { useUser } from '@/lib/auth/AuthProvider';
 import { useT } from '@/lib/i18n';
@@ -33,9 +34,9 @@ export default function MessagesPage() {
   const read = useMutation({ mutationFn: (id: string) => messageService.markRead(id, user.id), onSuccess: invalidate });
   const send = useMutation({
     mutationFn: () => messageService.send(sel!, user, draft.trim()),
-    onSuccess: (c) => { setDraft(''); invalidate(); if (isCustomerRole(user.role)) setTimeout(() => { messageService.simulateReply(c.id); invalidate(); }, 2500); },
+    onSuccess: (c) => { setDraft(''); invalidate(); if (isCustomerRole(user.role) && appConfig.dataSource === 'mock') setTimeout(() => { messageService.simulateReply(c.id); invalidate(); }, 2500); },
   });
-  const create = useMutation({ mutationFn: () => messageService.create(user, nf.subject, nf.body), onSuccess: (c) => { invalidate(); setSel(c.id); setNewOpen(false); setNf({ subject: '', body: '' }); toast.success(t('messages.started')); if (isCustomerRole(user.role)) setTimeout(() => { messageService.simulateReply(c.id); invalidate(); }, 2500); } });
+  const create = useMutation({ mutationFn: () => messageService.create(user, nf.subject, nf.body), onSuccess: (c) => { invalidate(); setSel(c.id); setNewOpen(false); setNf({ subject: '', body: '' }); toast.success(t('messages.started')); if (isCustomerRole(user.role) && appConfig.dataSource === 'mock') setTimeout(() => { messageService.simulateReply(c.id); invalidate(); }, 2500); } });
   useEffect(() => { if (conv && conv.unreadBy.includes(user.id)) read.mutate(conv.id); }, [conv?.id]); // eslint-disable-line
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [conv?.messages.length, sel]);
   const s = search.toLowerCase();

@@ -21,7 +21,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSession(s);
     return s.user;
   }, []);
-  const logout = useCallback(() => { localStorage.removeItem(KEY); setSession(null); }, []);
+  // signing out also drops the catalogue and customer data the service worker kept for offline use
+  const logout = useCallback(() => { localStorage.removeItem(KEY); try { void caches?.delete('nexus-api-catalogue-v1'); } catch { /* no Cache API */ } setSession(null); }, []);
   const value = useMemo(() => ({ user: session?.user ?? null, ready, login, logout }), [session, ready, login, logout]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

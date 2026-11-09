@@ -13,10 +13,12 @@
     "auth": {
       "invalidCredentials": "E-mail ou palavra-passe incorretos.",
       "pendingApproval": "A sua conta aguarda aprovação de um administrador.",
-      "inactive": "A sua conta foi desativada. Contacte o seu administrador."
+      "inactive": "A sua conta foi desativada. Contacte o seu administrador.",
+      "unauthorized": "A sua sessão terminou. Inicie sessão novamente."
     },
     "sites": {
-      "atLeastOne": "Escolha pelo menos um local."
+      "atLeastOne": "Escolha pelo menos um local.",
+      "notAllowed": "Não pode trabalhar neste local."
     },
     "requests": {
       "notFound": "Este pedido não existe ou não o pode ver.",
@@ -27,7 +29,8 @@
       "creditOverrideNeeded": "Este pedido ultrapassa o limite de crédito. Aprove-o com uma exceção.",
       "priceChanged": "Os preços mudaram desde a submissão. Confirme que o requerente os aceitou.",
       "commentRequired": "Adicione primeiro um comentário.",
-      "nothingInStock": "Nenhum artigo deste pedido está em stock neste local."
+      "nothingInStock": "Nenhum artigo deste pedido está em stock neste local.",
+      "idempotencyKey": "Ocorreu um problema durante a conversão. Tente novamente."
     },
     "purchasing": {
       "notFound": "Este documento de compra não existe ou não o pode ver.",
@@ -65,7 +68,8 @@
       "notOpen": "Esta entrega já não pode ser alterada.",
       "receivedBy": "Indique quem recebeu a mercadoria.",
       "proof": "Recolha uma assinatura ou uma foto.",
-      "reasonRequired": "Indique porque falhou a entrega."
+      "reasonRequired": "Indique porque falhou a entrega.",
+      "date": "Escolha uma data válida."
     },
     "payments": {
       "notFound": "Este pagamento não existe.",
@@ -76,7 +80,27 @@
       "reasonRequired": "Indique um motivo.",
       "promiseDetails": "Indique a data e o valor prometidos."
     },
-    "notFound": "Este registo não existe ou não o pode ver."
+    "notFound": "Este registo não existe ou não o pode ver.",
+    "conflict": "Outra pessoa acabou de alterar isto. Recarregue e tente novamente.",
+    "erp": {
+      "unavailable": "Não é possível contactar o ERP neste momento. Tente novamente dentro de alguns minutos.",
+      "rejected": "O ERP recusou esta alteração. Peça a um administrador para verificar o registo do ERP."
+    },
+    "orders": {
+      "cannotCancel": "Esta encomenda já não pode ser cancelada."
+    },
+    "announcements": {
+      "title": "Adicione um título."
+    },
+    "messages": {
+      "empty": "Escreva primeiro uma mensagem."
+    },
+    "followUps": {
+      "customer": "Escolha um cliente."
+    },
+    "users": {
+      "self": "Não pode desativar a sua própria conta."
+    }
   },
   "login": {
     "title": "Iniciar sessão",

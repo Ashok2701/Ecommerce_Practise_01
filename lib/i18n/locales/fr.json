@@ -13,10 +13,12 @@
     "auth": {
       "invalidCredentials": "E-mail ou mot de passe incorrect.",
       "pendingApproval": "Votre compte attend la validation d’un administrateur.",
-      "inactive": "Votre compte a été désactivé. Contactez votre administrateur."
+      "inactive": "Votre compte a été désactivé. Contactez votre administrateur.",
+      "unauthorized": "Votre session a expiré. Reconnectez-vous."
     },
     "sites": {
-      "atLeastOne": "Choisissez au moins un site."
+      "atLeastOne": "Choisissez au moins un site.",
+      "notAllowed": "Vous ne pouvez pas travailler sur ce site."
     },
     "requests": {
       "notFound": "Cette demande n’existe pas ou vous ne pouvez pas la voir.",
@@ -27,7 +29,8 @@
       "creditOverrideNeeded": "Cette demande dépasse la limite de crédit. Validez-la avec une dérogation.",
       "priceChanged": "Les prix ont changé depuis l’envoi. Confirmez que le demandeur les a acceptés.",
       "commentRequired": "Ajoutez d’abord un commentaire.",
-      "nothingInStock": "Aucun article de cette demande n’est en stock sur ce site."
+      "nothingInStock": "Aucun article de cette demande n’est en stock sur ce site.",
+      "idempotencyKey": "Un problème est survenu pendant la conversion. Réessayez."
     },
     "purchasing": {
       "notFound": "Ce document d’achat n’existe pas ou vous ne pouvez pas le voir.",
@@ -65,7 +68,8 @@
       "notOpen": "Cette livraison ne peut plus être modifiée.",
       "receivedBy": "Indiquez qui a réceptionné la marchandise.",
       "proof": "Ajoutez une signature ou une photo.",
-      "reasonRequired": "Indiquez pourquoi la livraison a échoué."
+      "reasonRequired": "Indiquez pourquoi la livraison a échoué.",
+      "date": "Choisissez une date valide."
     },
     "payments": {
       "notFound": "Ce paiement n'existe pas.",
@@ -76,7 +80,27 @@
       "reasonRequired": "Saisissez un motif.",
       "promiseDetails": "Saisissez la date et le montant promis."
     },
-    "notFound": "Cet élément n'existe pas ou vous ne pouvez pas le voir."
+    "notFound": "Cet élément n'existe pas ou vous ne pouvez pas le voir.",
+    "conflict": "Quelqu’un vient de modifier cet élément. Rechargez et réessayez.",
+    "erp": {
+      "unavailable": "L’ERP est injoignable pour le moment. Réessayez dans quelques minutes.",
+      "rejected": "L’ERP a refusé cette modification. Demandez à un administrateur de vérifier le journal de l’ERP."
+    },
+    "orders": {
+      "cannotCancel": "Cette commande ne peut plus être annulée."
+    },
+    "announcements": {
+      "title": "Ajoutez un titre."
+    },
+    "messages": {
+      "empty": "Écrivez d’abord un message."
+    },
+    "followUps": {
+      "customer": "Choisissez un client."
+    },
+    "users": {
+      "self": "Vous ne pouvez pas désactiver votre propre compte."
+    }
   },
   "login": {
     "title": "Connexion",
