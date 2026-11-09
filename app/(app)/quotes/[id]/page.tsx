@@ -20,6 +20,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { isCustomerRole, type Quote } from '@/types/domain';
+import { offerService, productService, customerService } from '@/lib/services';
+import { bestDiscount } from '@/lib/domain/pricing';
+import { OfferBadge } from '@/features/offers/OfferBits';
 
 export default function QuotePage() {
   const { t } = useT();
@@ -46,6 +49,10 @@ function Detail({ q }: { q: Quote }) {
   const user = useUser();
   const router = useRouter();
   const qc = useQueryClient();
+  // ERP offers don't stack on a quoted price; staff see what the customer would get anyway at this quantity
+  const offers = useQuery({ queryKey: ['offers', 'pricing'], queryFn: offerService.pricing, staleTime: 5 * 60_000 });
+  const catalog = useQuery({ queryKey: ['products', 'all'], queryFn: productService.getAll, staleTime: 5 * 60_000 });
+  const quoteCustomer = useQuery({ queryKey: ['customer', q.customerId], queryFn: () => customerService.getCustomer(q.customerId) });
   const actor = { id: user.id, name: user.name, role: user.role };
   const customer = isCustomerRole(user.role);
   const staff = !customer;
@@ -117,7 +124,8 @@ function Detail({ q }: { q: Quote }) {
                 const d = discountPct(l);
                 return (
                   <tr key={l.productId}>
-                    <td className="px-4 py-2.5"><ProductRef id={l.productId} name={l.name} /><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td>
+                    <td className="px-4 py-2.5"><ProductRef id={l.productId} name={l.name} /><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div>
+                      {staff && (() => { const prod = catalog.data?.find((x) => x.id === l.productId); const b = prod && bestDiscount(prod, l.quantity, { customer: quoteCustomer.data, site: q.site }, offers.data ?? []); return b ? <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground" data-testid={`quote-offer-${l.productId}`}><OfferBadge offer={b.offer} />{t('quotes.offerHint', { pct: b.pct })}</div> : null; })()}</td>
                     <td className="px-3 py-2.5 text-end tabular">{editing ? <Input type="number" min={0} aria-label={`${t('requests.detail.qty')}: ${l.name}`} className="ms-auto h-9 w-20 text-end" value={l.quantity} onChange={(e) => setLine(l.productId, 'quantity', e.target.value)} /> : `${fmtNumber(l.quantity)} ${l.uom}`}</td>
                     {staff && <td className="px-3 py-2.5 text-end tabular text-muted-foreground">{fmtMoney(l.listPrice, true)}</td>}
                     {showTarget && <td className="px-3 py-2.5 text-end tabular text-muted-foreground">{l.targetPrice ? fmtMoney(l.targetPrice, true) : '—'}</td>}

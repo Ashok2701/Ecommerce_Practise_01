@@ -195,7 +195,8 @@ export function onDispatch(o: Order, by: string) {
     const d: Delivery = {
       id: `del_${n}`, number: `DN-26-${String(n).padStart(5, '0')}`, orderId: o.id, orderNumber: o.number, customerId: o.customerId, customerName: o.customerName, site: o.site,
       address: o.deliveryAddress, status: 'scheduled', plannedDate: o.expectedDelivery, carrier: cust.type === 'B2C' ? 'BlueDart' : 'VRL Logistics', trackingRef: `VRL${4600000 + n}`,
-      lines: o.lines.map((l) => ({ productId: l.productId, sku: l.sku, name: l.name, uom: l.uom, quantity: l.quantity })),
+      // one delivery line per product: free goods ship with the paid quantity of the same item
+      lines: o.lines.reduce((acc, l) => { const e = acc.find((x) => x.productId === l.productId); if (e) e.quantity += l.quantity; else acc.push({ productId: l.productId, sku: l.sku, name: l.name, uom: l.uom, quantity: l.quantity }); return acc; }, [] as { productId: string; sku: string; name: string; uom: string; quantity: number }[]),
       timeline: [{ status: 'scheduled', at: now(), by, note: 'Delivery note created at dispatch' }],
     };
     db.deliveries.unshift(d); o.deliveryId = d.id;

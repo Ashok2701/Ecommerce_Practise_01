@@ -138,9 +138,7 @@ site-scoped.
 | POST | `/announcements` | `Announcement` | `Announcement` | ADMIN, SUPERVISOR |
 | PATCH | `/announcements/:id` | `Announcement` or `{ status }` | `Announcement` | |
 | DELETE | `/announcements/:id` | | | |
-| GET | `/offers` | `tier?, manage?` | `Offer[]` | Offer engine (BOGO, slabs, bundles) is designed in the backend chat |
-| POST | `/offers` | `Offer` | `Offer` | ADMIN, SUPERVISOR |
-| PATCH | `/offers/:id` | `Offer` or `{ status }` | `Offer` | |
+| GET | `/offers` | `forCustomerId?, manage?, kind?` | `Offer[]` | Read from the ERP – see "Offers and pricing" |
 | GET | `/conversations` | | `Conversation[]` | Visible to participants; customers see their own |
 | POST | `/conversations` | `{ subject, body }` | `Conversation` | |
 | POST | `/conversations/:id/messages` | `{ body }` | `Conversation` | |
@@ -300,6 +298,30 @@ Every document and master record has its own page. These endpoints back them; al
 
 Unknown or out-of-scope ids return 404 with `errors.notFound` (or the module's own `notFound` code); the page shows "doesn't exist or you can't see it" for both, so nothing leaks.
 
+## Offers and pricing
+
+**Offers live in the ERP.** In Sage X3 they are price lists: line discounts, quantity breaks and free goods (the free product and quantity set on the price-list line), with validity dates, customer / price-category targeting and sites. The portal never creates or changes an offer's terms. The backend reads them (scheduled sync plus on demand), and prices carts and orders with exactly the X3 rules, so the portal price is the X3 price.
+
+`Offer`: `{id, code, erpRef, kind: percent|tier|free_goods, title, description, productIds, categories?, discountPct?, tiers?[{minQty, discountPct}], buyQty?, freeQty?, freeProductId?, validFrom, validTo, status, audience: all|tier_A|tier_B|tier_C|customers, customerIds?, sites?, presentation}`
+
+`presentation` is the only part the portal stores and edits: `{image?, title?{lang: text}, text?{lang: text}, featured?, hidden?, sort?, updatedBy?, updatedAt?}`. Hidden offers still apply to prices (the ERP applies them); they are just not shown.
+
+| Method | Path | Who | Body / query | Notes |
+| --- | --- | --- | --- | --- |
+| GET | `/offers` | all | `forCustomerId?` (customers: their own, implied), `manage?` (staff: everything incl. hidden, scheduled, ended), `kind?` | Customers get only active, not hidden offers that apply to them and the current site |
+| GET | `/offers/{id}` | all | | Hidden offers return 404 to customers |
+| GET | `/offers/sync-status` | staff | | Last time offers were read from the ERP |
+| POST | `/offers/sync` | ADMIN, SUPERVISOR | | Read offers from the ERP now |
+| PUT | `/offers/{id}/presentation` | ADMIN, SUPERVISOR | `OfferPresentation` | Featuring an active offer notifies customers and reps |
+| POST | `/pricing/cart` | all | `{customerId, site, items[{productId, quantity}]}` | `{lines[], subtotal, discount, freeValue, tax, total, nudges[]}` – see rules below. The portal shows its own preview instantly and replaces it with this answer |
+
+Pricing rules (the frontend preview in `lib/domain/pricing.ts` follows the same rules):
+1. Unit price = contract price for the customer and product, else base price less the customer's tier discount.
+2. Line discount = the best of the percent and quantity-break offers that apply at the line quantity (customer, site, dates). The line keeps `offerId` / `offerCode`.
+3. Free goods: for every `buyQty` of a product, `freeQty` of `freeProductId` (or the same product) is added as its own line with `unitPrice 0`, `free: true`, `freeFor` = the product that earned it.
+4. Nudges: for a line close to the next quantity break or free item (at most half of the step still needed), `{productId, offerId, kind: tier|free, needed, discountPct?|freeQty?}`.
+5. Quotes: an accepted quote's prices replace offers (no stacking). Consignment call-offs get no offers.
+6. On conversion of a request, free lines are not copied: the engine adds them again for what is converted, so a partial conversion gets the free goods it earns. Free goods take stock like any other line.
+
 ## Not yet in the contract
 
-The offer engine (percent, BOGO and slab offers) is added with phase 2D of the frontend.

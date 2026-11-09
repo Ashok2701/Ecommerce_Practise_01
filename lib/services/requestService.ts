@@ -89,21 +89,22 @@ function fixedTotals(lines: { line: RequestLine; qty: number }[]) {
 /** Remaining (not yet converted) lines priced at today's prices for the request's site (quoted prices for an accepted quote). */
 function priceNow(r: SalesRequest) {
   const db = getDb();
-  if (r.quoteId) return fixedTotals(r.lines.filter((l) => l.quantity > l.convertedQty).map((l) => ({ line: l, qty: l.quantity - l.convertedQty })));
+  if (r.quoteId) return fixedTotals(r.lines.filter((l) => !l.free && l.quantity > l.convertedQty).map((l) => ({ line: l, qty: l.quantity - l.convertedQty })));
   const cust = db.customers.find((c) => c.id === r.customerId)!;
-  const items = r.lines.filter((l) => l.quantity > l.convertedQty)
+  // free-goods lines are not carried over: the offer engine adds them again for what is converted
+  const items = r.lines.filter((l) => !l.free && l.quantity > l.convertedQty)
     .map((l) => ({ product: atSite(db.products.find((p) => p.id === l.productId)!, r.site), quantity: l.quantity - l.convertedQty }));
-  return buildOrderTotals(items, cust, db.offers);
+  return buildOrderTotals(items, cust, r.consignmentId ? [] : db.offers, { products: db.products.map((p) => atSite(p, r.site)), site: r.site });
 }
 
 function preview(r: SalesRequest): ConversionPreview {
   const db = getDb();
   const now_ = priceNow(r);
-  const lines = r.lines.filter((l) => l.quantity > l.convertedQty).map((l) => {
+  const lines = r.lines.filter((l) => !l.free && l.quantity > l.convertedQty).map((l) => {
     const raw = db.products.find((p) => p.id === l.productId)!;
     const cons = r.consignmentId ? db.consignments.find((c) => c.id === r.consignmentId) : undefined;
     const stock = cons ? cons.lines.find((x) => x.productId === l.productId)?.quantity ?? 0 : r.site && raw.stockBySite ? raw.stockBySite[r.site] ?? 0 : raw.stock;
-    const priceNowLine = now_.lines.find((x) => x.productId === l.productId);
+    const priceNowLine = now_.lines.find((x) => x.productId === l.productId && !x.free);
     return { productId: l.productId, name: l.name, sku: l.sku, uom: l.uom, open: l.quantity - l.convertedQty, stock, priceThen: l.unitPrice, priceNow: priceNowLine?.unitPrice ?? l.unitPrice };
   });
   // indicative total of the open lines, including tax at the rate used on submission
@@ -132,8 +133,8 @@ function convertNow(r: SalesRequest, actor: ActorRef, opts: Omit<ConvertOptions,
   if (!take.length) throw new Error('errors.requests.nothingInStock');
   const items = take.map((l) => ({ product: atSite(db.products.find((x) => x.id === l.productId)!, r.site), quantity: l.qty }));
   const totals = r.quoteId
-    ? fixedTotals(take.map((l) => ({ line: r.lines.find((x) => x.productId === l.productId)!, qty: l.qty })))
-    : buildOrderTotals(items, cust, db.offers);
+    ? fixedTotals(take.map((l) => ({ line: r.lines.find((x) => x.productId === l.productId && !x.free)!, qty: l.qty })))
+    : buildOrderTotals(items, cust, r.consignmentId ? [] : db.offers, { products: db.products.map((p) => atSite(p, r.site)), site: r.site });
   const seq = db.seq.order++;
   const at = now();
   const order: Order = {
@@ -153,10 +154,13 @@ function convertNow(r: SalesRequest, actor: ActorRef, opts: Omit<ConvertOptions,
     cons.movements.unshift({ id: uid('cm'), at: now(), by: actor.name, kind: 'call_off', productId: l.productId, quantity: -l.qty, ref: order.number });
   });
   else take.forEach((l) => { const raw = db.products.find((x) => x.id === l.productId)!; if (r.site && raw.stockBySite) raw.stockBySite[r.site] = Math.max(0, (raw.stockBySite[r.site] ?? 0) - l.qty); });
-  take.forEach((l) => { const line = r.lines.find((x) => x.productId === l.productId)!; line.convertedQty += l.qty; });
+  // free goods leave the warehouse too
+  totals.lines.filter((l) => l.free).forEach((l) => { const raw = db.products.find((x) => x.id === l.productId)!; if (r.site && raw.stockBySite) raw.stockBySite[r.site] = Math.max(0, (raw.stockBySite[r.site] ?? 0) - l.quantity); });
+  take.forEach((l) => { const line = r.lines.find((x) => x.productId === l.productId && !x.free)!; line.convertedQty += l.qty; });
   r.orderIds.push(order.id); r.orderNumbers.push(order.number);
   r.holdUntil = undefined;
-  const done = r.lines.every((l) => l.convertedQty >= l.quantity);
+  const done = r.lines.filter((l) => !l.free).every((l) => l.convertedQty >= l.quantity);
+  if (done) r.lines.filter((l) => l.free).forEach((l) => { l.convertedQty = l.quantity; });
   if (r.status === 'submitted') r.timeline.push({ status: 'approved', at, by: actor.name, note: actor.id === SYSTEM.id ? 'Within auto-approval rules' : opts.overrideCredit ? 'Approved with credit override' : undefined });
   log(r, done ? 'converted' : 'partly_converted', actor.name, done ? `Sales order ${order.number} created` : `Sales order ${order.number} created for the lines in stock; the rest stays open`);
   db.activity.unshift({ id: uid('act'), at, actor: actor.name, text: `converted request ${r.number} to order ${order.number}`, kind: 'approval' });
@@ -218,7 +222,7 @@ export const requestService = {
       if (!items.length) throw new Error('errors.requests.empty');
       if (cons) {
         const reserved = (pid: string) => db.requests.filter((x) => x.consignmentId === cons.id && ['submitted', 'changes_requested', 'approved', 'partly_converted'].includes(x.status))
-          .reduce((s, x) => s + x.lines.filter((l) => l.productId === pid).reduce((a, l) => a + l.quantity - l.convertedQty, 0), 0);
+          .reduce((s, x) => s + x.lines.filter((l) => l.productId === pid && !l.free).reduce((a, l) => a + l.quantity - l.convertedQty, 0), 0);
         for (const i of items) {
           const line = cons.lines.find((l) => l.productId === i.product.id);
           if (!line || line.quantity - reserved(i.product.id) < i.quantity) throw new Error('errors.consignment.notEnough');
@@ -226,7 +230,8 @@ export const requestService = {
       }
       const totals = quote
         ? fixedTotals(quote.lines.map((l) => ({ line: { productId: l.productId, sku: l.sku, name: l.name, uom: l.uom, image: l.image, quantity: l.quantity, listPrice: l.listPrice, unitPrice: l.unitPrice, discountPct: 0, lineTotal: l.lineTotal, convertedQty: 0 }, qty: l.quantity })))
-        : buildOrderTotals(items, cust, db.offers);
+        // consignment stock is already the customer's: offers don't apply to call-offs
+        : buildOrderTotals(items, cust, cons ? [] : db.offers, { products: db.products.map((p) => atSite(p, site)), site });
       const at = now();
       const r: SalesRequest = {
         id: `req_${uid('').slice(1)}`, number: input.offline ? `DRAFT-${uid('').slice(1, 7).toUpperCase()}` : `SR-26-${String(db.seq.request++).padStart(5, '0')}`,

@@ -11,7 +11,8 @@ import {
 import { useUser } from '@/lib/auth/AuthProvider';
 import { useAccess } from '@/lib/auth/permissions';
 import { useCart } from '@/lib/cart/CartProvider';
-import { customerUnitPrice, offerFor } from '@/lib/domain/pricing';
+import { customerUnitPrice, offersFor } from '@/lib/domain/pricing';
+import { OfferBadge } from '@/features/offers/OfferBits';
 import { useT } from '@/lib/i18n';
 import { fmtDate, fmtMoney } from '@/lib/format';
 import { QueryView, LoadingState, KpiCard, SectionCard, EmptyState } from '@/components/common';
@@ -43,7 +44,7 @@ function CustomerDetail() {
   const deliveries = useQuery({ queryKey: ['deliveries', scope], queryFn: () => deliveryService.list(scope) });
   const consignments = useQuery({ queryKey: ['consignments', 'customer', id], queryFn: () => consignmentService.list(scope) });
   const products = useQuery({ queryKey: ['products', 'all'], queryFn: productService.getAll });
-  const offers = useQuery({ queryKey: ['offers', 'manage'], queryFn: () => offerService.list({ manage: true }) });
+  const offers = useQuery({ queryKey: ['offers', 'pricing'], queryFn: offerService.pricing, staleTime: 5 * 60_000 });
   const reps = useQuery({ queryKey: ['reps'], queryFn: userService.getSalesReps });
   const purchases = useMemo(() => {
     const m: Record<string, { productId: string; name: string; sku: string; uom: string; qty: number; times: number; last: string }> = {};
@@ -137,8 +138,8 @@ function CustomerDetail() {
                 <TabsContent value="pricing">
                   <SectionCard title={t('customers.detail.priceList')} action={<span className="text-xs text-muted-foreground">{t('customers.detail.priceListHint', { tier: c.priceTier })}</span>}>
                     <div className="overflow-x-auto"><table className="w-full text-sm"><thead className="bg-muted/50 text-xs text-muted-foreground"><tr><th className="px-4 py-2 text-start font-medium">{t('inventory.col.product')}</th><th className="px-4 py-2 text-end font-medium">{t('offers.listPrice')}</th><th className="px-4 py-2 text-end font-medium">{t('customers.detail.customerPrice')}</th><th className="px-4 py-2 text-end font-medium">{t('nav.offers')}</th></tr></thead>
-                      <tbody className="divide-y">{(products.data ?? []).map((p) => { const cp = customerUnitPrice(p, c); const off = offerFor(p.id, c, offers.data ?? []); return (
-                        <tr key={p.id} className={c.contractPrices[p.id] ? 'bg-blue-50/50 dark:bg-blue-500/5' : ''}><td className="px-4 py-2"><div className="font-medium">{p.name}</div><div className="font-mono text-[11px] text-muted-foreground">{p.sku} · {p.uom}</div></td><td className="px-4 py-2 text-end tabular text-muted-foreground">{fmtMoney(p.basePrice, true)}</td><td className="px-4 py-2 text-end font-medium tabular">{fmtMoney(cp, true)}{c.contractPrices[p.id] && <div className="text-[10px] font-semibold uppercase text-blue-700 dark:text-blue-300">{t('customers.detail.contract')}</div>}</td><td className="px-4 py-2 text-end text-emerald-700 dark:text-emerald-400">{off ? <RefLink href={`/offers/${off.id}`}>−{off.discountPct}%</RefLink> : '—'}</td></tr>
+                      <tbody className="divide-y">{(products.data ?? []).map((p) => { const cp = customerUnitPrice(p, c); const off = offersFor(p, { customer: c }, offers.data ?? [])[0]; return (
+                        <tr key={p.id} className={c.contractPrices[p.id] ? 'bg-blue-50/50 dark:bg-blue-500/5' : ''}><td className="px-4 py-2"><div className="font-medium">{p.name}</div><div className="font-mono text-[11px] text-muted-foreground">{p.sku} · {p.uom}</div></td><td className="px-4 py-2 text-end tabular text-muted-foreground">{fmtMoney(p.basePrice, true)}</td><td className="px-4 py-2 text-end font-medium tabular">{fmtMoney(cp, true)}{c.contractPrices[p.id] && <div className="text-[10px] font-semibold uppercase text-blue-700 dark:text-blue-300">{t('customers.detail.contract')}</div>}</td><td className="px-4 py-2 text-end text-emerald-700 dark:text-emerald-400">{off ? <OfferBadge offer={off} link /> : '—'}</td></tr>
                       ); })}</tbody></table></div>
                   </SectionCard>
                 </TabsContent>

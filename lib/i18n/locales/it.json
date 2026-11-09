@@ -1079,7 +1079,8 @@
       "declined": "Preventivo rifiutato",
       "revisionAsked": "Richiesta di modifica inviata",
       "cancelled": "Preventivo annullato"
-    }
+    },
+    "offerHint": "Il cliente ha già -{pct}% a questa quantità senza preventivo"
   },
   "deliveries": {
     "title": "Consegne",
@@ -1307,26 +1308,101 @@
     }
   },
   "offers": {
-    "activated": "Offerta attivata",
-    "deactivated": "Offerta disattivata",
-    "percentOff": "-{pct}%",
     "codeCopied": "Codice copiato",
-    "activate": "Attiva",
-    "deactivate": "Disattiva",
-    "validity": "Validità",
     "audience": "Per",
-    "howItWorks": "Come funziona",
-    "appliedAutomatically": "Applicata automaticamente nel carrello",
     "notForYou": "Questa offerta non è disponibile per il tuo account.",
     "listPrice": "Prezzo di listino",
     "yourPrice": "Il tuo prezzo",
     "withOffer": "Con offerta",
-    "added": "{name} aggiunto al carrello",
     "audiences": {
       "all": "Tutti i clienti",
       "tier_A": "Clienti fascia A",
       "tier_B": "Clienti fascia B",
-      "tier_C": "Clienti fascia C"
+      "tier_C": "Clienti fascia C",
+      "customers": "Clienti selezionati"
+    },
+    "featured": "In evidenza",
+    "hiddenTag": "Nascosta nel portale",
+    "fromQty": "da {qty}",
+    "addedQty": "{qty} {uom} di {name} aggiunti al carrello",
+    "addQty": "Aggiungi {qty}",
+    "terms": "Condizioni da {erp}",
+    "type": "Tipo",
+    "sites": "Sedi",
+    "allSites": "Tutte le sedi",
+    "appliesTo": "Si applica a",
+    "productsCount": {
+      "one": "{count} prodotto",
+      "other": "{count} prodotti"
+    },
+    "erpRef": "Riferimento ERP",
+    "tierQty": "Quantità",
+    "qtyOrMore": "{qty} o più",
+    "termsHint": "Prezzi, quantità e date sono gestiti in {erp}. Il portale li applica esattamente come {erp}.",
+    "synced": "Offerte aggiornate da {erp}",
+    "introStaff": "Offerte gestite in {erp}. Decidi come appaiono nel portale; le condizioni arrivano da {erp}.",
+    "introCustomer": "Offerte sul tuo account. Si applicano automaticamente nel carrello.",
+    "syncNow": "Aggiorna dall'ERP",
+    "lastSynced": "Ultima lettura da {erp} {ago}",
+    "startsOn": "Inizia il {date}",
+    "until": "Fino al {date}",
+    "empty": "Nessuna offerta",
+    "emptyCustomer": "Al momento non ci sono offerte sul tuo account.",
+    "rule": {
+      "label": "Regola",
+      "percent": "-{pct}%",
+      "tier": "Fino a -{pct}% da {qty}",
+      "freeOther": "Compri {buy}, {free} {name} in omaggio",
+      "freeSame": "Compri {buy}, {free} in omaggio"
+    },
+    "freeLine": "In omaggio con l'offerta {code}",
+    "free": "Omaggio",
+    "nudge": {
+      "tier": {
+        "one": "Aggiungi {count} per avere -{pct}%",
+        "other": "Aggiungi {count} per avere -{pct}%"
+      },
+      "freeOther": {
+        "one": "Aggiungi {count} per avere {free} {name} in omaggio",
+        "other": "Aggiungi {count} per avere {free} {name} in omaggio"
+      },
+      "freeSame": {
+        "one": "Aggiungi {count} per averne {free} in omaggio",
+        "other": "Aggiungi {count} per averne {free} in omaggio"
+      },
+      "add": "Aggiungi {count}"
+    },
+    "freeGoods": "Merce in omaggio",
+    "freeWorth": "del valore di {amount}",
+    "filter": {
+      "all": "Attive",
+      "percent": "Sconti",
+      "tier": "Prezzi a scaglioni",
+      "free_goods": "Merce in omaggio",
+      "scheduled": "Programmate",
+      "expired": "Concluse"
+    },
+    "kind": {
+      "percent": "Sconto",
+      "tier": "Scaglioni di quantità",
+      "free_goods": "Merce in omaggio"
+    },
+    "presentation": {
+      "edit": "Modifica presentazione",
+      "lastEdit": "Presentazione modificata da {name} il {date}",
+      "saved": "Presentazione salvata",
+      "title": "Come appare l'offerta nel portale",
+      "intro": "Immagine, titolo e testo per clienti e commerciali.",
+      "locked": "Sconti, quantità, prodotti, clienti e date sono gestiti nell'ERP e non si possono modificare qui.",
+      "image": "Immagine (link)",
+      "language": "Lingua",
+      "headline": "Titolo",
+      "text": "Testo",
+      "fallback": "Lascia vuoto per usare la descrizione dell'ERP.",
+      "featured": "In evidenza nelle dashboard",
+      "hidden": "Nascondi nel portale",
+      "sort": "Ordine",
+      "hiddenHint": "Le offerte nascoste valgono comunque sui prezzi – le applica l'ERP. Semplicemente non vengono mostrate."
     }
   },
   "orders": {

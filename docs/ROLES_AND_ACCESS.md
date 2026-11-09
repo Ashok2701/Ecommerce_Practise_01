@@ -42,7 +42,7 @@ Defined in `lib/access/modules.ts` (`MODULES`, `DEFAULT_ROLE_MODULES`).
 | collections | /collections | | ✓ | ✓ | | | |
 | invoices | /invoices | | | | | ✓ | ✓ |
 | account | /account | | | | | ✓ | ✓ |
-| offers | /offers | | ✓ | ✓ | | ✓ | ✓ |
+| offers | /offers | ✓ | ✓ | ✓ | | ✓ | ✓ |
 | announcements | /announcements | ✓ | ✓ | ✓ | ✓ | ✓ | |
 | messages | /messages | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | assistant | /assistant | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

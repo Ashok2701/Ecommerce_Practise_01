@@ -8,7 +8,8 @@ import { toast } from 'sonner';
 import { productService, offerService } from '@/lib/services';
 import { useUser } from '@/lib/auth/AuthProvider';
 import { useCart, usePricedCart } from '@/lib/cart/CartProvider';
-import { customerUnitPrice, offerFor, stockStatus } from '@/lib/domain/pricing';
+import { buildLine, stockStatus } from '@/lib/domain/pricing';
+import { useSite } from '@/lib/sites/SiteProvider';
 import { fmtMoney } from '@/lib/format';
 import { PageHeader, EmptyState, LoadingState } from '@/components/common';
 import { StatusBadge } from '@/components/common/StatusBadge';
@@ -92,7 +93,8 @@ export default function QuickOrderPage() {
   const cart = useCart();
   const { customer } = usePricedCart();
   const products = useQuery({ queryKey: ['products', 'all'], queryFn: productService.getAll, staleTime: 300_000 });
-  const offers = useQuery({ queryKey: ['offers', 'manage'], queryFn: () => offerService.list({ manage: true }) });
+  const offers = useQuery({ queryKey: ['offers', 'pricing'], queryFn: offerService.pricing, staleTime: 5 * 60_000 });
+  const { site } = useSite();
   const [lines, setLines] = useState<Line[]>([]);
   const [code, setCode] = useState('');
   const [qty, setQty] = useState('');
@@ -140,7 +142,7 @@ export default function QuickOrderPage() {
     if (!errs.length) { setPaste(''); setPasteOpen(false); }
   };
 
-  const priced = lines.map((l) => { const p = byId[l.productId]; if (!p) return null; const unit = customerUnitPrice(p, customer); const off = offerFor(p.id, customer, offers.data ?? []); const net = unit * (1 - (off?.discountPct ?? 0) / 100); return { ...l, p, unit: net, off, total: net * l.quantity }; }).filter(Boolean) as any[];
+  const priced = lines.map((l) => { const p = byId[l.productId]; if (!p) return null; const line = buildLine(p, l.quantity, customer, offers.data ?? [], site); const net = l.quantity ? line.lineTotal / l.quantity : line.unitPrice; return { ...l, p, unit: net, off: line.discountPct ? line : undefined, total: line.lineTotal }; }).filter(Boolean) as any[];
   const total = priced.reduce((s, l) => s + l.total, 0);
   const addAll = () => { lines.forEach((l) => cart.add(l.productId, l.quantity)); toast.success(`${lines.length} lines added to cart`); setLines([]); router.push('/cart'); };
 
@@ -192,7 +194,7 @@ export default function QuickOrderPage() {
             <ul className="divide-y">
               {priced.map((l) => (
                 <li key={l.productId} className="grid grid-cols-[1fr_auto] items-center gap-3 px-4 py-3 sm:grid-cols-[1fr_auto_120px_110px_40px]">
-                  <div className="min-w-0"><div className="flex items-center gap-2"><span className="font-mono text-xs font-semibold">{l.p.sku}</span><StatusBadge status={stockStatus(l.p)} /></div><div className="truncate text-sm">{l.p.name}</div><div className="text-[11px] text-muted-foreground">{fmtMoney(l.unit, true)} / {l.p.uom}{l.off ? ` \u00b7 \u2212${l.off.discountPct}% offer` : ''} \u00b7 MOQ {l.p.moq}{l.quantity > l.p.stock ? <span className="text-amber-700"> \u00b7 exceeds stock ({l.p.stock})</span> : ''}</div></div>
+                  <div className="min-w-0"><div className="flex items-center gap-2"><span className="font-mono text-xs font-semibold">{l.p.sku}</span><StatusBadge status={stockStatus(l.p)} /></div><div className="truncate text-sm">{l.p.name}</div><div className="text-[11px] text-muted-foreground">{fmtMoney(l.unit, true)} / {l.p.uom}{l.off ? ` \u00b7 \u2212${l.off.discountPct}% ${l.off.offerCode}` : ''} \u00b7 MOQ {l.p.moq}{l.quantity > l.p.stock ? <span className="text-amber-700"> \u00b7 exceeds stock ({l.p.stock})</span> : ''}</div></div>
                   <QtyStepper value={l.quantity} step={l.p.moq} min={l.p.moq} size="sm" label={`Quantity for ${l.p.sku}`} onChange={(v) => setLines((ls) => ls.map((x) => (x.productId === l.productId ? { ...x, quantity: Math.max(l.p.moq, v) } : x)))} />
                   <div className="hidden text-right text-sm font-semibold tabular sm:block">{fmtMoney(l.total)}</div>
                   <div className="text-right text-xs text-muted-foreground sm:hidden">{fmtMoney(l.total)}</div>

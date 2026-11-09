@@ -2,7 +2,7 @@ import type {
   Announcement, AppNotification, Conversation, Customer, FollowUp, Invoice, VisitReport, Offer, Order, OrderStatus, Payment, Product, User, Visit, ActivityItem,
 } from '@/types/domain';
 import { PRODUCTS } from './catalog';
-import { buildOrderTotals, customerUnitPrice } from '@/lib/domain/pricing';
+import { buildOrderTotals, customerUnitPrice, offerStatus } from '@/lib/domain/pricing';
 import { DEFAULT_ROLE_MODULES, type ModuleId } from '@/lib/access/modules';
 import type { Role, Site, SalesRequest, WorkflowSettings, Supplier, PurchaseRequest, PurchaseOrder, PurchaseLine, Consignment, ConsignmentLine, StockTransfer, TransferLine, TransferStatus, Quote, QuoteLine, QuoteStatus, Delivery, CollectionNote } from '@/types/domain';
 import { creditCheck } from '@/lib/domain/credit';
@@ -17,6 +17,8 @@ export interface MockDb {
   payments: Payment[];
   announcements: Announcement[];
   offers: Offer[];
+  /** When offers were last read from the ERP. */
+  offersSyncedAt: string;
   conversations: Conversation[];
   notifications: AppNotification[];
   followUps: FollowUp[];
@@ -250,12 +252,26 @@ export function createSeed(): MockDb {
     { id: 'ann_6', title: 'Safety week campaign (draft)', body: 'Draft content for National Safety Week PPE campaign.', category: 'product', audience: ['CUSTOMER_B2B', 'CUSTOMER_B2C'], status: 'draft', publishAt: ahead(20), createdBy: 'Anita Desai' },
   ];
 
+  // Offers as they come from Sage X3 price lists (discounts, quantity breaks, free goods).
+  // Status is derived from the dates; presentation is the portal's own decoration.
+  const X = (o: Omit<Offer, 'status'>): Offer => ({ ...o, status: offerStatus(o) });
   const offers: Offer[] = [
-    { id: 'off_1', code: 'PPE-SAFETY10', title: 'Safety Week: 10% off PPE', description: 'Extra 10% on helmets, vests, gloves and safety shoes on orders placed this month.', productIds: ['prd_015', 'prd_016', 'prd_017', 'prd_018'], discountPct: 10, validFrom: ago(5), validTo: ahead(20), status: 'active', audience: 'all' },
-    { id: 'off_2', code: 'BRG-SKF8', title: 'SKF Bearings – 8% festive offer', description: 'Additional 8% discount on SKF deep groove ball bearings.', productIds: ['prd_001', 'prd_002'], discountPct: 8, validFrom: ago(3), validTo: ahead(12), status: 'active', audience: 'all' },
-    { id: 'off_3', code: 'LUBE-DRUM5', title: 'Bulk lubricants – 5% off drums', description: '5% off on 210 L hydraulic oil drums and gear oil pails for Tier A accounts.', productIds: ['prd_027', 'prd_029'], discountPct: 5, validFrom: ago(10), validTo: ahead(30), status: 'active', audience: 'tier_A' },
-    { id: 'off_4', code: 'TOOLS-NOV', title: 'Power tools November launch', description: 'Introductory pricing on DeWalt and Makita cordless range.', productIds: ['prd_011', 'prd_013'], discountPct: 6, validFrom: ahead(10), validTo: ahead(40), status: 'scheduled', audience: 'all' },
-    { id: 'off_5', code: 'MONSOON-VLV', title: 'Monsoon valves clearance', description: 'Clearance on gate valves and NRVs.', productIds: ['prd_007', 'prd_008'], discountPct: 12, validFrom: ago(80), validTo: ago(20), status: 'expired', audience: 'all' },
+    X({ id: 'off_1', code: 'PPE-SAFETY10', erpRef: 'SPL-PPE-2611', kind: 'percent', title: 'Safety Week: 10% off PPE', description: 'Extra 10% on helmets, vests, gloves and safety shoes.', productIds: [], categories: ['Safety & PPE'], discountPct: 10, validFrom: ago(5), validTo: ahead(20), audience: 'all',
+      presentation: { featured: true, sort: 1, image: 'https://images.unsplash.com/photo-1567954970774-58d6aa6c50dc?auto=format&fit=crop&w=960&q=70', text: { en: 'Kit out every crew before the winter shutdowns – helmets, vests, gloves and S3 shoes, 10% off automatically in your cart.' }, updatedBy: 'Anita Desai', updatedAt: ago(4) } }),
+    X({ id: 'off_2', code: 'BRG-SKF-QTY', erpRef: 'SPL-BRG-2607', kind: 'tier', title: 'SKF ball bearings – volume pricing', description: 'Quantity breaks on SKF deep groove ball bearings.', productIds: ['prd_001', 'prd_002'], tiers: [{ minQty: 20, discountPct: 4 }, { minQty: 50, discountPct: 8 }, { minQty: 100, discountPct: 12 }], validFrom: ago(3), validTo: ahead(40), audience: 'all',
+      presentation: { featured: true, sort: 2 } }),
+    X({ id: 'off_3', code: 'FST-BOLT-10P1', erpRef: 'SPL-FST-2602', kind: 'free_goods', title: 'Hex bolts: buy 10 boxes, get 1 free', description: 'One box free for every 10 boxes of M12 hex bolts.', productIds: ['prd_019'], buyQty: 10, freeQty: 1, validFrom: ago(12), validTo: ahead(18), audience: 'all',
+      presentation: { featured: true, sort: 3 } }),
+    X({ id: 'off_4', code: 'PT-AGR-BITS', erpRef: 'SPL-PT-2610', kind: 'free_goods', title: 'Free HSS bit set with every 2 angle grinders', description: 'Buy 2 Bosch angle grinders, get a 29-piece HSS drill bit set free.', productIds: ['prd_012'], buyQty: 2, freeQty: 1, freeProductId: 'prd_014', validFrom: ago(2), validTo: ahead(25), audience: 'all',
+      presentation: {} }),
+    X({ id: 'off_5', code: 'LUBE-DRUM5', erpRef: 'SPL-LUB-2605', kind: 'percent', title: 'Bulk lubricants – 5% off drums', description: '5% off 210 L hydraulic oil drums and gear oil pails for Tier A accounts.', productIds: ['prd_027', 'prd_029'], discountPct: 5, validFrom: ago(10), validTo: ahead(30), audience: 'tier_A',
+      presentation: {} }),
+    X({ id: 'off_6', code: 'ABC-TMK-VOL', erpRef: 'SPL-CUS-0001', kind: 'tier', title: 'Timken taper bearings – your volume deal', description: 'Agreed volume pricing for ABC Distributors at the Hyderabad DC.', productIds: ['prd_003'], tiers: [{ minQty: 10, discountPct: 6 }, { minQty: 25, discountPct: 10 }], validFrom: ago(20), validTo: ahead(70), audience: 'customers', customerIds: ['cus_001'], sites: ['MAIN'],
+      presentation: {} }),
+    X({ id: 'off_7', code: 'TOOLS-NOV', erpRef: 'SPL-PT-2612', kind: 'percent', title: 'Cordless range launch pricing', description: 'Introductory pricing on DeWalt and Makita cordless tools.', productIds: ['prd_011', 'prd_013'], discountPct: 6, validFrom: ahead(10), validTo: ahead(40), audience: 'all',
+      presentation: {} }),
+    X({ id: 'off_8', code: 'MONSOON-VLV', erpRef: 'SPL-VLV-2606', kind: 'percent', title: 'Monsoon valves clearance', description: 'Clearance on gate valves and NRVs.', productIds: ['prd_007', 'prd_008'], discountPct: 12, validFrom: ago(80), validTo: ago(20), audience: 'all',
+      presentation: { hidden: true } }),
   ];
 
   const cu = (cid: string) => customerUsers.find((u) => u.customerId === cid)!;
@@ -542,7 +558,7 @@ export function createSeed(): MockDb {
     { id: 'cn_3', customerId: 'cus_002', at: ago(2), by: ravi, kind: 'promise', text: 'Accounts will release NEFT after month-end reconciliation.', promiseDate: ahead(4), promiseAmount: 45000 },
   ];
 
-  return { version: 11, quotes, deliveries, collectionNotes, consignments, transfers, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), requests, workflow: structuredClone(DEFAULT_WORKFLOW), suppliers, purchaseRequests, purchaseOrders, users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
+  return { version: 13, offersSyncedAt: ago(0, 1), quotes, deliveries, collectionNotes, consignments, transfers, roleModules: structuredClone(DEFAULT_ROLE_MODULES), sites: structuredClone(SITES), requests, workflow: structuredClone(DEFAULT_WORKFLOW), suppliers, purchaseRequests, purchaseOrders, users, customers, products, orders, invoices, payments, announcements, offers, conversations, notifications, followUps, visits, activity, visitReports: [
     { id: 'vr_1', visitId: 'vis_1', customerId: 'cus_001', salesRepId: 'usr_rep_1', salesRepName: 'Ravi Kumar', at: ago(0, 3), outcome: 'quote_requested', contactMet: 'Venkat Rao (Purchase Head)', notes: 'Plant shutdown planned for next Monday. Needs 200 bearings (6205/6308) and 6 buckets of EP2 grease. Competitor quoted 4% lower on grease.', nextSteps: 'Send revised grease quote; confirm bearing stock with Hyderabad DC.', followUpDate: ahead(1), photos: [] },
   ], seq: { order: seqOrder, invoice: seqInv, request: seqReq, pr: seqPr, po: seqPo, grn: seqGrn, transfer: seqTr, quote: seqQuote, delivery: seqDel, payment: 900 } };
 }

@@ -1079,7 +1079,8 @@
       "declined": "Angebot abgelehnt",
       "revisionAsked": "Änderungswunsch gesendet",
       "cancelled": "Angebot storniert"
-    }
+    },
+    "offerHint": "Der Kunde erhält bei dieser Menge ohne Angebot bereits {pct} % Rabatt"
   },
   "deliveries": {
     "title": "Lieferungen",
@@ -1307,26 +1308,101 @@
     }
   },
   "offers": {
-    "activated": "Angebot aktiviert",
-    "deactivated": "Angebot deaktiviert",
-    "percentOff": "{pct} % Rabatt",
     "codeCopied": "Code kopiert",
-    "activate": "Aktivieren",
-    "deactivate": "Deaktivieren",
-    "validity": "Gültig",
     "audience": "Für",
-    "howItWorks": "So funktioniert es",
-    "appliedAutomatically": "Wird im Warenkorb automatisch angewendet",
     "notForYou": "Dieses Angebot gilt nicht für Ihr Konto.",
     "listPrice": "Listenpreis",
     "yourPrice": "Ihr Preis",
     "withOffer": "Mit Angebot",
-    "added": "{name} in den Warenkorb gelegt",
     "audiences": {
       "all": "Alle Kunden",
       "tier_A": "Kunden Stufe A",
       "tier_B": "Kunden Stufe B",
-      "tier_C": "Kunden Stufe C"
+      "tier_C": "Kunden Stufe C",
+      "customers": "Ausgewählte Kunden"
+    },
+    "featured": "Hervorgehoben",
+    "hiddenTag": "Im Portal ausgeblendet",
+    "fromQty": "ab {qty}",
+    "addedQty": "{qty} {uom} {name} in den Warenkorb gelegt",
+    "addQty": "{qty} hinzufügen",
+    "terms": "Bedingungen aus {erp}",
+    "type": "Art",
+    "sites": "Standorte",
+    "allSites": "Alle Standorte",
+    "appliesTo": "Gilt für",
+    "productsCount": {
+      "one": "{count} Produkt",
+      "other": "{count} Produkte"
+    },
+    "erpRef": "ERP-Referenz",
+    "tierQty": "Menge",
+    "qtyOrMore": "ab {qty}",
+    "termsHint": "Preise, Mengen und Daten werden in {erp} gepflegt. Das Portal wendet sie genau wie {erp} an.",
+    "synced": "Angebote aus {erp} aktualisiert",
+    "introStaff": "In {erp} gepflegte Angebote. Sie bestimmen die Darstellung im Portal; die Bedingungen kommen aus {erp}.",
+    "introCustomer": "Angebote für Ihr Konto. Sie gelten automatisch im Warenkorb.",
+    "syncNow": "Aus dem ERP aktualisieren",
+    "lastSynced": "Zuletzt aus {erp} gelesen {ago}",
+    "startsOn": "Beginnt am {date}",
+    "until": "Bis {date}",
+    "empty": "Keine Angebote",
+    "emptyCustomer": "Derzeit gibt es keine Angebote für Ihr Konto.",
+    "rule": {
+      "label": "Regel",
+      "percent": "{pct} % Rabatt",
+      "tier": "Bis {pct} % Rabatt ab {qty}",
+      "freeOther": "{buy} kaufen, {free} {name} gratis",
+      "freeSame": "{buy} kaufen, {free} gratis"
+    },
+    "freeLine": "Gratis mit Angebot {code}",
+    "free": "Gratis",
+    "nudge": {
+      "tier": {
+        "one": "Noch {count} hinzufügen für {pct} % Rabatt",
+        "other": "Noch {count} hinzufügen für {pct} % Rabatt"
+      },
+      "freeOther": {
+        "one": "Noch {count} hinzufügen für {free} {name} gratis",
+        "other": "Noch {count} hinzufügen für {free} {name} gratis"
+      },
+      "freeSame": {
+        "one": "Noch {count} hinzufügen für {free} gratis",
+        "other": "Noch {count} hinzufügen für {free} gratis"
+      },
+      "add": "{count} hinzufügen"
+    },
+    "freeGoods": "Gratisware",
+    "freeWorth": "im Wert von {amount}",
+    "filter": {
+      "all": "Aktiv",
+      "percent": "Rabatte",
+      "tier": "Staffelpreise",
+      "free_goods": "Gratisware",
+      "scheduled": "Geplant",
+      "expired": "Beendet"
+    },
+    "kind": {
+      "percent": "Rabatt",
+      "tier": "Mengenstaffel",
+      "free_goods": "Gratisware"
+    },
+    "presentation": {
+      "edit": "Darstellung bearbeiten",
+      "lastEdit": "Darstellung bearbeitet von {name} am {date}",
+      "saved": "Darstellung gespeichert",
+      "title": "So erscheint das Angebot im Portal",
+      "intro": "Bild, Überschrift und Text für Kunden und Vertrieb.",
+      "locked": "Rabatte, Mengen, Produkte, Kunden und Daten werden im ERP gepflegt und können hier nicht geändert werden.",
+      "image": "Bild (Link)",
+      "language": "Sprache",
+      "headline": "Überschrift",
+      "text": "Text",
+      "fallback": "Leer lassen, um die ERP-Bezeichnung zu verwenden.",
+      "featured": "Auf Dashboards hervorheben",
+      "hidden": "Im Portal ausblenden",
+      "sort": "Reihenfolge",
+      "hiddenHint": "Ausgeblendete Angebote gelten weiterhin für Preise – das ERP wendet sie an. Sie werden nur nicht angezeigt."
     }
   },
   "orders": {

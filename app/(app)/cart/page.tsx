@@ -19,13 +19,15 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { OrderContextBar } from '@/features/orders/OrderContextBar';
 import { OrderSummary } from '@/features/orders/OrderSummary';
+import { FreeLineRow, LineOfferChip, NudgeRow } from '@/features/offers/OfferBits';
 
 export default function CartPage() {
   const { t } = useT();
   const errorText = useErrorText();
   const router = useRouter();
   const user = useUser();
-  const { cart, customer, totals, items, loading } = usePricedCart();
+  const { cart, customer, totals, items, nudges, products, loading } = usePricedCart();
+  const paid = totals.lines.filter((l) => !l.free);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [note, setNote] = useState('');
   // B2B customers and reps can ask for (or start) a quote instead of ordering at today's prices
@@ -45,24 +47,28 @@ export default function CartPage() {
       {!items.length ? (
         <EmptyState icon={ShoppingCart} title={t('cart.empty')} description={t('cart.emptyHint')} action={<Button asChild><Link href="/catalog">{t('cart.browse')}</Link></Button>} />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_340px] [&>*]:min-w-0">
           <div className="space-y-4">
             <Card className="divide-y" data-testid="cart-lines">
-              <div className="hidden grid-cols-[1fr_120px_140px_110px_120px_40px] gap-3 bg-muted/50 px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground md:grid"><span>{t('inventory.col.product')}</span><span className="text-right">{t('common.unitPrice')}</span><span className="text-center">{t('common.quantity')}</span><span className="text-right">{t('common.discount')}</span><span className="text-right">{t('requests.detail.lineTotal')}</span><span /></div>
-              {totals.lines.map((l) => { const p = items.find((i) => i.product.id === l.productId)!.product; return (
-                <div key={l.productId} className="grid grid-cols-[64px_1fr] gap-3 p-4 md:grid-cols-[1fr_120px_140px_110px_120px_40px] md:items-center">
+              <div className="hidden grid-cols-[minmax(0,1fr)_96px_124px_72px_104px_32px] gap-3 bg-muted/50 px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground md:grid"><span>{t('inventory.col.product')}</span><span className="text-end">{t('common.unitPrice')}</span><span className="text-center">{t('common.quantity')}</span><span className="text-end">{t('common.discount')}</span><span className="text-end">{t('requests.detail.lineTotal')}</span><span /></div>
+              {paid.map((l) => { const p = items.find((i) => i.product.id === l.productId)!.product; return (
+                <div key={l.productId}>
+                <div className="grid grid-cols-[64px_1fr] gap-3 p-4 md:grid-cols-[minmax(0,1fr)_96px_124px_72px_104px_32px] md:items-center">
                   <div className="flex min-w-0 gap-3 md:col-span-1 max-md:contents">
-                    <ProductImage src={l.image} alt={l.name} className="h-16 w-16 shrink-0 rounded-md" />
-                    <div className="min-w-0"><Link href={`/catalog/${l.productId}`} className="line-clamp-2 text-sm font-medium hover:text-primary">{l.name}</Link><div className="font-mono text-[11px] text-muted-foreground">{l.sku} · {p.packSize}</div>{l.quantity < p.moq && <div className="mt-1 flex items-center gap-1 text-xs text-amber-700"><AlertTriangle className="h-3 w-3" aria-hidden="true" />{t('cart.belowMoq', { moq: p.moq })}</div>}<div className="mt-1 text-xs text-muted-foreground md:hidden">{fmtMoney(l.unitPrice, true)} / {l.uom}{l.discountPct ? <span className="text-emerald-700"> · −{l.discountPct}%</span> : null}</div></div>
+                    <ProductImage src={l.image} alt={l.name} className="h-16 w-16 shrink-0 rounded-md md:h-12 md:w-12" />
+                    <div className="min-w-0"><Link href={`/catalog/${l.productId}`} className="line-clamp-2 text-sm font-medium hover:text-primary">{l.name}</Link><div className="font-mono text-[11px] text-muted-foreground">{l.sku} · {p.packSize}<LineOfferChip line={l} /></div>{l.quantity < p.moq && <div className="mt-1 flex items-center gap-1 text-xs text-amber-700"><AlertTriangle className="h-3 w-3" aria-hidden="true" />{t('cart.belowMoq', { moq: p.moq })}</div>}<div className="mt-1 text-xs text-muted-foreground md:hidden">{fmtMoney(l.unitPrice, true)} / {l.uom}{l.discountPct ? <span className="text-emerald-700"> · −{l.discountPct}%</span> : null}</div></div>
                   </div>
-                  <div className="hidden text-right text-sm tabular md:block">{fmtMoney(l.unitPrice, true)}<div className="text-[11px] text-muted-foreground">{t('cart.perUom', { uom: l.uom })}</div></div>
+                  <div className="hidden text-end text-sm tabular md:block">{fmtMoney(l.unitPrice, true)}<div className="text-[11px] text-muted-foreground">{t('cart.perUom', { uom: l.uom })}</div></div>
                   <div className="col-start-2 flex items-center justify-between gap-2 md:col-start-auto md:justify-center">
                     <QtyStepper value={l.quantity} onChange={(v) => cart.setQty(l.productId, v)} step={p.moq} min={0} size="sm" label={t('cart.qtyFor', { name: l.name })} />
                     <span className="text-sm font-semibold tabular md:hidden">{fmtMoney(l.lineTotal, true)}</span>
                   </div>
-                  <div className="hidden text-right text-sm tabular text-emerald-700 md:block">{l.discountPct ? `−${l.discountPct}%` : '—'}</div>
-                  <div className="hidden text-right text-sm font-semibold tabular md:block">{fmtMoney(l.lineTotal, true)}</div>
+                  <div className="hidden text-end text-sm tabular text-emerald-700 md:block">{l.discountPct ? `−${l.discountPct}%` : '—'}</div>
+                  <div className="hidden text-end text-sm font-semibold tabular md:block">{fmtMoney(l.lineTotal, true)}</div>
                   <div className="col-start-2 md:col-start-auto"><Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground" onClick={() => cart.remove(l.productId)} aria-label={t('cart.remove', { name: l.name })}><Trash2 className="h-4 w-4" /></Button></div>
+                </div>
+                {totals.lines.filter((f) => f.free && f.freeFor === l.productId).map((f) => <FreeLineRow key={`free-${f.offerId}-${f.productId}`} line={f} />)}
+                {nudges.filter((n) => n.productId === l.productId).map((n) => <NudgeRow key={`nudge-${n.offerId}`} nudge={n} products={products} onAdd={(q) => cart.setQty(l.productId, l.quantity + q)} />)}
                 </div>
               ); })}
             </Card>

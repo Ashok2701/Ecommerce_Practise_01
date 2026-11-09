@@ -91,7 +91,7 @@ export const isLocked = (role: Role, id: ModuleId) => ALWAYS_ON.includes(id) || 
 
 export const DEFAULT_ROLE_MODULES: Record<Role, ModuleId[]> = {
   // Admin runs the portal; business modules are not granted automatically.
-  ADMIN: ['dashboard', 'users', 'access', 'workflow', 'settings', 'customers', 'announcements', 'messages', 'assistant', 'notifications'],
+  ADMIN: ['dashboard', 'users', 'access', 'workflow', 'settings', 'customers', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
   SUPERVISOR: ['dashboard', 'approvals', 'quotes', 'requests', 'orders', 'deliveries', 'collections', 'workflow', 'purchase_requests', 'purchase_orders', 'suppliers', 'inventory', 'consignment', 'transfers', 'customers', 'team', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
   SALES_REP: ['dashboard', 'customers', 'collections', 'follow_ups', 'performance', 'new_order', 'catalog', 'quick_order', 'cart', 'quotes', 'requests', 'orders', 'deliveries', 'inventory', 'consignment', 'transfers', 'offers', 'announcements', 'messages', 'assistant', 'notifications'],
   SUPPLIER: ['dashboard', 'supplier_catalog', 'purchase_requests', 'purchase_orders', 'announcements', 'messages', 'assistant', 'notifications'],

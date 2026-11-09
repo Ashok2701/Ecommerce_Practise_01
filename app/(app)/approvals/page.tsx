@@ -1,5 +1,6 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
+import { FreeTag } from '@/features/offers/OfferBits';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -26,8 +27,8 @@ function Summary({ r }: { r: SalesRequest }) {
       </div>
       <Card className="overflow-hidden">
         <ul className="divide-y text-sm">{r.lines.map((l) => (
-          <li key={l.productId} className="flex items-center gap-3 px-3 py-2">
-            <span className="min-w-0 flex-1 truncate">{l.name}</span>
+          <li key={`${l.productId}${l.free ? `-free-${l.offerId}` : ''}`} className="flex items-center gap-3 px-3 py-2">
+            <span className="min-w-0 flex-1 truncate">{l.name}<FreeTag line={l} /></span>
             <span className="tabular text-muted-foreground">{l.quantity - l.convertedQty} {l.uom}</span>
             <span className="w-24 text-end tabular">{fmtMoney(l.lineTotal, true)}</span>
           </li>

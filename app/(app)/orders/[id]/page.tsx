@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { FreeTag, LineOfferChip } from '@/features/offers/OfferBits';
 import { OrderDelivery } from '@/features/deliveries/OrderDelivery';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -102,9 +103,9 @@ export default function OrderDetailPage() {
                 <div className="space-y-4">
                   <SectionCard title={t('orders.detail.products')}>
                     <ul className="divide-y">{o.lines.map((l) => (
-                      <li key={l.productId} className="flex items-center gap-3 px-4 py-3">
+                      <li key={`${l.productId}${l.free ? `-free-${l.offerId}` : ''}`} className={cn('flex items-center gap-3 px-4 py-3', l.free && 'bg-emerald-50/60 dark:bg-emerald-500/5')}>
                         <ProductImage src={l.image} alt={l.name} className="h-12 w-12 shrink-0 rounded-md" />
-                        <div className="min-w-0 flex-1"><ProductRef id={l.productId} name={l.name} className="block truncate text-sm" /><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></div>
+                        <div className="min-w-0 flex-1"><ProductRef id={l.productId} name={l.name} className="block truncate text-sm" /><div className="font-mono text-[11px] text-muted-foreground">{l.sku}<LineOfferChip line={l} /><FreeTag line={l} /></div></div>
                         <div className="hidden text-end text-sm text-muted-foreground tabular sm:block">{l.quantity} {l.uom} × {fmtMoney(l.unitPrice, true)}{l.discountPct ? <div className="text-xs text-emerald-700">−{l.discountPct}%</div> : null}</div>
                         <div className="w-28 text-end text-sm font-semibold tabular">{fmtMoney(l.lineTotal, true)}<div className="text-[11px] font-normal text-muted-foreground sm:hidden">{l.quantity} {l.uom}</div></div>
                       </li>

@@ -8,7 +8,9 @@ import { toast } from 'sonner';
 import { productService, offerService } from '@/lib/services';
 import { useUser } from '@/lib/auth/AuthProvider';
 import { useCart, usePricedCart } from '@/lib/cart/CartProvider';
-import { customerUnitPrice, offerFor, stockStatus } from '@/lib/domain/pricing';
+import { bestDiscount, customerUnitPrice, offersFor, stockStatus } from '@/lib/domain/pricing';
+import { OfferBadge } from '@/features/offers/OfferBits';
+import { useSite } from '@/lib/sites/SiteProvider';
 import { useT } from '@/lib/i18n';
 import { fmtMoney, fmtNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -45,9 +47,10 @@ function AddControl({ p, compact }: { p: Product; compact?: boolean }) {
 }
 
 function Price({ p, customer, offers }: { p: Product; customer?: Customer | null; offers: Offer[] }) {
+  const { site } = useSite();
   const price = customerUnitPrice(p, customer);
-  const offer = offerFor(p.id, customer, offers);
-  const net = offer ? price * (1 - offer.discountPct / 100) : price;
+  // price at the minimum order quantity with the best ERP offer that applies
+  const net = price * (1 - (bestDiscount(p, p.moq, { customer, site }, offers)?.pct ?? 0) / 100);
   return (
     <div>
       <div className="flex items-baseline gap-2"><span className="text-lg font-semibold tabular" data-testid="customer-price">{fmtMoney(net, true)}</span><span className="text-xs text-muted-foreground">/ {p.uom}</span></div>
@@ -98,7 +101,11 @@ function CatalogInner() {
   useEffect(() => setPage(1), [debounced, category, brands, stock, sort]);
   const params = { search: debounced, category, brands, stock: stock as any, sort: sort as any, page, pageSize: 12 };
   const q = useQuery({ queryKey: ['products', params], queryFn: () => productService.getProducts(params), placeholderData: (p) => p });
-  const offers = useQuery({ queryKey: ['offers', 'manage'], queryFn: () => offerService.list({ manage: true }) });
+  const offers = useQuery({ queryKey: ['offers', 'pricing'], queryFn: offerService.pricing, staleTime: 5 * 60_000 });
+  const allProducts = useQuery({ queryKey: ['products', 'all'], queryFn: productService.getAll, staleTime: 5 * 60_000 });
+  const { site } = useSite();
+  // badge the first offer the portal shows for this customer (hidden offers still price, but get no badge)
+  const badgeFor = (p: Product) => offersFor(p, { customer, site }, offers.data ?? []).find((o) => !o.presentation.hidden);
   const categories = productService.getCategories();
   const allBrands = useMemo(() => productService.getBrands(), []);
   const activeFilters = (category !== 'all' ? 1 : 0) + brands.length + (stock !== 'all' ? 1 : 0);
@@ -134,9 +141,9 @@ function CatalogInner() {
 
           {q.isLoading ? <LoadingState variant="cards" rows={6} /> : q.isError ? <ErrorState onRetry={() => q.refetch()} /> : !q.data?.items.length ? <EmptyState title="No products match" action={<Button variant="outline" onClick={() => { setSearch(''); setCategory('all'); setBrands([]); setStock('all'); }}>{t('common.clear')} filters</Button>} /> : view === 'grid' ? (
             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="product-grid">
-              {q.data.items.map((p) => { const off = offerFor(p.id, customer, offers.data ?? []); return (
+              {q.data.items.map((p) => { const off = badgeFor(p); return (
                 <li key={p.id} className="flex flex-col overflow-hidden rounded-lg border bg-card">
-                  <Link href={`/catalog/${p.id}`} className="relative block"><ProductImage src={p.image} alt={p.name} className="aspect-[16/10]" />{off && <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded bg-emerald-600 px-1.5 py-0.5 text-[11px] font-semibold text-white"><Tag className="h-3 w-3" />-{off.discountPct}% offer</span>}</Link>
+                  <Link href={`/catalog/${p.id}`} className="relative block"><ProductImage src={p.image} alt={p.name} className="aspect-[16/10]" />{off && <OfferBadge offer={off} freeName={off.freeProductId ? allProducts.data?.find((x) => x.id === off.freeProductId)?.name : undefined} className="absolute start-2 top-2 bg-emerald-600 text-white ring-0 dark:bg-emerald-600 dark:text-white" />}</Link>
                   <div className="flex flex-1 flex-col p-4">
                     <div className="flex items-center justify-between gap-2"><span className="font-mono text-[11px] text-muted-foreground">{p.sku}</span><StatusBadge status={stockStatus(p)} /></div>
                     <Link href={`/catalog/${p.id}`} className="mt-1 line-clamp-2 text-sm font-semibold hover:text-primary">{p.name}</Link>

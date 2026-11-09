@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { FreeTag, LineOfferChip } from '@/features/offers/OfferBits';
 import { ProductRef, RefLink } from '@/features/detail/DetailBits';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -51,7 +52,7 @@ function Detail({ r }: { r: SalesRequest }) {
   const cancel = useMutation({ mutationFn: (note?: string) => requestService.cancel(r.id, actor, note), onSuccess: () => { refresh(); toast.success(t('requests.detail.cancelled')); }, onError: (e) => toast.error(errorText(e)) });
   const addComment = useMutation({ mutationFn: () => requestService.comment(r.id, actor, comment), onSuccess: () => { setComment(''); refresh(); } });
   const editInCart = async () => {
-    cart.replace(r.lines.map((l) => ({ productId: l.productId, quantity: l.quantity - l.convertedQty })).filter((l) => l.quantity > 0), r.customerId);
+    cart.replace(r.lines.filter((l) => !l.free).map((l) => ({ productId: l.productId, quantity: l.quantity - l.convertedQty })).filter((l) => l.quantity > 0), r.customerId);
     await cancel.mutateAsync(t('requests.detail.replaced'));
     toast.success(t('requests.detail.editDone'));
     router.push('/cart');
@@ -96,8 +97,8 @@ function Detail({ r }: { r: SalesRequest }) {
                   <th className="px-3 py-2 text-end font-medium">{t('requests.detail.ordered')}</th><th className="px-3 py-2 text-end font-medium">{t('requests.detail.price')}</th><th className="px-4 py-2 text-end font-medium">{t('requests.detail.lineTotal')}</th>
                 </tr></thead>
                 <tbody className="divide-y">{r.lines.map((l) => (
-                  <tr key={l.productId}>
-                    <td className="px-4 py-2.5"><ProductRef id={l.productId} name={l.name} /><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td>
+                  <tr key={`${l.productId}${l.free ? `-free-${l.offerId}` : ''}`} className={l.free ? 'bg-emerald-50/60 dark:bg-emerald-500/5' : undefined}>
+                    <td className="px-4 py-2.5"><ProductRef id={l.productId} name={l.name} /><div className="font-mono text-[11px] text-muted-foreground">{l.sku}<LineOfferChip line={l} /><FreeTag line={l} /></div></td>
                     <td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.quantity)} {l.uom}</td>
                     <td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.convertedQty)}</td>
                     <td className="px-3 py-2.5 text-end tabular">{fmtMoney(l.unitPrice, true)}</td>

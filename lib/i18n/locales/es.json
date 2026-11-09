@@ -1079,7 +1079,8 @@
       "declined": "Presupuesto rechazado",
       "revisionAsked": "Solicitud de cambios enviada",
       "cancelled": "Presupuesto cancelado"
-    }
+    },
+    "offerHint": "El cliente ya tiene -{pct} % a esta cantidad sin presupuesto"
   },
   "deliveries": {
     "title": "Entregas",
@@ -1307,26 +1308,101 @@
     }
   },
   "offers": {
-    "activated": "Oferta activada",
-    "deactivated": "Oferta desactivada",
-    "percentOff": "-{pct} %",
     "codeCopied": "Código copiado",
-    "activate": "Activar",
-    "deactivate": "Desactivar",
-    "validity": "Validez",
     "audience": "Para",
-    "howItWorks": "Cómo funciona",
-    "appliedAutomatically": "Se aplica automáticamente en el carrito",
     "notForYou": "Esta oferta no está disponible para su cuenta.",
     "listPrice": "Precio de tarifa",
     "yourPrice": "Su precio",
     "withOffer": "Con oferta",
-    "added": "{name} añadido al carrito",
     "audiences": {
       "all": "Todos los clientes",
       "tier_A": "Clientes nivel A",
       "tier_B": "Clientes nivel B",
-      "tier_C": "Clientes nivel C"
+      "tier_C": "Clientes nivel C",
+      "customers": "Clientes seleccionados"
+    },
+    "featured": "Destacada",
+    "hiddenTag": "Oculta en el portal",
+    "fromQty": "desde {qty}",
+    "addedQty": "{qty} {uom} de {name} añadidos al carrito",
+    "addQty": "Añadir {qty}",
+    "terms": "Condiciones de {erp}",
+    "type": "Tipo",
+    "sites": "Centros",
+    "allSites": "Todos los centros",
+    "appliesTo": "Se aplica a",
+    "productsCount": {
+      "one": "{count} producto",
+      "other": "{count} productos"
+    },
+    "erpRef": "Referencia ERP",
+    "tierQty": "Cantidad",
+    "qtyOrMore": "{qty} o más",
+    "termsHint": "Precios, cantidades y fechas se mantienen en {erp}. El portal los aplica exactamente como {erp}.",
+    "synced": "Ofertas actualizadas desde {erp}",
+    "introStaff": "Ofertas mantenidas en {erp}. Usted decide cómo se ven en el portal; las condiciones vienen de {erp}.",
+    "introCustomer": "Ofertas de su cuenta. Se aplican automáticamente en el carrito.",
+    "syncNow": "Actualizar desde el ERP",
+    "lastSynced": "Última lectura de {erp} {ago}",
+    "startsOn": "Empieza el {date}",
+    "until": "Hasta el {date}",
+    "empty": "No hay ofertas",
+    "emptyCustomer": "Ahora mismo no hay ofertas en su cuenta.",
+    "rule": {
+      "label": "Regla",
+      "percent": "-{pct} %",
+      "tier": "Hasta -{pct} % desde {qty}",
+      "freeOther": "Compre {buy}, llévese {free} {name} gratis",
+      "freeSame": "Compre {buy}, llévese {free} gratis"
+    },
+    "freeLine": "Gratis con la oferta {code}",
+    "free": "Gratis",
+    "nudge": {
+      "tier": {
+        "one": "Añada {count} más para obtener -{pct} %",
+        "other": "Añada {count} más para obtener -{pct} %"
+      },
+      "freeOther": {
+        "one": "Añada {count} más y llévese {free} {name} gratis",
+        "other": "Añada {count} más y llévese {free} {name} gratis"
+      },
+      "freeSame": {
+        "one": "Añada {count} más y llévese {free} gratis",
+        "other": "Añada {count} más y llévese {free} gratis"
+      },
+      "add": "Añadir {count}"
+    },
+    "freeGoods": "Artículos gratis",
+    "freeWorth": "por valor de {amount}",
+    "filter": {
+      "all": "Activas",
+      "percent": "Descuentos",
+      "tier": "Precios por volumen",
+      "free_goods": "Artículos gratis",
+      "scheduled": "Programadas",
+      "expired": "Finalizadas"
+    },
+    "kind": {
+      "percent": "Descuento",
+      "tier": "Escalas de cantidad",
+      "free_goods": "Artículos gratis"
+    },
+    "presentation": {
+      "edit": "Editar presentación",
+      "lastEdit": "Presentación editada por {name} el {date}",
+      "saved": "Presentación guardada",
+      "title": "Cómo se ve esta oferta en el portal",
+      "intro": "Imagen, titular y texto para clientes y comerciales.",
+      "locked": "Descuentos, cantidades, productos, clientes y fechas se mantienen en el ERP y no se pueden cambiar aquí.",
+      "image": "Imagen (enlace)",
+      "language": "Idioma",
+      "headline": "Titular",
+      "text": "Texto",
+      "fallback": "Déjelo vacío para usar la descripción del ERP.",
+      "featured": "Destacar en los paneles",
+      "hidden": "Ocultar en el portal",
+      "sort": "Orden",
+      "hiddenHint": "Las ofertas ocultas siguen aplicándose a los precios – el ERP las aplica. Solo no se muestran."
     }
   },
   "orders": {

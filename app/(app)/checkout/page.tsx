@@ -22,6 +22,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { OrderContextBar } from '@/features/orders/OrderContextBar';
 import { OrderSummary } from '@/features/orders/OrderSummary';
+import { FreeLineRow, LineOfferChip } from '@/features/offers/OfferBits';
 import type { Address, SalesRequest } from '@/types/domain';
 
 const Addr = ({ a }: { a?: Address }) => (a ? <p className="text-sm text-muted-foreground">{a.line1}<br />{a.city}, {a.state} {a.postalCode}<br />{a.country}</p> : null);
@@ -103,10 +104,10 @@ export default function CheckoutPage() {
             <div><h2 className="mb-2 flex items-center gap-2 text-sm font-semibold"><FileText className="h-4 w-4 text-primary" aria-hidden="true" />{t('checkout.billing')}</h2><Addr a={customer.billingAddress} /></div>
           </Card>
           <Card className="overflow-hidden">
-            <h2 className="border-b px-4 py-3 text-sm font-semibold">{t('checkout.products', { count: totals.lines.length })}</h2>
-            <ul className="divide-y">{totals.lines.map((l) => (
+            <h2 className="border-b px-4 py-3 text-sm font-semibold">{t('checkout.products', { count: totals.lines.filter((l) => !l.free).length })}</h2>
+            <ul className="divide-y">{totals.lines.map((l) => l.free ? <li key={`free-${l.offerId}-${l.productId}`}><FreeLineRow line={l} /></li> : (
               <li key={l.productId} className="flex items-center gap-3 px-4 py-3 text-sm">
-                <div className="min-w-0 flex-1"><div className="font-medium">{l.name}</div><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></div>
+                <div className="min-w-0 flex-1"><div className="font-medium">{l.name}</div><div className="font-mono text-[11px] text-muted-foreground">{l.sku}<LineOfferChip line={l} /></div></div>
                 <div className="text-end text-muted-foreground tabular">{l.quantity} {l.uom} × {fmtMoney(l.unitPrice, true)}{l.discountPct ? <div className="text-xs text-primary">−{l.discountPct}%</div> : null}</div>
                 <div className="w-28 text-end font-semibold tabular">{fmtMoney(l.lineTotal, true)}</div>
               </li>

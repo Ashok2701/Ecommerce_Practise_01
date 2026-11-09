@@ -1,7 +1,9 @@
 import { source, http } from '@/lib/api/httpClient';
 import { getDb, commit, uid } from '@/lib/data/mockDb';
 import { pushNotification } from './notificationService';
-import type { Announcement, Offer, Role } from '@/types/domain';
+import { getCurrentSite } from '@/lib/sites/current';
+import { offerAppliesTo, offerStatus } from '@/lib/domain/pricing';
+import type { ActorRef, Announcement, Offer, OfferPresentation, Role } from '@/types/domain';
 
 export const announcementService = {
   /** manage=true returns everything (admin/manager); otherwise only published items targeted to the role. */
@@ -29,23 +31,55 @@ function notifyAnnouncement(a: Announcement) {
   pushNotification({ roles }, 'announcement', a.title, a.body.slice(0, 90), `/announcements/${a.id}`);
 }
 
+/**
+ * Offers are read from the ERP (Sage X3 price lists). The portal never creates
+ * or changes an offer's terms; Admin/Supervisor may only edit its presentation.
+ * Customers only get offers that apply to them (audience, site, dates) and that
+ * aren't hidden in the portal. Pricing applies hidden offers too – the ERP does.
+ */
+export interface OfferQuery { forCustomerId?: string; manage?: boolean; kind?: Offer['kind'] }
+
+const withStatus = (o: Offer): Offer => ({ ...o, status: offerStatus(o) });
+
 export const offerService = {
-  list: (opts: { manage?: boolean; tier?: 'A' | 'B' | 'C' } = {}) =>
-    source<Offer[]>(() => getDb().offers.filter((o) => opts.manage || (o.status === 'active' && (o.audience === 'all' || o.audience === `tier_${opts.tier}`))), () => http.get('/offers', opts)),
-  get: (id: string) => source<Offer>(() => { const o = getDb().offers.find((x) => x.id === id); if (!o) throw new Error('errors.notFound'); return o; }, () => http.get(`/offers/${id}`)),
-  activeOffers: () => getDb().offers.filter((o) => o.status === 'active'),
-  save: (o: Partial<Offer> & { title: string }) =>
-    source<Offer>(() => {
+  list: (q: OfferQuery = {}) =>
+    source<Offer[]>(() => {
       const db = getDb();
-      let item = o.id ? db.offers.find((x) => x.id === o.id) : undefined;
-      if (item) Object.assign(item, o);
-      else {
-        item = { id: uid('off'), code: o.title.toUpperCase().replace(/[^A-Z0-9]+/g, '-').slice(0, 12), description: '', productIds: [], discountPct: 5, validFrom: new Date().toISOString(), validTo: new Date(Date.now() + 14 * 86400000).toISOString(), status: 'draft', audience: 'all', ...o } as Offer;
-        db.offers.unshift(item);
-      }
-      if (item.status === 'active') pushNotification({ roles: ['CUSTOMER_B2B', 'CUSTOMER_B2C', 'SALES_REP'] }, 'offer', `New offer: ${item.title}`, item.description.slice(0, 90), `/offers/${item.id}`);
-      commit(); return item;
-    }, () => (o.id ? http.patch(`/offers/${o.id}`, o) : http.post('/offers', o))),
-  setStatus: (id: string, status: Offer['status']) =>
-    source(() => { const o = getDb().offers.find((x) => x.id === id)!; o.status = status; commit(); return o; }, () => http.patch(`/offers/${id}`, { status })),
+      const all = db.offers.map(withStatus).filter((o) => !q.kind || o.kind === q.kind);
+      if (q.manage) return all.sort(byPresentation);
+      const customer = q.forCustomerId ? db.customers.find((c) => c.id === q.forCustomerId) : undefined;
+      return all.filter((o) => !o.presentation.hidden && offerAppliesTo(o, { customer, site: getCurrentSite() })).sort(byPresentation);
+    }, () => http.get('/offers', q)),
+
+  /** Every offer, including hidden and inactive ones – for pricing. Backend: pricing happens server-side. */
+  pricing: () => source<Offer[]>(() => getDb().offers.map(withStatus), () => http.get('/offers', { pricing: true })),
+
+  get: (id: string) => source<Offer>(() => { const o = getDb().offers.find((x) => x.id === id); if (!o) throw new Error('errors.notFound'); return withStatus(o); }, () => http.get(`/offers/${id}`)),
+
+  /** When offers were last read from the ERP. */
+  syncedAt: () => source<string>(() => getDb().offersSyncedAt, () => http.get('/offers/sync-status')),
+
+  /** Ask the backend to read offers from the ERP again. */
+  sync: () => source<string>(() => { const db = getDb(); db.offersSyncedAt = new Date().toISOString(); db.offers.forEach((o) => { o.status = offerStatus(o); }); commit(); return db.offersSyncedAt; }, () => http.post('/offers/sync')),
+
+  /** Portal decoration only (picture, text, featured, hidden, order). */
+  savePresentation: (id: string, presentation: OfferPresentation, actor: ActorRef) =>
+    source<Offer>(() => {
+      if (actor.role !== 'ADMIN' && actor.role !== 'SUPERVISOR') throw new Error('errors.forbidden');
+      const db = getDb();
+      const o = db.offers.find((x) => x.id === id);
+      if (!o) throw new Error('errors.notFound');
+      const wasFeatured = !!o.presentation.featured;
+      o.presentation = { ...presentation, updatedBy: actor.name, updatedAt: new Date().toISOString() };
+      if (!wasFeatured && presentation.featured && !presentation.hidden && offerStatus(o) === 'active')
+        pushNotification({ roles: ['CUSTOMER_B2B', 'CUSTOMER_B2C', 'SALES_REP'] }, 'offer', `New offer: ${presentation.title?.en || o.title}`, (presentation.text?.en || o.description).slice(0, 90), `/offers/${o.id}`);
+      commit();
+      return withStatus(o);
+    }, () => http.put(`/offers/${id}/presentation`, presentation)),
 };
+
+function byPresentation(a: Offer, b: Offer) {
+  const rank = (o: Offer) => (o.status === 'active' ? 0 : o.status === 'scheduled' ? 1 : 2);
+  return rank(a) - rank(b) || Number(!!b.presentation.featured) - Number(!!a.presentation.featured) || (a.presentation.sort ?? 99) - (b.presentation.sort ?? 99) || a.validTo.localeCompare(b.validTo);
+}
+

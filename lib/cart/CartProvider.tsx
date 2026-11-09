@@ -3,7 +3,8 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/lib/auth/AuthProvider';
 import { productService, customerService, offerService } from '@/lib/services';
-import { buildOrderTotals } from '@/lib/domain/pricing';
+import { buildOrderTotals, nudgesFor } from '@/lib/domain/pricing';
+import { useSite } from '@/lib/sites/SiteProvider';
 import { isCustomerRole } from '@/types/domain';
 import type { Customer, Product } from '@/types/domain';
 
@@ -61,13 +62,16 @@ export function useCart() {
   return c;
 }
 
-/** Resolve cart items to priced lines for the ordering customer. */
+/** Resolve cart items to priced lines for the ordering customer (ERP offers applied, free goods and nudges). */
 export function usePricedCart() {
   const cart = useCart();
+  const { site } = useSite();
   const products = useQuery({ queryKey: ['products', 'all'], queryFn: productService.getAll, staleTime: 5 * 60_000 });
   const customer = useQuery({ queryKey: ['customer', cart.customerId], queryFn: () => customerService.getCustomer(cart.customerId!), enabled: !!cart.customerId });
-  const offers = useQuery({ queryKey: ['offers', 'manage'], queryFn: () => offerService.list({ manage: true }) });
+  // every ERP offer, hidden ones included: the ERP applies them regardless of how the portal shows them
+  const offers = useQuery({ queryKey: ['offers', 'pricing'], queryFn: offerService.pricing, staleTime: 5 * 60_000 });
   const items = cart.items.map((i) => ({ product: products.data?.find((p) => p.id === i.productId) as Product, quantity: i.quantity })).filter((i) => i.product);
-  const totals = buildOrderTotals(items, customer.data as Customer, offers.data ?? []);
-  return { cart, customer: customer.data, items, totals, loading: products.isLoading || customer.isLoading };
+  const totals = buildOrderTotals(items, customer.data as Customer, offers.data ?? [], { products: products.data, site });
+  const nudges = nudgesFor(items, customer.data as Customer, offers.data ?? [], site);
+  return { cart, customer: customer.data, items, totals, nudges, offers: offers.data ?? [], products: products.data ?? [], loading: products.isLoading || customer.isLoading };
 }

@@ -1079,7 +1079,8 @@
       "declined": "Quote declined",
       "revisionAsked": "Change request sent",
       "cancelled": "Quote cancelled"
-    }
+    },
+    "offerHint": "Customer gets {pct}% off at this quantity without a quote"
   },
   "deliveries": {
     "title": "Deliveries",
@@ -1307,26 +1308,101 @@
     }
   },
   "offers": {
-    "activated": "Offer activated",
-    "deactivated": "Offer deactivated",
-    "percentOff": "{pct}% off",
     "codeCopied": "Code copied",
-    "activate": "Activate",
-    "deactivate": "Deactivate",
-    "validity": "Valid",
     "audience": "For",
-    "howItWorks": "How it works",
-    "appliedAutomatically": "Applied automatically in the cart",
     "notForYou": "This offer isn't available for your account.",
     "listPrice": "List price",
     "yourPrice": "Your price",
     "withOffer": "With offer",
-    "added": "{name} added to cart",
     "audiences": {
       "all": "All customers",
       "tier_A": "Tier A customers",
       "tier_B": "Tier B customers",
-      "tier_C": "Tier C customers"
+      "tier_C": "Tier C customers",
+      "customers": "Selected customers"
+    },
+    "featured": "Featured",
+    "hiddenTag": "Hidden in portal",
+    "fromQty": "from {qty}",
+    "addedQty": "{qty} {uom} of {name} added to cart",
+    "addQty": "Add {qty}",
+    "terms": "Terms from {erp}",
+    "type": "Type",
+    "sites": "Sites",
+    "allSites": "All sites",
+    "appliesTo": "Applies to",
+    "productsCount": {
+      "one": "{count} product",
+      "other": "{count} products"
+    },
+    "erpRef": "ERP reference",
+    "tierQty": "Quantity",
+    "qtyOrMore": "{qty} or more",
+    "termsHint": "Prices, quantities and dates are maintained in {erp}. The portal applies them exactly as {erp} does.",
+    "synced": "Offers refreshed from {erp}",
+    "introStaff": "Offers maintained in {erp}. Decide how they look in the portal; the terms come from {erp}.",
+    "introCustomer": "Offers on your account. They apply automatically in your cart.",
+    "syncNow": "Refresh from ERP",
+    "lastSynced": "Last read from {erp} {ago}",
+    "startsOn": "Starts {date}",
+    "until": "Until {date}",
+    "empty": "No offers",
+    "emptyCustomer": "There are no offers on your account right now.",
+    "rule": {
+      "label": "Rule",
+      "percent": "{pct}% off",
+      "tier": "Up to {pct}% off from {qty}",
+      "freeOther": "Buy {buy}, get {free} {name} free",
+      "freeSame": "Buy {buy}, get {free} free"
+    },
+    "freeLine": "Free with offer {code}",
+    "free": "Free",
+    "nudge": {
+      "tier": {
+        "one": "Add {count} more to get {pct}% off",
+        "other": "Add {count} more to get {pct}% off"
+      },
+      "freeOther": {
+        "one": "Add {count} more to get {free} {name} free",
+        "other": "Add {count} more to get {free} {name} free"
+      },
+      "freeSame": {
+        "one": "Add {count} more to get {free} free",
+        "other": "Add {count} more to get {free} free"
+      },
+      "add": "Add {count}"
+    },
+    "freeGoods": "Free goods",
+    "freeWorth": "worth {amount}",
+    "filter": {
+      "all": "Active",
+      "percent": "Discounts",
+      "tier": "Volume pricing",
+      "free_goods": "Free goods",
+      "scheduled": "Scheduled",
+      "expired": "Ended"
+    },
+    "kind": {
+      "percent": "Discount",
+      "tier": "Quantity breaks",
+      "free_goods": "Free goods"
+    },
+    "presentation": {
+      "edit": "Edit presentation",
+      "lastEdit": "Presentation edited by {name} on {date}",
+      "saved": "Presentation saved",
+      "title": "How this offer looks in the portal",
+      "intro": "Picture, headline and text for customers and reps.",
+      "locked": "Discounts, quantities, products, customers and dates are maintained in the ERP and can't be changed here.",
+      "image": "Picture (link)",
+      "language": "Language",
+      "headline": "Headline",
+      "text": "Text",
+      "fallback": "Leave empty to use the ERP label.",
+      "featured": "Feature on dashboards",
+      "hidden": "Hide in portal",
+      "sort": "Order",
+      "hiddenHint": "Hidden offers still apply to prices – the ERP applies them. They just aren't shown."
     }
   },
   "orders": {

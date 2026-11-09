@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { FreeTag, LineOfferChip } from '@/features/offers/OfferBits';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { CreditCard, Download, HandCoins, Send } from 'lucide-react';
@@ -97,8 +98,8 @@ function Detail({ d }: { d: InvoiceDetail }) {
                   <th className="px-4 py-2.5 text-end font-medium">{t('requests.detail.lineTotal')}</th>
                 </tr></thead>
                 <tbody className="divide-y">{o.lines.map((l) => (
-                  <tr key={l.productId}>
-                    <td className="px-4 py-2.5"><RefLink href={customer ? `/catalog/${l.productId}` : `/inventory/${l.productId}`} className="font-medium">{l.name}</RefLink><div className="font-mono text-[11px] text-muted-foreground">{l.sku}</div></td>
+                  <tr key={`${l.productId}${l.free ? `-free-${l.offerId}` : ''}`} className={l.free ? 'bg-emerald-50/60 dark:bg-emerald-500/5' : undefined}>
+                    <td className="px-4 py-2.5"><RefLink href={customer ? `/catalog/${l.productId}` : `/inventory/${l.productId}`} className="font-medium">{l.name}</RefLink><div className="font-mono text-[11px] text-muted-foreground">{l.sku}<LineOfferChip line={l} /><FreeTag line={l} /></div></td>
                     <td className="px-3 py-2.5 text-end tabular">{fmtNumber(l.quantity)} {l.uom}</td>
                     <td className="px-3 py-2.5 text-end tabular">{fmtMoney(l.unitPrice, true)}{l.discountPct ? <div className="text-[11px] text-emerald-700 dark:text-emerald-400">−{l.discountPct}%</div> : null}</td>
                     <td className="px-4 py-2.5 text-end font-medium tabular">{fmtMoney(l.lineTotal, true)}</td>

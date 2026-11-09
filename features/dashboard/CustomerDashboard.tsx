@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
+import { OfferBadge, offerTitle } from '@/features/offers/OfferBits';
 import { useQuery } from '@tanstack/react-query';
-import { Wallet, CreditCard, Package, RotateCcw, Megaphone, BadgePercent, Boxes, ArrowRight, TrendingUp } from 'lucide-react';
+import { Wallet, CreditCard, Package, RotateCcw, Megaphone, BadgePercent, Boxes, ArrowRight, TrendingUp, Star } from 'lucide-react';
 import { dashboardService, announcementService, offerService } from '@/lib/services';
 import { useUser } from '@/lib/auth/AuthProvider';
 import { useAccess } from '@/lib/auth/permissions';
@@ -15,13 +16,13 @@ import { useReorder } from '@/features/orders/useReorder';
 
 /** Home for business (B2B) and retail (B2C) customers. Retail accounts pay up front, so credit is hidden. */
 export function CustomerDashboard() {
-  const { t } = useT();
+  const { t, locale } = useT();
   const user = useUser();
   const access = useAccess(user.role);
   const reorder = useReorder();
   const q = useQuery({ queryKey: ['dash', 'customer', user.customerId], queryFn: () => dashboardService.getCustomerDashboard(user.customerId!) });
   const ann = useQuery({ queryKey: ['announcements', user.role], queryFn: () => announcementService.list(user.role), enabled: access.can('announcements') });
-  const offers = useQuery({ queryKey: ['offers', 'cust', q.data?.customer.priceTier], queryFn: () => offerService.list({ tier: q.data?.customer.priceTier }), enabled: !!q.data && access.can('offers') });
+  const offers = useQuery({ queryKey: ['offers', user.customerId], queryFn: () => offerService.list({ forCustomerId: user.customerId }), enabled: !!q.data && access.can('offers') });
   return (
     <QueryView query={q} loading={<LoadingState variant="kpis" />}>
       {(d) => {
@@ -70,10 +71,10 @@ export function CustomerDashboard() {
                 <SectionCard title={<span className="flex items-center gap-2"><BadgePercent className="h-4 w-4 text-primary" aria-hidden="true" />{t('customerDash.offersForYou')}</span>} action={viewAll('/offers')}>
                   {(offers.data ?? []).length ? (
                     <ul className="divide-y">{(offers.data ?? []).slice(0, 3).map((o) => (
-                      <li key={o.id} className="px-4 py-3">
-                        <div className="flex items-center justify-between gap-2"><span className="text-sm font-medium">{o.title}</span><span className="rounded bg-accent px-1.5 py-0.5 text-xs font-semibold text-accent-foreground">-{o.discountPct}%</span></div>
-                        <p className="mt-0.5 text-xs text-muted-foreground">{t('customerDash.validUntil', { date: fmtDate(o.validTo) })} · <span className="font-mono">{o.code}</span></p>
-                      </li>
+                      <li key={o.id}><Link href={`/offers/${o.id}`} className="block px-4 py-3 hover:bg-muted/40" data-testid={`dash-offer-${o.id}`}>
+                        <div className="flex items-start justify-between gap-2"><span className="text-sm font-medium">{offerTitle(o, locale)}</span>{o.presentation.featured && <Star className="h-3.5 w-3.5 shrink-0 text-amber-500" aria-label={t('offers.featured')} />}</div>
+                        <div className="mt-1 flex flex-wrap items-center gap-2"><OfferBadge offer={o} /><span className="text-xs text-muted-foreground">{t('customerDash.validUntil', { date: fmtDate(o.validTo) })}</span></div>
+                      </Link></li>
                     ))}</ul>
                   ) : <p className="px-4 py-6 text-sm text-muted-foreground">{t('customerDash.noOffers')}</p>}
                 </SectionCard>

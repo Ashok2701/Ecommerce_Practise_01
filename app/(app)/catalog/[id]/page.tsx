@@ -8,7 +8,9 @@ import { toast } from 'sonner';
 import { productService, offerService } from '@/lib/services';
 import { useT } from '@/lib/i18n';
 import { useCart, usePricedCart } from '@/lib/cart/CartProvider';
-import { customerUnitPrice, offerFor, stockStatus } from '@/lib/domain/pricing';
+import { bestDiscount, customerUnitPrice, offersFor, stockStatus } from '@/lib/domain/pricing';
+import { OfferBadge, offerTitle } from '@/features/offers/OfferBits';
+import { useSite } from '@/lib/sites/SiteProvider';
 import { fmtDate, fmtMoney, fmtNumber } from '@/lib/format';
 import { QueryView, LoadingState } from '@/components/common';
 import { StatusBadge } from '@/components/common/StatusBadge';
@@ -24,7 +26,10 @@ export default function ProductDetailPage() {
   const cart = useCart();
   const { customer } = usePricedCart();
   const q = useQuery({ queryKey: ['product', id], queryFn: () => productService.getProduct(id) });
-  const offers = useQuery({ queryKey: ['offers', 'manage'], queryFn: () => offerService.list({ manage: true }) });
+  const offers = useQuery({ queryKey: ['offers', 'pricing'], queryFn: offerService.pricing, staleTime: 5 * 60_000 });
+  const allProducts = useQuery({ queryKey: ['products', 'all'], queryFn: productService.getAll, staleTime: 5 * 60_000 });
+  const { site } = useSite();
+  const { locale } = useT();
   const [qty, setQty] = useState<number | null>(null);
   return (
     <div>
@@ -33,9 +38,10 @@ export default function ProductDetailPage() {
       <QueryView query={q} loading={<LoadingState variant="detail" />}>
         {(p) => {
           const price = customerUnitPrice(p, customer);
-          const offer = offerFor(p.id, customer, offers.data ?? []);
-          const net = offer ? price * (1 - offer.discountPct / 100) : price;
           const quantity = qty ?? p.moq;
+          // the price follows the quantity: quantity breaks apply as the customer types
+          const net = price * (1 - (bestDiscount(p, quantity, { customer, site }, offers.data ?? [])?.pct ?? 0) / 100);
+          const shown = offersFor(p, { customer, site }, offers.data ?? []).filter((o) => !o.presentation.hidden);
           const add = () => { if (quantity < p.moq) return toast.error(`Minimum order quantity is ${p.moq} ${p.uom}`); cart.add(p.id, quantity); toast.success(`Added ${quantity} ${p.uom} to cart`); };
           return (
             <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
@@ -56,7 +62,13 @@ export default function ProductDetailPage() {
                   <div className="text-xs font-medium text-muted-foreground">Your price{customer ? ` · ${customer.name}` : ''}</div>
                   <div className="mt-1 flex items-baseline gap-2"><span className="text-3xl font-semibold tabular" data-testid="pdp-price">{fmtMoney(net, true)}</span><span className="text-sm text-muted-foreground">per {p.uom}</span></div>
                   <div className="mt-1 text-sm text-muted-foreground">List price <span className="line-through">{fmtMoney(p.basePrice, true)}</span>{customer?.contractPrices[p.id] ? ' · contract price applied' : customer ? ` · Tier ${customer.priceTier} discount ${customer.tierDiscountPct}%` : ''}</div>
-                  {offer && <div className="mt-3 flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-800"><Tag className="h-4 w-4" /><span><b>{offer.title}</b> – extra {offer.discountPct}% till {fmtDate(offer.validTo)}</span></div>}
+                  {shown.map((o) => (
+                    <Link key={o.id} href={`/offers/${o.id}`} className="mt-3 block rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-900 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-200" data-testid={`pdp-offer-${o.id}`}>
+                      <div className="flex flex-wrap items-center gap-2"><OfferBadge offer={o} freeName={o.freeProductId ? allProducts.data?.find((x) => x.id === o.freeProductId)?.name : undefined} /><span className="font-medium">{offerTitle(o, locale)}</span></div>
+                      {o.kind === 'tier' && <div className="mt-1 flex flex-wrap gap-x-3 text-xs">{[...(o.tiers ?? [])].sort((a, b) => a.minQty - b.minQty).map((tr) => <span key={tr.minQty} className={quantity >= tr.minQty ? 'font-semibold' : ''}>{tr.minQty}+ → −{tr.discountPct}%</span>)}</div>}
+                      <div className="mt-0.5 text-xs opacity-80">{t('customerDash.validUntil', { date: fmtDate(o.validTo) })}</div>
+                    </Link>
+                  ))}
                   <dl className="mt-4 grid grid-cols-3 gap-3 text-sm">
                     <div className="rounded-md bg-muted/60 p-2.5"><dt className="text-xs text-muted-foreground">UOM</dt><dd className="font-semibold">{p.uom}</dd></div>
                     <div className="rounded-md bg-muted/60 p-2.5"><dt className="text-xs text-muted-foreground">MOQ</dt><dd className="font-semibold">{p.moq}</dd></div>

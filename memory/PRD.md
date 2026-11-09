@@ -80,3 +80,10 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - Customer page gains requests, quotes, invoices & payments, deliveries and consignment tabs; order, customer and user pages fully translated
 - Every list row and every reference (customer, supplier, product, order, invoice, payment, delivery, request, quote) links to its page when the viewer may open it; plain text otherwise
 - Shared detail routes (invoices/payments for customers, collections and customer staff); reps only see their own customers' invoices and receipts; errors show translated "doesn't exist or you can't see it"
+
+## Iteration 11 – Offers from Sage X3 (Nov 2026)
+- Decision: offers are maintained only in X3 (price lists: discounts, quantity breaks, free goods). The portal reads them and never creates or edits terms; Admin/Supervisor only edit presentation (picture, headline and text per language, featured, hidden, order). The old "create offer" editor was removed
+- Pricing engine mirrors X3: best of percent/quantity-break per line, free-goods lines (same or another product) at ₹0, nudges ("Add 2 more to get 1 free", "Add 2 more to get 4% off") with one-tap add
+- Offers page (customers: only offers that apply to them; staff: all, with filters by type and status, last sync time, Refresh from ERP); offer page with locked "Terms from Sage X3" (rule, quantity breaks, audience, sites, ERP reference) and products with the viewer's price
+- Catalog badges and prices follow offers; product page price follows the typed quantity; cart/checkout/requests/orders/invoices show applied offer codes and free lines; quotes show staff what offer the customer would get without a quote; consignment call-offs get no offers
+- Admin gets the Offers module by default

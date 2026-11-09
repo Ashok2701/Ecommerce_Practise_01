@@ -132,6 +132,13 @@ export interface OrderLine {
   unitPrice: number;
   discountPct: number;
   lineTotal: number;
+  /** ERP offer applied to this line. */
+  offerId?: ID;
+  offerCode?: string;
+  /** Free-goods line created by an offer (price 0). */
+  free?: boolean;
+  /** For a free line: the product whose purchase earned it. */
+  freeFor?: ID;
 }
 
 export interface OrderEvent {
@@ -249,17 +256,59 @@ export interface Announcement {
   pinned?: boolean;
 }
 
+/**
+ * Offers are maintained in the ERP (Sage X3 price lists: discounts, quantity
+ * breaks and free goods). The portal reads them, prices carts with the same
+ * rules, and only adds its own presentation (picture, marketing text, featured).
+ */
+export type OfferKind = 'percent' | 'tier' | 'free_goods';
+
+export interface OfferTier { minQty: number; discountPct: number }
+
+/** Portal-only decoration of an ERP offer. Never changes price or validity. */
+export interface OfferPresentation {
+  image?: string;
+  /** Marketing title / text per language code; falls back to the ERP label. */
+  title?: Record<string, string>;
+  text?: Record<string, string>;
+  featured?: boolean;
+  /** Hidden from the portal's offer pages. Pricing still applies, as it does in the ERP. */
+  hidden?: boolean;
+  sort?: number;
+  updatedBy?: string;
+  updatedAt?: ISODate;
+}
+
 export interface Offer {
   id: ID;
+  /** ERP promotion / price list code. */
   code: string;
+  /** ERP record reference (for example the X3 price list line). */
+  erpRef?: string;
+  kind: OfferKind;
+  /** ERP label and description. */
   title: string;
   description: string;
+  /** Products the offer applies to; categories add every product in them. */
   productIds: ID[];
-  discountPct: number;
+  categories?: string[];
+  /** percent: discount on the line. */
+  discountPct?: number;
+  /** tier: quantity breaks on the line quantity, lowest first. */
+  tiers?: OfferTier[];
+  /** free_goods: for every buyQty bought, freeQty of freeProductId (same product when empty). */
+  buyQty?: number;
+  freeQty?: number;
+  freeProductId?: ID;
   validFrom: ISODate;
   validTo: ISODate;
-  status: 'active' | 'scheduled' | 'expired' | 'draft';
-  audience: 'all' | 'tier_A' | 'tier_B' | 'tier_C';
+  /** Derived from the dates; the ERP decides. */
+  status: 'active' | 'scheduled' | 'expired';
+  audience: 'all' | 'tier_A' | 'tier_B' | 'tier_C' | 'customers';
+  customerIds?: ID[];
+  /** Sites where the offer applies; empty means every site. */
+  sites?: string[];
+  presentation: OfferPresentation;
 }
 
 export interface ChatMessage {
