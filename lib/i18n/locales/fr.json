@@ -260,7 +260,8 @@
     "customer": "Client",
     "clear": "Effacer",
     "filters": "Filtres",
-    "close": "Fermer"
+    "close": "Fermer",
+    "delete": "Supprimer"
   },
   "status": {
     "draft": "Brouillon",
@@ -328,7 +329,43 @@
     "moq": "MOQ",
     "uom": "Unité",
     "yourPrice": "Votre prix",
-    "listPrice": "Catalogue"
+    "listPrice": "Catalogue",
+    "minQty": "La quantité minimum de commande est de {qty} {uom}",
+    "added": "{qty} {uom} ajouté(s) · {name}",
+    "viewCart": "Voir le panier",
+    "backorder": "En réapprovisionnement",
+    "inCart": "{count} dans le panier",
+    "save": "−{pct} %",
+    "category": "Catégorie",
+    "availability": "Disponibilité",
+    "brand": "Marque",
+    "pickCustomerText": "Les prix et les offres sont propres à chaque client. Choisissez pour qui vous commandez.",
+    "searchLabel": "Rechercher des produits",
+    "searchPlaceholder": "Rechercher par nom, référence ou marque…",
+    "clearSearch": "Effacer la recherche",
+    "sort": {
+      "label": "Trier",
+      "relevance": "Pertinence",
+      "name": "Nom A–Z",
+      "priceAsc": "Prix croissant",
+      "priceDesc": "Prix décroissant"
+    },
+    "view": "Affichage",
+    "gridView": "Vue grille",
+    "listView": "Vue liste",
+    "count": {
+      "one": "{n} produit",
+      "other": "{n} produits"
+    },
+    "noMatch": "Aucun produit ne correspond",
+    "clearFilters": "Effacer les filtres",
+    "avail": "{qty} dispo.",
+    "pagination": "Pagination",
+    "showResults": "Afficher les résultats",
+    "items": {
+      "one": "{count} article",
+      "other": "{count} articles"
+    }
   },
   "cart": {
     "title": "Panier",
@@ -398,7 +435,112 @@
     "title": "Assistant IA",
     "preview": "Aperçu",
     "placeholder": "Questions sur commandes, soldes, produits…",
-    "disclaimer": "Réponses simulées. La version future utilisera des fonctions métier contrôlées par les droits via le backend."
+    "disclaimer": "Réponses simulées. La version future utilisera des fonctions métier contrôlées par les droits via le backend.",
+    "howTitle": "Fonctionnement de l'assistant",
+    "how1": "Le modèle de langage s'exécute dans le backend et n'appelle que des fonctions métier approuvées (commandes, devis, factures, livraisons, stock, offres).",
+    "how2": "Chaque appel est vérifié selon le rôle et le périmètre de données de l'utilisateur connecté.",
+    "how3": "Les données viennent de l'adaptateur ERP ({erp} aujourd'hui) – jamais d'un accès direct à la base.",
+    "mockNote": "Ceci est un aperçu. Les réponses sont calculées sur cet appareil à partir des mêmes données que les écrans.",
+    "greeting": "Bonjour {name}, je peux répondre à vos questions sur les commandes, devis, livraisons, soldes, offres et stocks. Que voulez-vous savoir ?",
+    "failed": "Désolé, je n'ai pas pu obtenir cette information. Réessayez.",
+    "reordered": {
+      "one": "{count} article de {number} ajouté au panier",
+      "other": "{count} articles de {number} ajoutés au panier"
+    },
+    "scope": "Réponses limitées à vos droits de {role}",
+    "via": "via",
+    "typing": "L'assistant écrit",
+    "ask": {
+      "attention": "Qu'est-ce qui m'attend ?",
+      "help": "Que sais-tu faire ?",
+      "balance": "Quel est mon encours ?",
+      "invoices": "Quelles factures sont ouvertes ?",
+      "overdue": "Quels clients ont des paiements en retard ?",
+      "review": "Combien de demandes sont à examiner ?",
+      "track": "Quand ma commande arrive-t-elle ?",
+      "frequent": "Montre les produits que j'achète souvent",
+      "repeat": "Renouveler ma dernière commande",
+      "performance": "Où en sont mes ventes ce mois-ci ?",
+      "orders": "Montre les commandes récentes",
+      "quotes": "Où en sont les devis ?",
+      "deliveries": "Quelles livraisons sont prévues ?",
+      "payments": "Quels paiements sont à vérifier ?",
+      "offers": "Quelles offres ai-je ?",
+      "stock": "Quels produits sont en stock faible ?",
+      "transfers": "Montre les transferts de stock ouverts",
+      "consignment": "Où en est mon stock en consignation ?",
+      "purchaseOrders": "Montre les bons de commande ouverts",
+      "followUps": "Quelles relances ai-je ?"
+    },
+    "ai": {
+      "supplier": "Vous avez {ack} bon(s) de commande à confirmer et {pick} enlèvement(s) à valider.",
+      "attention": "Voici ce qui vous attend :",
+      "overdueInvoices": {
+        "one": "{count} facture en retard ({amount})",
+        "other": "{count} factures en retard ({amount})"
+      },
+      "balance": "Votre encours est de {amount} pour une limite de crédit de {limit}.",
+      "available": "Crédit disponible : {amount}",
+      "overdueAmt": "En retard : {amount}",
+      "due": "échéance {date}",
+      "overdue": {
+        "one": "{count} client de votre périmètre a un encours :",
+        "other": "{count} clients de votre périmètre ont un encours :"
+      },
+      "review": {
+        "one": "{count} demande de vente attend un examen.",
+        "other": "{count} demandes de vente attendent un examen."
+      },
+      "noQuotes": "Aucun devis ouvert.",
+      "quotesCustomer": "Vous avez {open} devis ouvert(s) ; {answer} attendent votre réponse.",
+      "quotesStaff": "{open} devis ouvert(s) ; {price} restent à chiffrer.",
+      "noDeliveries": "Aucune livraison ouverte.",
+      "deliveries": "{open} livraisons ouvertes ; {due} prévues aujourd'hui ou en retard.",
+      "payments": {
+        "one": "{count} paiement attend une vérification.",
+        "other": "{count} paiements attendent une vérification."
+      },
+      "offers": {
+        "one": "{count} offre s'applique à vous en ce moment :",
+        "other": "{count} offres s'appliquent à vous en ce moment :"
+      },
+      "stock": "Voici le stock trouvé :",
+      "stockLow": "Je n'ai pas trouvé de produit correspondant, voici les articles en stock faible :",
+      "transfers": {
+        "one": "{count} transfert de stock est ouvert :",
+        "other": "{count} transferts de stock sont ouverts :"
+      },
+      "noConsignment": "Aucun stock en consignation dans votre périmètre.",
+      "consignment": "{count} emplacement(s) en consignation ; {low} ligne(s) sous le minimum convenu.",
+      "lines": {
+        "one": "{count} ligne",
+        "other": "{count} lignes"
+      },
+      "followUps": {
+        "one": "Vous avez {count} relance ouverte :",
+        "other": "Vous avez {count} relances ouvertes :"
+      },
+      "performance": "Vos ventes du mois s'élèvent à {amount} : {pct} % de votre objectif de {target}.",
+      "purchaseOrders": {
+        "one": "{count} bon de commande est ouvert :",
+        "other": "{count} bons de commande sont ouverts :"
+      },
+      "noOpenOrders": "Vous n'avez aucune commande en cours.",
+      "track": "Voici vos commandes en cours et leurs dates de livraison prévues :",
+      "expected": "prévue le {date}",
+      "trackOne": "Suivre {number}",
+      "frequent": "D'après l'historique, voici les produits les plus souvent achetés :",
+      "viewTop": "Voir le produit principal",
+      "noRepeat": "Je n'ai trouvé aucune commande précédente à renouveler.",
+      "repeat": "Votre dernière commande terminée est {number} du {date} pour {amount} ({count} articles). Je peux ajouter les mêmes articles à votre panier aux prix du jour – vous vérifierez avant l'envoi.",
+      "orders": {
+        "one": "Voici la commande la plus récente :",
+        "other": "Voici les {count} commandes les plus récentes :"
+      },
+      "allOrders": "Voir toutes les commandes",
+      "help": "Je peux vous aider pour :",
+      "notUnderstood": "Je n'ai pas bien compris. Je peux vous aider pour :"
+    }
   },
   "offline": {
     "banner": "Vous êtes hors ligne. Le catalogue et les données récentes viennent du cache ; les nouvelles commandes sont en attente de synchro.",
@@ -1273,7 +1415,29 @@
       "company": "Entreprise",
       "product": "Produit",
       "notice": "Avis important"
-    }
+    },
+    "updated": "Annonce mise à jour",
+    "created": "Annonce créée",
+    "editTitle": "Modifier l'annonce",
+    "new": "Nouvelle annonce",
+    "titleRequired": "Le titre est obligatoire",
+    "titleLabel": "Titre",
+    "message": "Message",
+    "categoryLabel": "Catégorie",
+    "publishNow": "Publier maintenant",
+    "publishOn": "Publier le",
+    "target": "Public cible",
+    "pinToTop": "Épingler en haut",
+    "publishedToast": "Publiée – le public a été notifié",
+    "unpublishedToast": "Dépubliée",
+    "deleted": "Annonce supprimée",
+    "introManage": "Créez et publiez des informations pour les clients et les équipes internes.",
+    "introView": "Actualités de l'entreprise, nouveautés produits et avis importants.",
+    "notices": "Avis importants",
+    "empty": "Aucune annonce",
+    "publish": "Publier",
+    "unpublish": "Dépublier",
+    "deleteTitle": "Supprimer l'annonce ?"
   },
   "customers": {
     "detail": {
@@ -1431,7 +1595,8 @@
       "cancelTitle": "Annuler {number} ?",
       "cancelText": "La commande est retirée. Cette action est définitive.",
       "cancelConfirm": "Annuler la commande"
-    }
+    },
+    "repriced": "Prix actualisés selon la tarification client actuelle."
   },
   "reps": {
     "kpi": {
@@ -1485,5 +1650,376 @@
       "other": "{count} produits"
     },
     "empty": "Aucun fournisseur"
+  },
+  "followUps": {
+    "intro": "Appels, visites, devis et rappels de paiement pour vos clients.",
+    "add": "Ajouter une relance",
+    "caughtUp": "Vous êtes à jour.",
+    "markedDone": "Marquée comme faite",
+    "markDone": "Marquer comme faite",
+    "reopen": "Rouvrir",
+    "pickCustomer": "Sélectionnez un client",
+    "added": "Relance ajoutée",
+    "selectCustomer": "Sélectionner un client",
+    "type": "Type",
+    "notes": "Notes"
+  },
+  "notifications": {
+    "title": "Centre de notifications",
+    "unread": {
+      "one": "{count} non lue",
+      "other": "{count} non lues"
+    },
+    "unreadTab": "Non lues",
+    "enablePush": "Activer les notifications push",
+    "pushUnsupported": "Les notifications push ne sont pas prises en charge sur cet appareil",
+    "pushGranted": "Autorisation accordée – les notifications push démarreront une fois le backend connecté",
+    "pushState": "Autorisation : {state}",
+    "emptyTitle": "Vous êtes à jour",
+    "emptyText": "Les nouvelles notifications apparaîtront ici."
+  },
+  "performance": {
+    "title": "Performance commerciale",
+    "target": "Objectif mensuel",
+    "activeCustomers": "Clients actifs",
+    "achievement": "Atteinte de l'objectif",
+    "toGo": "Encore {amount} · {days} jours restants",
+    "trend": "Ventes vs objectif – 6 derniers mois",
+    "topCustomers": "Meilleurs clients (depuis le début)"
+  },
+  "settingsPage": {
+    "intro": "Connexion de cette installation à l'ERP, langue et application sur les appareils.",
+    "save": "Enregistrer",
+    "saved": "Paramètres enregistrés",
+    "erp": "Intégration ERP",
+    "adapter": "Adaptateur : sage-x3 · via le backend Nexus",
+    "mockMode": "Mode démo",
+    "liveMode": "Mode réel",
+    "apiUrl": "URL de base de l'API backend",
+    "apiHint": "Pour passer tous les écrans des données de démo au backend, définissez",
+    "dataSource": "Source de données actuelle :",
+    "test": "Tester la connexion",
+    "mockTest": "Données de démo – il n'y a pas encore de backend à tester.",
+    "connOk": "Backend joignable",
+    "connFail": "Backend injoignable ({status})",
+    "planned": "Adaptateurs prévus : SAP Business One / S/4HANA, Microsoft Dynamics 365, Oracle NetSuite.",
+    "rules": "Règles de commande et d'approbation",
+    "rulesText": "Le mode crédit, les seuils d'approbation automatique et qui approuve quoi se règlent sur la page Règles de workflow.",
+    "language": "Langue et région",
+    "yourLanguage": "Votre langue",
+    "languageHint": "Tous les écrans sont traduits. Les langues proposées et la langue par défaut se règlent dans le fichier de paramètres de l'installation.",
+    "currency": "Devise",
+    "region": "Format des nombres",
+    "pwa": "Application et notifications",
+    "manifest": "Manifeste d'application web configuré",
+    "sw": "Service worker : {state}",
+    "swState": {
+      "checking": "vérification…",
+      "active": "actif",
+      "prodOnly": "enregistré dans les builds de production",
+      "unsupported": "non pris en charge"
+    },
+    "offlineQueue": "File de commandes hors ligne (En attente de synchro) activée",
+    "installed": "Application installée",
+    "install": "Installer l'application",
+    "installUnavailable": "Installation disponible dans les navigateurs compatibles",
+    "pushOrders": "Notifications push pour le suivi des commandes",
+    "digest": "Récapitulatif quotidien par e-mail pour les responsables"
+  },
+  "quickOrder": {
+    "scanTitle": "Scanner le code-barres",
+    "scanText": "Pointez la caméra vers un produit ou une étiquette de rayon. Chaque scan ajoute un MOQ.",
+    "camStarting": "Démarrage de la caméra…",
+    "camUnsupported": "Le scan en direct n'est pas pris en charge par ce navigateur (il fonctionne dans Chrome sur Android). Utilisez le scan de démonstration ou saisissez le code.",
+    "camDenied": "L'accès à la caméra a été refusé. Autorisez-le ou saisissez le code.",
+    "simulate": "Simuler un scan (démo)",
+    "rounded": "Arrondi au multiple du MOQ ({moq})",
+    "noMatch": "Aucun produit ne correspond à « {code} »",
+    "unknownBarcode": "Code-barres inconnu : {code}",
+    "pasted": {
+      "one": "{count} ligne ajoutée",
+      "other": "{count} lignes ajoutées"
+    },
+    "pastedSome": "{ok} ajoutée(s) · {bad} non reconnue(s)",
+    "addedToCart": {
+      "one": "{count} ligne ajoutée au panier",
+      "other": "{count} lignes ajoutées au panier"
+    },
+    "pickCustomerTitle": "Sélectionnez d'abord un client",
+    "pickCustomerText": "La commande rapide utilise la liste de prix et les offres du client.",
+    "selectCustomer": "Sélectionner un client",
+    "intro": "Saisissez une référence et une quantité, appuyez sur Entrée, recommencez. Ou scannez des codes-barres, ou collez une liste depuis Excel.",
+    "pasteList": "Coller une liste",
+    "scan": "Scanner",
+    "code": "Référence produit",
+    "codePlaceholder": "Référence ou nom, ex. BRG-6205 ou casque",
+    "qtyPlaceholder": "Qté (MOQ)",
+    "add": "Ajouter",
+    "pasteLabel": "Collez un produit par ligne :",
+    "pasteFormat": "RÉFÉRENCE quantité",
+    "addLines": "Ajouter les lignes",
+    "notRecognised": "Non reconnu",
+    "emptyTitle": "Aucune ligne pour l'instant",
+    "emptyText": "Commencez à saisir une référence ci-dessus. Les quantités sont arrondies automatiquement au MOQ du conditionnement.",
+    "lines": {
+      "one": "{count} ligne",
+      "other": "{count} lignes"
+    },
+    "clearAll": "Tout effacer",
+    "exceeds": "dépasse le stock ({stock})",
+    "qtyFor": "Quantité pour {name}",
+    "remove": "Retirer {name}",
+    "estimated": "Estimation (HT)"
+  },
+  "pdp": {
+    "back": "Retour au catalogue",
+    "added": "{qty} {uom} ajouté(s) au panier",
+    "specs": "Caractéristiques",
+    "packSize": "Conditionnement",
+    "tax": "Taux de taxe",
+    "per": "par {uom}",
+    "contractApplied": "prix contrat appliqué",
+    "tierDiscount": "remise niveau {tier} : {pct} %",
+    "available": "Disponible",
+    "tip": "Astuce : commandez par multiples de {qty} {uom} ({pack}).",
+    "goToCart": "Aller au panier ({count})",
+    "ships": {
+      "one": "Expédié sous {count} jour",
+      "other": "Expédié sous {count} jours"
+    },
+    "genuine": "{brand} d'origine"
+  },
+  "newOrder": {
+    "cartCleared": "Panier vidé – les prix dépendent du client.",
+    "orderingFor": "Commande pour {name}",
+    "orderingForLabel": "Commande pour",
+    "intro": "Sélectionnez le client pour lequel vous commandez. Sa liste de prix, ses offres et son crédit s'appliquent automatiquement.",
+    "searchLabel": "Rechercher des clients",
+    "searchPlaceholder": "Client, code ou ville…",
+    "tier": "Niveau {tier}",
+    "outstanding": "Encours {amount}",
+    "progress": "Étapes de la commande",
+    "steps": {
+      "customer": "Client",
+      "products": "Produits",
+      "cart": "Panier",
+      "review": "Vérification"
+    },
+    "credit": "Crédit disponible {amount}",
+    "change": "Changer"
+  },
+  "adminDash": {
+    "intro": "Vue en direct des clients, commandes et utilisateurs.",
+    "reviewUsers": "Valider les utilisateurs",
+    "totalCustomers": "Clients professionnels",
+    "activeHint": "{count} actifs",
+    "pendingUsers": "Utilisateurs à valider",
+    "awaitingReview": "En attente de validation",
+    "totalOrders": "Total des commandes",
+    "allTime": "Depuis le début",
+    "requestsToReview": "Demandes à examiner",
+    "sales30": "Ventes (30 jours)",
+    "unread": "Messages non lus",
+    "erpSync": "Synchronisation ERP",
+    "healthy": "Opérationnelle",
+    "trend30": "Ventes – 30 derniers jours",
+    "byStatus": "Commandes par statut (30 jours)",
+    "activity": "Activité récente",
+    "recentOrders": "Commandes récentes",
+    "byCategory": "Ventes par catégorie"
+  },
+  "managerDash": {
+    "openApprovals": "Ouvrir les approbations",
+    "pendingApprovals": "Approbations en attente",
+    "ordersToday": "Commandes du jour",
+    "salesToday": "Ventes du jour",
+    "activeReps": "Commerciaux actifs",
+    "pendingIssues": "Points en attente",
+    "issuesHint": "Messages et demandes de modification",
+    "creditAlerts": "Alertes crédit ({count})",
+    "creditHint": "Demandes au-delà du crédit disponible",
+    "onHold": "compte bloqué",
+    "overBy": "dépassement de {amount}",
+    "utilisation": "utilisation {pct} %",
+    "reviewOverride": "Examiner et déroger",
+    "awaiting": "En attente de votre approbation",
+    "by": "par {name}",
+    "noApprovals": "Aucune approbation en attente",
+    "activity": "Activité clients récente",
+    "trend14": "Ventes – 14 derniers jours"
+  },
+  "salesDash": {
+    "visitUpdated": "Visite mise à jour",
+    "visits": "Visites du jour",
+    "completed": "{count} terminée(s)",
+    "monthly": "Ventes du mois",
+    "ofTarget": "{pct} % de l'objectif",
+    "pendingFollowUps": "Relances en attente",
+    "route": "Tournée du jour",
+    "stops": {
+      "one": "{count} arrêt",
+      "other": "{count} arrêts"
+    },
+    "checkIn": "Arrivée",
+    "order": "Commander",
+    "complete": "Terminer et rendre compte",
+    "viewReport": "Voir le compte rendu",
+    "addReport": "Ajouter un compte rendu",
+    "ofAmount": "sur un objectif de {amount}",
+    "ordersMonth": "Commandes (mois)",
+    "remaining": "Reste à faire",
+    "followDue": "Relances à faire",
+    "recentOrders": "Mes commandes récentes"
+  },
+  "workQueue": {
+    "title": "À traiter",
+    "clear": "Rien en attente – tout est à jour.",
+    "quotesToAnswer": {
+      "one": "Devis en attente de votre réponse",
+      "other": "Devis en attente de votre réponse"
+    },
+    "quotesPending": {
+      "one": "Demande de devis en cours de chiffrage",
+      "other": "Demandes de devis en cours de chiffrage"
+    },
+    "onTheWay": {
+      "one": "Livraison en route",
+      "other": "Livraisons en route"
+    },
+    "quotesToPrice": {
+      "one": "Demande de devis à chiffrer",
+      "other": "Demandes de devis à chiffrer"
+    },
+    "quotesWaiting": {
+      "one": "Devis envoyé, en attente du client",
+      "other": "Devis envoyés, en attente du client"
+    },
+    "paymentsToVerify": {
+      "one": "Paiement à vérifier",
+      "other": "Paiements à vérifier"
+    },
+    "deliveriesDue": {
+      "one": "Livraison prévue aujourd'hui ou en retard",
+      "other": "Livraisons prévues aujourd'hui ou en retard"
+    },
+    "deliveriesFailed": {
+      "one": "Livraison échouée à replanifier",
+      "other": "Livraisons échouées à replanifier"
+    },
+    "transfersToApprove": {
+      "one": "Transfert de stock à approuver",
+      "other": "Transferts de stock à approuver"
+    },
+    "transfersToReceive": {
+      "one": "Transfert entrant à réceptionner",
+      "other": "Transferts entrants à réceptionner"
+    },
+    "posInTransit": {
+      "one": "Bon de commande en transit",
+      "other": "Bons de commande en transit"
+    },
+    "requestsToReview": {
+      "one": "Demande de vente à examiner",
+      "other": "Demandes de vente à examiner"
+    },
+    "followUpsDue": {
+      "one": "Relance prévue aujourd'hui ou en retard",
+      "other": "Relances prévues aujourd'hui ou en retard"
+    }
+  },
+  "visits": {
+    "outcome": {
+      "order_placed": "Commande passée",
+      "quote_requested": "Devis demandé",
+      "payment_collected": "Paiement encaissé",
+      "no_order": "Pas de commande",
+      "issue_reported": "Problème signalé"
+    },
+    "maxPhotos": "Jusqu'à {count} photos par visite",
+    "badImage": "Impossible de lire cette image",
+    "saved": "Compte rendu de visite enregistré",
+    "followScheduled": "Relance prévue le {date}",
+    "saveFailed": "Impossible d'enregistrer le compte rendu (stockage de l'appareil peut-être plein – essayez avec moins de photos)",
+    "title": "Compte rendu de visite",
+    "needNotes": "Ajoutez quelques notes sur la visite",
+    "outcomeLabel": "Résultat",
+    "contact": "Contact rencontré",
+    "notesPlaceholder": "Besoins évoqués, stock en rayon, activité des concurrents, retours…",
+    "photos": "Photos",
+    "photo": "Photo de visite",
+    "photoN": "Photo de visite {n}",
+    "removePhoto": "Retirer la photo {n}",
+    "photosHint": "Rayon, marchandise abîmée, présentoirs concurrents. Les photos sont compressées sur l'appareil.",
+    "nextSteps": "Prochaines étapes",
+    "nextPlaceholder": "ex. Envoyer le devis révisé pour la graisse EP2 avant vendredi",
+    "followDate": "Date de relance",
+    "followType": "Type de relance",
+    "followAdded": "Une relance sera ajoutée à votre liste.",
+    "save": "Enregistrer le compte rendu",
+    "emptyTitle": "Aucun compte rendu de visite",
+    "emptyText": "Les comptes rendus du commercial apparaissent ici.",
+    "followOn": "relance le {date}",
+    "noPhotos": "Aucune photo"
+  },
+  "messages": {
+    "started": "Conversation démarrée",
+    "titleCustomer": "Messages et assistance",
+    "introCustomer": "Échangez avec votre commercial et notre équipe d'assistance.",
+    "introStaff": "Conversations clients et échanges internes.",
+    "new": "Nouvelle conversation",
+    "search": "Rechercher des conversations",
+    "searchPlaceholder": "Rechercher des conversations…",
+    "empty": "Aucune conversation",
+    "select": "Sélectionnez une conversation",
+    "selectText": "Choisissez un fil dans la liste ou démarrez-en un nouveau.",
+    "replyPlaceholder": "Écrire une réponse…",
+    "subject": "Objet",
+    "subjectPlaceholder": "ex. Question sur la livraison de SO-26-04120"
+  },
+  "customersList": {
+    "assigned": {
+      "one": "{count} client vous est attribué",
+      "other": "{count} clients vous sont attribués"
+    },
+    "intro": "Partenaires commerciaux synchronisés depuis {erp}.",
+    "searchPlaceholder": "Société, code, contact ou ville…",
+    "statusFilter": "Filtre de statut",
+    "allStatuses": "Tous les statuts",
+    "repFilter": "Filtre commercial",
+    "allReps": "Tous les commerciaux",
+    "col": {
+      "code": "Code",
+      "company": "Société",
+      "contact": "Contact",
+      "location": "Localisation",
+      "outstanding": "Encours"
+    }
+  },
+  "ordersList": {
+    "introCustomer": "Suivez chaque commande de l'envoi à la livraison.",
+    "introRep": "Commandes de vos clients attribués.",
+    "introStaff": "Toutes les commandes clients.",
+    "search": "Rechercher des commandes",
+    "searchPlaceholder": "N° de commande, client, bon de commande ou produit…",
+    "empty": "Aucune commande trouvée",
+    "col": {
+      "order": "Commande"
+    },
+    "eta": "Prévue"
+  },
+  "team": {
+    "intro": "Performance mensuelle des commerciaux terrain.",
+    "thisMonth": "Ce mois-ci",
+    "achievement": "Atteinte de l'objectif de {name}",
+    "target": "Objectif {amount}",
+    "customers": {
+      "one": "{count} client",
+      "other": "{count} clients"
+    },
+    "orders": {
+      "one": "{count} commande",
+      "other": "{count} commandes"
+    },
+    "chart": "Ventes du mois par commercial"
   }
 }

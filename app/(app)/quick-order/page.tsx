@@ -11,6 +11,7 @@ import { useCart, usePricedCart } from '@/lib/cart/CartProvider';
 import { buildLine, stockStatus } from '@/lib/domain/pricing';
 import { useSite } from '@/lib/sites/SiteProvider';
 import { fmtMoney } from '@/lib/format';
+import { useT } from '@/lib/i18n';
 import { PageHeader, EmptyState, LoadingState } from '@/components/common';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { QtyStepper } from '@/components/common/ProductBits';
@@ -36,6 +37,7 @@ function resolve(code: string, products: Product[]): Product | undefined {
 }
 
 function Scanner({ open, onClose, onCode, products }: { open: boolean; onClose: () => void; onCode: (code: string) => void; products: Product[] }) {
+  const { t } = useT();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [state, setState] = useState<'starting' | 'scanning' | 'unsupported' | 'denied'>('starting');
   const last = useRef<{ code: string; t: number }>({ code: '', t: 0 });
@@ -63,31 +65,32 @@ function Scanner({ open, onClose, onCode, products }: { open: boolean; onClose: 
         tick();
       } catch { setState('denied'); }
     })();
-    return () => { stopped = true; cancelAnimationFrame(raf); stream?.getTracks().forEach((t) => t.stop()); setState('starting'); };
+    return () => { stopped = true; cancelAnimationFrame(raf); stream?.getTracks().forEach((tr) => tr.stop()); setState('starting'); };
   }, [open]);
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader><DialogTitle>Scan product barcode</DialogTitle><DialogDescription>Point the camera at a product or shelf label. Each scan adds one MOQ.</DialogDescription></DialogHeader>
+        <DialogHeader><DialogTitle>{t('quickOrder.scanTitle')}</DialogTitle><DialogDescription>{t('quickOrder.scanText')}</DialogDescription></DialogHeader>
         <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-slate-900">
           <video ref={videoRef} className={cn('h-full w-full object-cover', state !== 'scanning' && 'hidden')} muted playsInline />
           {state === 'scanning' && <div className="pointer-events-none absolute inset-x-8 top-1/2 h-0.5 -translate-y-1/2 animate-pulse bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,.8)]" />}
           {state !== 'scanning' && (
             <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center text-sm text-slate-300">
               <Camera className="h-8 w-8" />
-              {state === 'starting' && 'Starting camera\u2026'}
-              {state === 'unsupported' && 'Live barcode scanning is not supported in this browser (works in Chrome on Android). Use the demo scan below or type the code.'}
-              {state === 'denied' && 'Camera permission was denied. Allow camera access or type the code.'}
+              {state === 'starting' && t('quickOrder.camStarting')}
+              {state === 'unsupported' && t('quickOrder.camUnsupported')}
+              {state === 'denied' && t('quickOrder.camDenied')}
             </div>
           )}
         </div>
-        <Button variant="outline" onClick={() => { const p = products[Math.floor(Math.random() * products.length)]; onCode(p.sku); }} data-testid="simulate-scan"><ScanLine className="mr-2 h-4 w-4" />Simulate a scan (demo)</Button>
+        <Button variant="outline" onClick={() => { const p = products[Math.floor(Math.random() * products.length)]; onCode(p.sku); }} data-testid="simulate-scan"><ScanLine className="me-2 h-4 w-4" />{t('quickOrder.simulate')}</Button>
       </DialogContent>
     </Dialog>
   );
 }
 
 export default function QuickOrderPage() {
+  const { t } = useT();
   const user = useUser();
   const router = useRouter();
   const cart = useCart();
@@ -117,17 +120,17 @@ export default function QuickOrderPage() {
     const wanted = q && q > 0 ? q : p.moq;
     const quantity = roundToMoq(wanted, p.moq);
     setLines((ls) => { const ex = ls.find((l) => l.productId === p.id); return ex ? ls.map((l) => (l.productId === p.id ? { ...l, quantity: l.quantity + quantity } : l)) : [{ productId: p.id, quantity }, ...ls]; });
-    if (!silent) toast.success(`${p.sku} \u00b7 ${quantity} ${p.uom}`, { description: quantity !== wanted ? `Rounded to MOQ multiple of ${p.moq}` : p.name, duration: 1500 });
+    if (!silent) toast.success(`${p.sku} \u00b7 ${quantity} ${p.uom}`, { description: quantity !== wanted ? t('quickOrder.rounded', { moq: p.moq }) : p.name, duration: 1500 });
   };
 
   const submitCode = (p?: Product) => {
     const prod = p ?? resolve(code, all) ?? suggestions[0];
-    if (!prod) return toast.error(`No product matches "${code}"`);
+    if (!prod) return toast.error(t('quickOrder.noMatch', { code }));
     addLine(prod, parseInt(qty, 10));
     setCode(''); setQty(''); codeRef.current?.focus();
   };
 
-  const onScan = (raw: string) => { const p = resolve(raw, all); if (p) addLine(p); else toast.error(`Unknown barcode: ${raw}`); };
+  const onScan = (raw: string) => { const p = resolve(raw, all); if (p) addLine(p); else toast.error(t('quickOrder.unknownBarcode', { code: raw })); };
 
   const importPaste = () => {
     const errs: string[] = []; let ok = 0;
@@ -138,73 +141,73 @@ export default function QuickOrderPage() {
       if (p) { addLine(p, q, true); ok++; } else errs.push(l);
     });
     setErrors(errs);
-    toast[errs.length ? 'warning' : 'success'](`${ok} line(s) added${errs.length ? ` \u00b7 ${errs.length} not recognised` : ''}`);
+    toast[errs.length ? 'warning' : 'success'](errs.length ? t('quickOrder.pastedSome', { ok, bad: errs.length }) : t('quickOrder.pasted', { count: ok }));
     if (!errs.length) { setPaste(''); setPasteOpen(false); }
   };
 
   const priced = lines.map((l) => { const p = byId[l.productId]; if (!p) return null; const line = buildLine(p, l.quantity, customer, offers.data ?? [], site); const net = l.quantity ? line.lineTotal / l.quantity : line.unitPrice; return { ...l, p, unit: net, off: line.discountPct ? line : undefined, total: line.lineTotal }; }).filter(Boolean) as any[];
   const total = priced.reduce((s, l) => s + l.total, 0);
-  const addAll = () => { lines.forEach((l) => cart.add(l.productId, l.quantity)); toast.success(`${lines.length} lines added to cart`); setLines([]); router.push('/cart'); };
+  const addAll = () => { lines.forEach((l) => cart.add(l.productId, l.quantity)); toast.success(t('quickOrder.addedToCart', { count: lines.length })); setLines([]); router.push('/cart'); };
 
-  if (user.role === 'SALES_REP' && !customer) return (<div><OrderContextBar step="products" /><EmptyState icon={Building2} title="Select a customer first" description="Quick order uses the customer's price list and offers." action={<Button asChild><Link href="/orders/new">Select customer</Link></Button>} /></div>);
+  if (user.role === 'SALES_REP' && !customer) return (<div><OrderContextBar step="products" /><EmptyState icon={Building2} title={t('quickOrder.pickCustomerTitle')} description={t('quickOrder.pickCustomerText')} action={<Button asChild><Link href="/orders/new">{t('quickOrder.selectCustomer')}</Link></Button>} /></div>);
   if (products.isLoading) return <LoadingState variant="detail" />;
 
   return (
     <div>
       <OrderContextBar step="products" />
-      <PageHeader title={<span className="flex items-center gap-2"><Zap className="h-5 w-5 text-primary" />Quick order</span>} description="Type a product code and quantity, press Enter, repeat. Or scan barcodes / paste a list from Excel."
-        actions={<><Button variant="outline" onClick={() => setPasteOpen((v) => !v)} data-testid="toggle-paste"><ClipboardPaste className="mr-2 h-4 w-4" />Paste list</Button><Button variant="outline" onClick={() => setScan(true)} data-testid="open-scanner"><ScanLine className="mr-2 h-4 w-4" />Scan</Button></>} />
+      <PageHeader title={<span className="flex items-center gap-2"><Zap className="h-5 w-5 text-primary" aria-hidden="true" />{t('nav.quickOrder')}</span>} description={t('quickOrder.intro')}
+        actions={<><Button variant="outline" onClick={() => setPasteOpen((v) => !v)} data-testid="toggle-paste"><ClipboardPaste className="me-2 h-4 w-4" />{t('quickOrder.pasteList')}</Button><Button variant="outline" onClick={() => setScan(true)} data-testid="open-scanner"><ScanLine className="me-2 h-4 w-4" />{t('quickOrder.scan')}</Button></>} />
 
       <Card className="p-4">
         <form onSubmit={(e) => { e.preventDefault(); submitCode(); }} className="flex flex-col gap-2 sm:flex-row">
           <div className="relative flex-1">
-            <label htmlFor="qo-code" className="sr-only">Product code</label>
+            <label htmlFor="qo-code" className="sr-only">{t('quickOrder.code')}</label>
             <Input id="qo-code" ref={codeRef} autoFocus autoComplete="off" data-testid="quick-code" value={code} onChange={(e) => setCode(e.target.value)} onFocus={() => setFocus(true)} onBlur={() => setTimeout(() => setFocus(false), 150)}
-              placeholder="SKU or name, e.g. BRG-6205 or helmet" className="h-12 font-mono text-base" />
+              placeholder={t('quickOrder.codePlaceholder')} className="h-12 font-mono text-base" />
             {focus && suggestions.length > 0 && (
               <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border bg-popover shadow-lg" role="listbox">
                 {suggestions.map((p) => (
-                  <li key={p.id}><button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => submitCode(p)} className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-muted" data-testid={`suggest-${p.sku}`}>
-                    <span className="w-36 shrink-0 font-mono text-xs">{p.sku}</span><span className="flex-1 truncate">{p.name}</span><span className="text-xs text-muted-foreground">MOQ {p.moq}</span>
+                  <li key={p.id}><button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => submitCode(p)} className="flex w-full items-center gap-3 px-3 py-2 text-start text-sm hover:bg-muted" data-testid={`suggest-${p.sku}`}>
+                    <span className="w-36 shrink-0 font-mono text-xs">{p.sku}</span><span className="flex-1 truncate">{p.name}</span><span className="text-xs text-muted-foreground">{t('catalog.moq')} {p.moq}</span>
                   </button></li>
                 ))}
               </ul>
             )}
           </div>
           <div className="flex gap-2">
-            <label htmlFor="qo-qty" className="sr-only">Quantity</label>
-            <Input id="qo-qty" inputMode="numeric" data-testid="quick-qty" value={qty} onChange={(e) => setQty(e.target.value.replace(/\D/g, ''))} placeholder="Qty (MOQ)" className="h-12 w-full text-base sm:w-28" />
-            <Button type="submit" className="h-12 px-5" data-testid="quick-add"><Plus className="mr-1 h-4 w-4" />Add</Button>
+            <label htmlFor="qo-qty" className="sr-only">{t('common.quantity')}</label>
+            <Input id="qo-qty" inputMode="numeric" data-testid="quick-qty" value={qty} onChange={(e) => setQty(e.target.value.replace(/\D/g, ''))} placeholder={t('quickOrder.qtyPlaceholder')} className="h-12 w-full text-base sm:w-28" />
+            <Button type="submit" className="h-12 px-5" data-testid="quick-add"><Plus className="me-1 h-4 w-4" />{t('quickOrder.add')}</Button>
           </div>
         </form>
         {pasteOpen && (
           <div className="mt-4 space-y-2 border-t pt-4">
-            <label htmlFor="qo-paste" className="text-sm font-medium">Paste one product per line: <span className="font-mono text-xs text-muted-foreground">SKU quantity</span></label>
+            <label htmlFor="qo-paste" className="text-sm font-medium">{t('quickOrder.pasteLabel')} <span className="font-mono text-xs text-muted-foreground">{t('quickOrder.pasteFormat')}</span></label>
             <Textarea id="qo-paste" data-testid="quick-paste" rows={5} value={paste} onChange={(e) => setPaste(e.target.value)} className="font-mono text-sm" placeholder={'BRG-6205-2RS 50\nPPE-HLM-IS2925, 40\nLUB-GRS-EP2-18\t4'} />
-            <div className="flex gap-2"><Button onClick={importPaste} disabled={!paste.trim()} data-testid="quick-import">Add lines</Button><Button variant="ghost" onClick={() => { setPaste(''); setErrors([]); }}>Clear</Button></div>
-            {!!errors.length && <div className="rounded-md bg-amber-50 p-3 text-xs text-amber-900" data-testid="quick-errors"><div className="mb-1 flex items-center gap-1 font-semibold"><AlertTriangle className="h-3.5 w-3.5" />Not recognised</div>{errors.map((e) => <div key={e} className="font-mono">{e}</div>)}</div>}
+            <div className="flex gap-2"><Button onClick={importPaste} disabled={!paste.trim()} data-testid="quick-import">{t('quickOrder.addLines')}</Button><Button variant="ghost" onClick={() => { setPaste(''); setErrors([]); }}>{t('common.clear')}</Button></div>
+            {!!errors.length && <div className="rounded-md bg-amber-50 p-3 text-xs text-amber-900" data-testid="quick-errors"><div className="mb-1 flex items-center gap-1 font-semibold"><AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />{t('quickOrder.notRecognised')}</div>{errors.map((e) => <div key={e} className="font-mono">{e}</div>)}</div>}
           </div>
         )}
       </Card>
 
       <div className="mt-4">
-        {!priced.length ? <EmptyState icon={Zap} title="No lines yet" description="Start typing a product code above. Quantities are rounded up to the pack MOQ automatically." /> : (
+        {!priced.length ? <EmptyState icon={Zap} title={t('quickOrder.emptyTitle')} description={t('quickOrder.emptyText')} /> : (
           <Card className="overflow-hidden" data-testid="quick-lines">
-            <div className="flex items-center justify-between border-b px-4 py-3"><span className="text-sm font-semibold">{priced.length} lines</span><Button variant="ghost" size="sm" onClick={() => setLines([])}>Clear all</Button></div>
+            <div className="flex items-center justify-between border-b px-4 py-3"><span className="text-sm font-semibold">{t('quickOrder.lines', { count: priced.length })}</span><Button variant="ghost" size="sm" onClick={() => setLines([])}>{t('quickOrder.clearAll')}</Button></div>
             <ul className="divide-y">
               {priced.map((l) => (
                 <li key={l.productId} className="grid grid-cols-[1fr_auto] items-center gap-3 px-4 py-3 sm:grid-cols-[1fr_auto_120px_110px_40px]">
-                  <div className="min-w-0"><div className="flex items-center gap-2"><span className="font-mono text-xs font-semibold">{l.p.sku}</span><StatusBadge status={stockStatus(l.p)} /></div><div className="truncate text-sm">{l.p.name}</div><div className="text-[11px] text-muted-foreground">{fmtMoney(l.unit, true)} / {l.p.uom}{l.off ? ` \u00b7 \u2212${l.off.discountPct}% ${l.off.offerCode}` : ''} \u00b7 MOQ {l.p.moq}{l.quantity > l.p.stock ? <span className="text-amber-700"> \u00b7 exceeds stock ({l.p.stock})</span> : ''}</div></div>
-                  <QtyStepper value={l.quantity} step={l.p.moq} min={l.p.moq} size="sm" label={`Quantity for ${l.p.sku}`} onChange={(v) => setLines((ls) => ls.map((x) => (x.productId === l.productId ? { ...x, quantity: Math.max(l.p.moq, v) } : x)))} />
-                  <div className="hidden text-right text-sm font-semibold tabular sm:block">{fmtMoney(l.total)}</div>
-                  <div className="text-right text-xs text-muted-foreground sm:hidden">{fmtMoney(l.total)}</div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 justify-self-end" onClick={() => setLines((ls) => ls.filter((x) => x.productId !== l.productId))} aria-label={`Remove ${l.p.sku}`}><Trash2 className="h-4 w-4" /></Button>
+                  <div className="min-w-0"><div className="flex items-center gap-2"><span className="font-mono text-xs font-semibold">{l.p.sku}</span><StatusBadge status={stockStatus(l.p)} /></div><div className="truncate text-sm">{l.p.name}</div><div className="text-[11px] text-muted-foreground">{fmtMoney(l.unit, true)} / {l.p.uom}{l.off ? ` \u00b7 \u2212${l.off.discountPct}% ${l.off.offerCode}` : ''} \u00b7 {t('catalog.moq')} {l.p.moq}{l.quantity > l.p.stock ? <span className="text-amber-700"> \u00b7 {t('quickOrder.exceeds', { stock: l.p.stock })}</span> : ''}</div></div>
+                  <QtyStepper value={l.quantity} step={l.p.moq} min={l.p.moq} size="sm" label={t('quickOrder.qtyFor', { name: l.p.sku })} onChange={(v) => setLines((ls) => ls.map((x) => (x.productId === l.productId ? { ...x, quantity: Math.max(l.p.moq, v) } : x)))} />
+                  <div className="hidden text-end text-sm font-semibold tabular sm:block">{fmtMoney(l.total)}</div>
+                  <div className="text-end text-xs text-muted-foreground sm:hidden">{fmtMoney(l.total)}</div>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 justify-self-end" onClick={() => setLines((ls) => ls.filter((x) => x.productId !== l.productId))} aria-label={t('quickOrder.remove', { name: l.p.sku })}><Trash2 className="h-4 w-4" /></Button>
                 </li>
               ))}
             </ul>
             <div className="sticky bottom-16 flex items-center justify-between gap-3 border-t bg-card px-4 py-3 md:bottom-0">
-              <div><div className="text-xs text-muted-foreground">Estimated (excl. GST)</div><div className="text-lg font-semibold tabular" data-testid="quick-total">{fmtMoney(total)}</div></div>
-              <Button className="h-11" onClick={addAll} data-testid="quick-add-to-cart"><ShoppingCart className="mr-2 h-4 w-4" />Add to cart</Button>
+              <div><div className="text-xs text-muted-foreground">{t('quickOrder.estimated')}</div><div className="text-lg font-semibold tabular" data-testid="quick-total">{fmtMoney(total)}</div></div>
+              <Button className="h-11" onClick={addAll} data-testid="quick-add-to-cart"><ShoppingCart className="me-2 h-4 w-4" />{t('common.addToCart')}</Button>
             </div>
           </Card>
         )}

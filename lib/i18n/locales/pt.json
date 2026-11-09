@@ -260,7 +260,8 @@
     "customer": "Cliente",
     "clear": "Limpar",
     "filters": "Filtros",
-    "close": "Fechar"
+    "close": "Fechar",
+    "delete": "Eliminar"
   },
   "status": {
     "draft": "Rascunho",
@@ -328,7 +329,43 @@
     "moq": "Qtd. mín.",
     "uom": "Unidade",
     "yourPrice": "O seu preço",
-    "listPrice": "Tabela"
+    "listPrice": "Tabela",
+    "minQty": "A quantidade mínima de encomenda é {qty} {uom}",
+    "added": "Adicionado {qty} {uom} · {name}",
+    "viewCart": "Ver carrinho",
+    "backorder": "Por encomenda",
+    "inCart": "{count} no carrinho",
+    "save": "poupe {pct}%",
+    "category": "Categoria",
+    "availability": "Disponibilidade",
+    "brand": "Marca",
+    "pickCustomerText": "Os preços e as ofertas dependem de cada cliente. Escolha para quem está a encomendar.",
+    "searchLabel": "Pesquisar produtos",
+    "searchPlaceholder": "Pesquisar por nome, código ou marca…",
+    "clearSearch": "Limpar pesquisa",
+    "sort": {
+      "label": "Ordenar",
+      "relevance": "Relevância",
+      "name": "Nome A–Z",
+      "priceAsc": "Preço: do mais baixo",
+      "priceDesc": "Preço: do mais alto"
+    },
+    "view": "Vista",
+    "gridView": "Vista em grelha",
+    "listView": "Vista em lista",
+    "count": {
+      "one": "{n} produto",
+      "other": "{n} produtos"
+    },
+    "noMatch": "Nenhum produto corresponde",
+    "clearFilters": "Limpar filtros",
+    "avail": "{qty} disp.",
+    "pagination": "Paginação",
+    "showResults": "Ver resultados",
+    "items": {
+      "one": "{count} artigo",
+      "other": "{count} artigos"
+    }
   },
   "cart": {
     "title": "Carrinho",
@@ -398,7 +435,112 @@
     "title": "Assistente IA",
     "preview": "Pré-visualização",
     "placeholder": "Pergunte sobre encomendas, saldos, produtos…",
-    "disclaimer": "Respostas simuladas. A versão futura usará funções de negócio com controlo de permissões através do backend."
+    "disclaimer": "Respostas simuladas. A versão futura usará funções de negócio com controlo de permissões através do backend.",
+    "howTitle": "Como funciona o assistente",
+    "how1": "O modelo de linguagem corre no backend e só chama funções de negócio aprovadas (encomendas, orçamentos, faturas, entregas, stock, ofertas).",
+    "how2": "Cada chamada é verificada segundo o perfil e o âmbito de dados do utilizador com sessão iniciada.",
+    "how3": "Os dados vêm do adaptador do ERP ({erp} hoje) – nunca de acesso direto à base de dados.",
+    "mockNote": "Isto é uma pré-visualização. As respostas são calculadas neste dispositivo com os mesmos dados que os ecrãs usam.",
+    "greeting": "Olá {name}, posso responder a perguntas sobre encomendas, orçamentos, entregas, saldos, ofertas e stock. O que quer saber?",
+    "failed": "Não consegui obter essa informação agora. Tente novamente.",
+    "reordered": {
+      "one": "{count} artigo de {number} adicionado ao carrinho",
+      "other": "{count} artigos de {number} adicionados ao carrinho"
+    },
+    "scope": "Respostas limitadas às suas permissões de {role}",
+    "via": "via",
+    "typing": "O assistente está a escrever",
+    "ask": {
+      "attention": "O que tenho pendente?",
+      "help": "O que sabes fazer?",
+      "balance": "Qual é o meu saldo em aberto?",
+      "invoices": "Que faturas estão em aberto?",
+      "overdue": "Que clientes têm pagamentos em atraso?",
+      "review": "Quantos pedidos há para rever?",
+      "track": "Quando chega a minha encomenda?",
+      "frequent": "Mostra os produtos que compro habitualmente",
+      "repeat": "Repetir a minha última encomenda",
+      "performance": "Como estão as minhas vendas este mês?",
+      "orders": "Mostra as encomendas recentes",
+      "quotes": "Como estão os orçamentos?",
+      "deliveries": "Que entregas estão previstas?",
+      "payments": "Que pagamentos é preciso verificar?",
+      "offers": "Que ofertas tenho?",
+      "stock": "Que produtos têm pouco stock?",
+      "transfers": "Mostra as transferências de stock em aberto",
+      "consignment": "Como está o meu stock em consignação?",
+      "purchaseOrders": "Mostra os pedidos de compra em aberto",
+      "followUps": "Que acompanhamentos tenho?"
+    },
+    "ai": {
+      "supplier": "Tem {ack} pedido(s) de compra por confirmar e {pick} recolha(s) por confirmar.",
+      "attention": "Isto é o que tem pendente:",
+      "overdueInvoices": {
+        "one": "{count} fatura em atraso ({amount})",
+        "other": "{count} faturas em atraso ({amount})"
+      },
+      "balance": "O seu saldo em aberto é {amount} para um limite de crédito de {limit}.",
+      "available": "Crédito disponível: {amount}",
+      "overdueAmt": "Em atraso: {amount}",
+      "due": "vence a {date}",
+      "overdue": {
+        "one": "{count} cliente do seu âmbito tem saldo em aberto:",
+        "other": "{count} clientes do seu âmbito têm saldo em aberto:"
+      },
+      "review": {
+        "one": "{count} pedido de venda aguarda revisão.",
+        "other": "{count} pedidos de venda aguardam revisão."
+      },
+      "noQuotes": "Não há orçamentos em aberto.",
+      "quotesCustomer": "Tem {open} orçamento(s) em aberto; {answer} aguardam a sua resposta.",
+      "quotesStaff": "{open} orçamento(s) em aberto; {price} por valorizar.",
+      "noDeliveries": "Não há entregas em aberto.",
+      "deliveries": "{open} entregas em aberto; {due} previstas hoje ou em atraso.",
+      "payments": {
+        "one": "{count} pagamento aguarda verificação.",
+        "other": "{count} pagamentos aguardam verificação."
+      },
+      "offers": {
+        "one": "{count} oferta aplica-se a si neste momento:",
+        "other": "{count} ofertas aplicam-se a si neste momento:"
+      },
+      "stock": "Este é o stock que encontrei:",
+      "stockLow": "Não encontrei esse produto; estes artigos têm pouco stock:",
+      "transfers": {
+        "one": "{count} transferência de stock está em aberto:",
+        "other": "{count} transferências de stock estão em aberto:"
+      },
+      "noConsignment": "Não há stock em consignação no seu âmbito.",
+      "consignment": "{count} local(is) em consignação; {low} linha(s) abaixo do mínimo acordado.",
+      "lines": {
+        "one": "{count} linha",
+        "other": "{count} linhas"
+      },
+      "followUps": {
+        "one": "Tem {count} acompanhamento em aberto:",
+        "other": "Tem {count} acompanhamentos em aberto:"
+      },
+      "performance": "As suas vendas este mês são {amount}: {pct}% do seu objetivo de {target}.",
+      "purchaseOrders": {
+        "one": "{count} pedido de compra está em aberto:",
+        "other": "{count} pedidos de compra estão em aberto:"
+      },
+      "noOpenOrders": "Não tem encomendas em aberto neste momento.",
+      "track": "Estas são as suas encomendas em aberto e as datas de entrega previstas:",
+      "expected": "prevista a {date}",
+      "trackOne": "Acompanhar {number}",
+      "frequent": "Pelo histórico, estes são os produtos comprados com mais frequência:",
+      "viewTop": "Ver produto principal",
+      "noRepeat": "Não encontrei uma encomenda anterior para repetir.",
+      "repeat": "A sua última encomenda concluída foi {number} de {date} no valor de {amount} ({count} artigos). Posso adicionar os mesmos artigos ao carrinho aos preços de hoje – reverá antes de enviar.",
+      "orders": {
+        "one": "Esta é a encomenda mais recente:",
+        "other": "Estas são as {count} encomendas mais recentes:"
+      },
+      "allOrders": "Ver todas as encomendas",
+      "help": "Posso ajudar com:",
+      "notUnderstood": "Não percebi bem. Posso ajudar com:"
+    }
   },
   "offline": {
     "banner": "Está offline. O catálogo e os dados recentes vêm da cache; as novas encomendas ficam com sincronização pendente.",
@@ -1273,7 +1415,29 @@
       "company": "Empresa",
       "product": "Produto",
       "notice": "Aviso importante"
-    }
+    },
+    "updated": "Comunicado atualizado",
+    "created": "Comunicado criado",
+    "editTitle": "Editar comunicado",
+    "new": "Novo comunicado",
+    "titleRequired": "O título é obrigatório",
+    "titleLabel": "Título",
+    "message": "Mensagem",
+    "categoryLabel": "Categoria",
+    "publishNow": "Publicar agora",
+    "publishOn": "Publicar em",
+    "target": "Público-alvo",
+    "pinToTop": "Fixar no topo",
+    "publishedToast": "Publicado – o público foi notificado",
+    "unpublishedToast": "Publicação retirada",
+    "deleted": "Comunicado eliminado",
+    "introManage": "Crie e publique novidades para clientes e equipas internas.",
+    "introView": "Notícias da empresa, novidades de produto e avisos importantes.",
+    "notices": "Avisos importantes",
+    "empty": "Sem comunicados",
+    "publish": "Publicar",
+    "unpublish": "Retirar",
+    "deleteTitle": "Eliminar o comunicado?"
   },
   "customers": {
     "detail": {
@@ -1431,7 +1595,8 @@
       "cancelTitle": "Cancelar {number}?",
       "cancelText": "A encomenda é retirada. Não é possível anular.",
       "cancelConfirm": "Cancelar encomenda"
-    }
+    },
+    "repriced": "Preços atualizados para a tabela atual do cliente."
   },
   "reps": {
     "kpi": {
@@ -1485,5 +1650,376 @@
       "other": "{count} produtos"
     },
     "empty": "Sem fornecedores"
+  },
+  "followUps": {
+    "intro": "Chamadas, visitas, orçamentos e lembretes de pagamento para os seus clientes.",
+    "add": "Adicionar acompanhamento",
+    "caughtUp": "Está tudo em dia.",
+    "markedDone": "Marcado como feito",
+    "markDone": "Marcar como feito",
+    "reopen": "Reabrir",
+    "pickCustomer": "Selecione um cliente",
+    "added": "Acompanhamento adicionado",
+    "selectCustomer": "Selecionar cliente",
+    "type": "Tipo",
+    "notes": "Notas"
+  },
+  "notifications": {
+    "title": "Centro de notificações",
+    "unread": {
+      "one": "{count} por ler",
+      "other": "{count} por ler"
+    },
+    "unreadTab": "Por ler",
+    "enablePush": "Ativar notificações push",
+    "pushUnsupported": "Este dispositivo não suporta notificações push",
+    "pushGranted": "Permissão concedida – as notificações push começam quando o backend estiver ligado",
+    "pushState": "Permissão: {state}",
+    "emptyTitle": "Está tudo em dia",
+    "emptyText": "As novas notificações aparecem aqui."
+  },
+  "performance": {
+    "title": "Desempenho comercial",
+    "target": "Objetivo mensal",
+    "activeCustomers": "Clientes ativos",
+    "achievement": "Cumprimento do objetivo",
+    "toGo": "Faltam {amount} · {days} dias restantes",
+    "trend": "Vendas vs objetivo – últimos 6 meses",
+    "topCustomers": "Melhores clientes (histórico)"
+  },
+  "settingsPage": {
+    "intro": "Como esta instalação se liga ao ERP, o seu idioma e a app nos dispositivos.",
+    "save": "Guardar alterações",
+    "saved": "Definições guardadas",
+    "erp": "Integração com o ERP",
+    "adapter": "Adaptador: sage-x3 · através do backend Nexus",
+    "mockMode": "Modo demo",
+    "liveMode": "Modo real",
+    "apiUrl": "URL base da API do backend",
+    "apiHint": "Para mudar todos os ecrãs dos dados de demonstração para o backend, defina",
+    "dataSource": "Origem de dados atual:",
+    "test": "Testar ligação",
+    "mockTest": "A usar dados de demonstração – ainda não há backend para testar.",
+    "connOk": "Backend acessível",
+    "connFail": "Backend inacessível ({status})",
+    "planned": "Adaptadores previstos: SAP Business One / S/4HANA, Microsoft Dynamics 365, Oracle NetSuite.",
+    "rules": "Regras de encomenda e aprovação",
+    "rulesText": "O modo de crédito, os limites de aprovação automática e quem aprova o quê definem-se na página Regras de fluxo.",
+    "language": "Idioma e região",
+    "yourLanguage": "O seu idioma",
+    "languageHint": "Todos os ecrãs estão traduzidos. Os idiomas disponíveis e o idioma predefinido definem-se no ficheiro de definições da instalação.",
+    "currency": "Moeda",
+    "region": "Formato de números",
+    "pwa": "App e notificações",
+    "manifest": "Manifesto da web app configurado",
+    "sw": "Service worker: {state}",
+    "swState": {
+      "checking": "a verificar…",
+      "active": "ativo",
+      "prodOnly": "registado nas compilações de produção",
+      "unsupported": "não suportado"
+    },
+    "offlineQueue": "Fila de encomendas offline (A sincronizar) ativa",
+    "installed": "App instalada",
+    "install": "Instalar app",
+    "installUnavailable": "Instalação disponível em navegadores compatíveis",
+    "pushOrders": "Notificações push de encomendas",
+    "digest": "Resumo diário por e-mail para responsáveis"
+  },
+  "quickOrder": {
+    "scanTitle": "Ler código de barras",
+    "scanText": "Aponte a câmara para um produto ou etiqueta de prateleira. Cada leitura adiciona uma quantidade mínima.",
+    "camStarting": "A iniciar a câmara…",
+    "camUnsupported": "Este navegador não suporta leitura em direto (funciona no Chrome para Android). Use a leitura de demonstração ou escreva o código.",
+    "camDenied": "O acesso à câmara foi recusado. Permita o acesso ou escreva o código.",
+    "simulate": "Simular uma leitura (demo)",
+    "rounded": "Arredondado a um múltiplo da quantidade mínima ({moq})",
+    "noMatch": "Nenhum produto corresponde a «{code}»",
+    "unknownBarcode": "Código de barras desconhecido: {code}",
+    "pasted": {
+      "one": "{count} linha adicionada",
+      "other": "{count} linhas adicionadas"
+    },
+    "pastedSome": "{ok} adicionadas · {bad} não reconhecidas",
+    "addedToCart": {
+      "one": "{count} linha adicionada ao carrinho",
+      "other": "{count} linhas adicionadas ao carrinho"
+    },
+    "pickCustomerTitle": "Selecione primeiro um cliente",
+    "pickCustomerText": "A encomenda rápida usa a tabela de preços e as ofertas do cliente.",
+    "selectCustomer": "Selecionar cliente",
+    "intro": "Escreva um código e uma quantidade, prima Enter, repita. Ou leia códigos de barras ou cole uma lista do Excel.",
+    "pasteList": "Colar lista",
+    "scan": "Ler código",
+    "code": "Código do produto",
+    "codePlaceholder": "Código ou nome, p. ex. BRG-6205 ou capacete",
+    "qtyPlaceholder": "Qtd. (mín.)",
+    "add": "Adicionar",
+    "pasteLabel": "Cole um produto por linha:",
+    "pasteFormat": "CÓDIGO quantidade",
+    "addLines": "Adicionar linhas",
+    "notRecognised": "Não reconhecido",
+    "emptyTitle": "Ainda sem linhas",
+    "emptyText": "Comece a escrever um código acima. As quantidades são arredondadas automaticamente à quantidade mínima da embalagem.",
+    "lines": {
+      "one": "{count} linha",
+      "other": "{count} linhas"
+    },
+    "clearAll": "Limpar tudo",
+    "exceeds": "excede o stock ({stock})",
+    "qtyFor": "Quantidade de {name}",
+    "remove": "Remover {name}",
+    "estimated": "Estimativa (sem impostos)"
+  },
+  "pdp": {
+    "back": "Voltar ao catálogo",
+    "added": "{qty} {uom} adicionados ao carrinho",
+    "specs": "Especificações",
+    "packSize": "Embalagem",
+    "tax": "Taxa de imposto",
+    "per": "por {uom}",
+    "contractApplied": "preço de contrato aplicado",
+    "tierDiscount": "desconto nível {tier}: {pct}%",
+    "available": "Disponível",
+    "tip": "Dica: encomende em múltiplos de {qty} {uom} ({pack}).",
+    "goToCart": "Ir para o carrinho ({count})",
+    "ships": {
+      "one": "Enviado em {count} dia",
+      "other": "Enviado em {count} dias"
+    },
+    "genuine": "{brand} original"
+  },
+  "newOrder": {
+    "cartCleared": "Carrinho limpo – os preços dependem do cliente.",
+    "orderingFor": "Encomenda para {name}",
+    "orderingForLabel": "Encomenda para",
+    "intro": "Selecione o cliente para quem está a encomendar. A tabela de preços, as ofertas e o crédito aplicam-se automaticamente.",
+    "searchLabel": "Pesquisar clientes",
+    "searchPlaceholder": "Cliente, código ou cidade…",
+    "tier": "Nível {tier}",
+    "outstanding": "Em aberto {amount}",
+    "progress": "Progresso da encomenda",
+    "steps": {
+      "customer": "Cliente",
+      "products": "Produtos",
+      "cart": "Carrinho",
+      "review": "Revisão"
+    },
+    "credit": "Crédito disponível {amount}",
+    "change": "Alterar"
+  },
+  "adminDash": {
+    "intro": "Visão em tempo real de clientes, encomendas e utilizadores.",
+    "reviewUsers": "Rever utilizadores",
+    "totalCustomers": "Clientes empresariais",
+    "activeHint": "{count} ativos",
+    "pendingUsers": "Utilizadores por aprovar",
+    "awaitingReview": "A aguardar revisão",
+    "totalOrders": "Total de encomendas",
+    "allTime": "Histórico",
+    "requestsToReview": "Pedidos por rever",
+    "sales30": "Vendas (30 dias)",
+    "unread": "Mensagens por ler",
+    "erpSync": "Sincronização com o ERP",
+    "healthy": "Normal",
+    "trend30": "Vendas – últimos 30 dias",
+    "byStatus": "Encomendas por estado (30 dias)",
+    "activity": "Atividade recente",
+    "recentOrders": "Encomendas recentes",
+    "byCategory": "Vendas por categoria"
+  },
+  "managerDash": {
+    "openApprovals": "Abrir aprovações",
+    "pendingApprovals": "Aprovações pendentes",
+    "ordersToday": "Encomendas de hoje",
+    "salesToday": "Vendas de hoje",
+    "activeReps": "Comerciais ativos",
+    "pendingIssues": "Assuntos pendentes",
+    "issuesHint": "Mensagens e pedidos de alteração",
+    "creditAlerts": "Alertas de crédito ({count})",
+    "creditHint": "Pedidos acima do crédito disponível",
+    "onHold": "conta bloqueada",
+    "overBy": "excede em {amount}",
+    "utilisation": "utilização {pct}%",
+    "reviewOverride": "Rever e autorizar",
+    "awaiting": "A aguardar a sua aprovação",
+    "by": "por {name}",
+    "noApprovals": "Sem aprovações pendentes",
+    "activity": "Atividade recente de clientes",
+    "trend14": "Vendas – últimos 14 dias"
+  },
+  "salesDash": {
+    "visitUpdated": "Visita atualizada",
+    "visits": "Visitas de hoje",
+    "completed": "{count} concluídas",
+    "monthly": "Vendas do mês",
+    "ofTarget": "{pct}% do objetivo",
+    "pendingFollowUps": "Acompanhamentos pendentes",
+    "route": "Roteiro de hoje",
+    "stops": {
+      "one": "{count} paragem",
+      "other": "{count} paragens"
+    },
+    "checkIn": "Registar chegada",
+    "order": "Encomendar",
+    "complete": "Concluir e relatar",
+    "viewReport": "Ver relatório",
+    "addReport": "Adicionar relatório",
+    "ofAmount": "de um objetivo de {amount}",
+    "ordersMonth": "Encomendas (mês)",
+    "remaining": "Em falta",
+    "followDue": "Acompanhamentos a fazer",
+    "recentOrders": "As minhas encomendas recentes"
+  },
+  "workQueue": {
+    "title": "Precisa da sua atenção",
+    "clear": "Nada pendente – está tudo em dia.",
+    "quotesToAnswer": {
+      "one": "Orçamento a aguardar a sua resposta",
+      "other": "Orçamentos a aguardar a sua resposta"
+    },
+    "quotesPending": {
+      "one": "Pedido de orçamento em preparação",
+      "other": "Pedidos de orçamento em preparação"
+    },
+    "onTheWay": {
+      "one": "Entrega a caminho",
+      "other": "Entregas a caminho"
+    },
+    "quotesToPrice": {
+      "one": "Pedido de orçamento por valorizar",
+      "other": "Pedidos de orçamento por valorizar"
+    },
+    "quotesWaiting": {
+      "one": "Orçamento enviado, a aguardar o cliente",
+      "other": "Orçamentos enviados, a aguardar o cliente"
+    },
+    "paymentsToVerify": {
+      "one": "Pagamento por verificar",
+      "other": "Pagamentos por verificar"
+    },
+    "deliveriesDue": {
+      "one": "Entrega prevista hoje ou em atraso",
+      "other": "Entregas previstas hoje ou em atraso"
+    },
+    "deliveriesFailed": {
+      "one": "Entrega falhada por reagendar",
+      "other": "Entregas falhadas por reagendar"
+    },
+    "transfersToApprove": {
+      "one": "Transferência de stock por aprovar",
+      "other": "Transferências de stock por aprovar"
+    },
+    "transfersToReceive": {
+      "one": "Transferência a receber",
+      "other": "Transferências a receber"
+    },
+    "posInTransit": {
+      "one": "Pedido de compra em trânsito",
+      "other": "Pedidos de compra em trânsito"
+    },
+    "requestsToReview": {
+      "one": "Pedido de venda por rever",
+      "other": "Pedidos de venda por rever"
+    },
+    "followUpsDue": {
+      "one": "Acompanhamento para hoje ou em atraso",
+      "other": "Acompanhamentos para hoje ou em atraso"
+    }
+  },
+  "visits": {
+    "outcome": {
+      "order_placed": "Encomenda feita",
+      "quote_requested": "Orçamento pedido",
+      "payment_collected": "Pagamento recebido",
+      "no_order": "Sem encomenda",
+      "issue_reported": "Problema comunicado"
+    },
+    "maxPhotos": "Até {count} fotos por visita",
+    "badImage": "Não foi possível ler a imagem",
+    "saved": "Relatório de visita guardado",
+    "followScheduled": "Acompanhamento agendado para {date}",
+    "saveFailed": "Não foi possível guardar o relatório (o armazenamento pode estar cheio – tente com menos fotos)",
+    "title": "Relatório de visita",
+    "needNotes": "Adicione algumas notas sobre a visita",
+    "outcomeLabel": "Resultado",
+    "contact": "Contacto presente",
+    "notesPlaceholder": "Necessidades discutidas, stock na prateleira, atividade da concorrência, feedback…",
+    "photos": "Fotos",
+    "photo": "Foto da visita",
+    "photoN": "Foto da visita {n}",
+    "removePhoto": "Remover foto {n}",
+    "photosHint": "Prateleira, mercadoria danificada, expositores da concorrência. As fotos são comprimidas no dispositivo.",
+    "nextSteps": "Próximos passos",
+    "nextPlaceholder": "p. ex. Enviar orçamento revisto da massa EP2 até sexta",
+    "followDate": "Data de acompanhamento",
+    "followType": "Tipo de acompanhamento",
+    "followAdded": "Será adicionado um acompanhamento à sua lista.",
+    "save": "Guardar relatório de visita",
+    "emptyTitle": "Ainda sem relatórios de visita",
+    "emptyText": "Os relatórios registados pelo comercial aparecem aqui.",
+    "followOn": "acompanhamento a {date}",
+    "noPhotos": "Sem fotos"
+  },
+  "messages": {
+    "started": "Conversa iniciada",
+    "titleCustomer": "Mensagens e suporte",
+    "introCustomer": "Fale com o seu comercial e com a nossa equipa de suporte.",
+    "introStaff": "Conversas com clientes e tópicos internos.",
+    "new": "Nova conversa",
+    "search": "Pesquisar conversas",
+    "searchPlaceholder": "Pesquisar conversas…",
+    "empty": "Sem conversas",
+    "select": "Selecione uma conversa",
+    "selectText": "Escolha um tópico da lista ou inicie um novo.",
+    "replyPlaceholder": "Escreva uma resposta…",
+    "subject": "Assunto",
+    "subjectPlaceholder": "p. ex. Dúvida sobre a entrega de SO-26-04120"
+  },
+  "customersList": {
+    "assigned": {
+      "one": "{count} cliente atribuído a si",
+      "other": "{count} clientes atribuídos a si"
+    },
+    "intro": "Parceiros comerciais sincronizados a partir de {erp}.",
+    "searchPlaceholder": "Empresa, código, contacto ou cidade…",
+    "statusFilter": "Filtro de estado",
+    "allStatuses": "Todos os estados",
+    "repFilter": "Filtro de comercial",
+    "allReps": "Todos os comerciais",
+    "col": {
+      "code": "Código",
+      "company": "Empresa",
+      "contact": "Contacto",
+      "location": "Localização",
+      "outstanding": "Em aberto"
+    }
+  },
+  "ordersList": {
+    "introCustomer": "Acompanhe cada encomenda desde o envio até à entrega.",
+    "introRep": "Encomendas dos seus clientes atribuídos.",
+    "introStaff": "Todas as encomendas de clientes.",
+    "search": "Pesquisar encomendas",
+    "searchPlaceholder": "N.º de encomenda, cliente, n.º de compra ou produto…",
+    "empty": "Nenhuma encomenda encontrada",
+    "col": {
+      "order": "Encomenda"
+    },
+    "eta": "Entrega"
+  },
+  "team": {
+    "intro": "Desempenho mensal dos comerciais de terreno.",
+    "thisMonth": "Este mês",
+    "achievement": "Cumprimento do objetivo de {name}",
+    "target": "Objetivo {amount}",
+    "customers": {
+      "one": "{count} cliente",
+      "other": "{count} clientes"
+    },
+    "orders": {
+      "one": "{count} encomenda",
+      "other": "{count} encomendas"
+    },
+    "chart": "Vendas do mês por comercial"
   }
 }

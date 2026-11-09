@@ -13,6 +13,7 @@ import { StatusBadge } from '@/components/common/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useReorder } from '@/features/orders/useReorder';
+import { WorkQueue } from './WorkQueue';
 
 /** Home for business (B2B) and retail (B2C) customers. Retail accounts pay up front, so credit is hidden. */
 export function CustomerDashboard() {
@@ -51,6 +52,8 @@ export function CustomerDashboard() {
                 <p className="mt-1 text-xs text-muted-foreground">{t('customerDash.creditUsed', { pct: usedPct })}</p>
               </div>
             )}
+
+            <WorkQueue className="mt-4" hideWhenClear />
 
             <div className="mt-4 grid gap-4 lg:grid-cols-3">
               <SectionCard title={t('customerDash.recentOrders')} className={access.can('offers') ? 'lg:col-span-2' : 'lg:col-span-3'} action={viewAll('/orders')}>

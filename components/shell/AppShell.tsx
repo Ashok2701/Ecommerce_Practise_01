@@ -1,8 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bell, Search, Menu, LogOut, Globe, WifiOff, Wifi, RotateCcw, Sparkles, CheckCheck, UserCircle2, Building2, SunMoon } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -251,6 +251,28 @@ function ConnectivityPill() {
   );
 }
 
+/** Sends requests saved on this device as soon as the connection comes back, whichever page is open. */
+function DraftSync() {
+  const { t } = useT();
+  const ui = useUI();
+  const user = useUser();
+  const access = useAccess(user.role);
+  const qc = useQueryClient();
+  const was = useRef(ui.online);
+  useEffect(() => {
+    const back = ui.online && !was.current;
+    was.current = ui.online;
+    if (!back || !access.can('requests')) return;
+    requestService.syncDrafts({ id: user.id, name: user.name, role: user.role }).then(({ sent, blocked }) => {
+      if (!sent && !blocked) return;
+      qc.invalidateQueries();
+      if (sent) toast.success(t('requests.sent', { count: sent }));
+      if (blocked) toast.error(t('requests.notSent', { count: blocked }));
+    }).catch(() => { /* stays a draft; the Requests page offers a manual retry */ });
+  }, [ui.online]); // eslint-disable-line react-hooks/exhaustive-deps
+  return null;
+}
+
 function OfflineBanner() {
   const { t } = useT();
   const ui = useUI();
@@ -292,6 +314,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <OfflineBanner />
+          <DraftSync />
         </header>
         <main id="main" className="mx-auto w-full max-w-[1400px] px-4 pb-28 pt-5 sm:px-6 md:pb-10 lg:pt-6">{children}</main>
       </div>

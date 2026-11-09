@@ -1,5 +1,5 @@
 'use client';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CloudUpload, Search } from 'lucide-react';
@@ -42,12 +42,7 @@ function RequestsInner() {
       if (blocked) toast.error(t('requests.notSent', { count: blocked }));
     },
   });
-  // send drafts automatically when the connection comes back
-  const wasOnline = useRef(ui.online);
-  useEffect(() => {
-    if (ui.online && !wasOnline.current && drafts.length && !sync.isPending) sync.mutate();
-    wasOnline.current = ui.online;
-  }, [ui.online, drafts.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  // drafts are sent automatically by the app shell when the connection comes back (see DraftSync)
 
   const inView = (r: SalesRequest, v: View) => v === 'all' || (v === 'open' ? OPEN_REQUEST.includes(r.status) : v === 'review' ? REVIEWABLE_REQUEST.includes(r.status) : !OPEN_REQUEST.includes(r.status));
   const s = search.trim().toLowerCase();

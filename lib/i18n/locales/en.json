@@ -260,7 +260,8 @@
     "customer": "Customer",
     "clear": "Clear",
     "filters": "Filters",
-    "close": "Close"
+    "close": "Close",
+    "delete": "Delete"
   },
   "status": {
     "draft": "Draft",
@@ -328,7 +329,43 @@
     "moq": "MOQ",
     "uom": "UOM",
     "yourPrice": "Your price",
-    "listPrice": "List"
+    "listPrice": "List",
+    "minQty": "Minimum order quantity is {qty} {uom}",
+    "added": "Added {qty} {uom} · {name}",
+    "viewCart": "View cart",
+    "backorder": "Backorder",
+    "inCart": "{count} in cart",
+    "save": "save {pct}%",
+    "category": "Category",
+    "availability": "Availability",
+    "brand": "Brand",
+    "pickCustomerText": "Prices and offers are specific to each customer. Choose who you are ordering for.",
+    "searchLabel": "Search products",
+    "searchPlaceholder": "Search by name, SKU or brand…",
+    "clearSearch": "Clear search",
+    "sort": {
+      "label": "Sort",
+      "relevance": "Relevance",
+      "name": "Name A–Z",
+      "priceAsc": "Price: low to high",
+      "priceDesc": "Price: high to low"
+    },
+    "view": "View",
+    "gridView": "Grid view",
+    "listView": "List view",
+    "count": {
+      "one": "{n} product",
+      "other": "{n} products"
+    },
+    "noMatch": "No products match",
+    "clearFilters": "Clear filters",
+    "avail": "{qty} avail.",
+    "pagination": "Pagination",
+    "showResults": "Show results",
+    "items": {
+      "one": "{count} item",
+      "other": "{count} items"
+    }
   },
   "cart": {
     "title": "Cart",
@@ -398,7 +435,112 @@
     "title": "AI Assistant",
     "preview": "Preview",
     "placeholder": "Ask about orders, balances, products…",
-    "disclaimer": "Mock responses. Future version will use permission-checked business functions via the backend."
+    "disclaimer": "Mock responses. Future version will use permission-checked business functions via the backend.",
+    "howTitle": "How the assistant works",
+    "how1": "The language model runs in the backend and only calls approved business functions (orders, quotes, invoices, deliveries, stock, offers).",
+    "how2": "Every function call is checked against the signed-in user's role and data scope.",
+    "how3": "Data comes from the ERP adapter ({erp} today) – never direct database access.",
+    "mockNote": "This is a preview. Answers are worked out on this device from the same data the screens use.",
+    "greeting": "Hi {name}, I can answer questions about your orders, quotes, deliveries, balances, offers and stock. What would you like to know?",
+    "failed": "Sorry, I couldn't get that information right now. Please try again.",
+    "reordered": {
+      "one": "{count} item from {number} added to cart",
+      "other": "{count} items from {number} added to cart"
+    },
+    "scope": "Answers limited to your {role} permissions",
+    "via": "via",
+    "typing": "Assistant is typing",
+    "ask": {
+      "attention": "What needs my attention?",
+      "help": "What can you do?",
+      "balance": "What is my outstanding balance?",
+      "invoices": "Which invoices are open?",
+      "overdue": "Which customers have overdue payments?",
+      "review": "How many requests need review?",
+      "track": "When is my order expected?",
+      "frequent": "Show products I usually buy",
+      "repeat": "Repeat my last order",
+      "performance": "How are my sales this month?",
+      "orders": "Show recent orders",
+      "quotes": "What's happening with quotes?",
+      "deliveries": "Which deliveries are due?",
+      "payments": "Which payments need verifying?",
+      "offers": "What offers do I have?",
+      "stock": "Which products are low on stock?",
+      "transfers": "Show open stock transfers",
+      "consignment": "How is my consignment stock?",
+      "purchaseOrders": "Show open purchase orders",
+      "followUps": "What follow-ups do I have?"
+    },
+    "ai": {
+      "supplier": "You have {ack} purchase order(s) to acknowledge and {pick} pickup(s) to confirm.",
+      "attention": "Here's what's waiting for you:",
+      "overdueInvoices": {
+        "one": "{count} overdue invoice ({amount})",
+        "other": "{count} overdue invoices ({amount})"
+      },
+      "balance": "Your outstanding balance is {amount} against a credit limit of {limit}.",
+      "available": "Available credit: {amount}",
+      "overdueAmt": "Overdue: {amount}",
+      "due": "due {date}",
+      "overdue": {
+        "one": "{count} customer in your scope has an outstanding balance:",
+        "other": "{count} customers in your scope have outstanding balances:"
+      },
+      "review": {
+        "one": "{count} sales request is waiting for review.",
+        "other": "{count} sales requests are waiting for review."
+      },
+      "noQuotes": "There are no open quotes.",
+      "quotesCustomer": "You have {open} open quote(s); {answer} waiting for your answer.",
+      "quotesStaff": "{open} open quote(s); {price} still to price.",
+      "noDeliveries": "There are no open deliveries.",
+      "deliveries": "{open} open deliveries; {due} due today or late.",
+      "payments": {
+        "one": "{count} payment is waiting to be verified.",
+        "other": "{count} payments are waiting to be verified."
+      },
+      "offers": {
+        "one": "{count} offer applies to you right now:",
+        "other": "{count} offers apply to you right now:"
+      },
+      "stock": "Here's the stock I found:",
+      "stockLow": "I couldn't match a product, so here are items running low:",
+      "transfers": {
+        "one": "{count} stock transfer is open:",
+        "other": "{count} stock transfers are open:"
+      },
+      "noConsignment": "There's no consignment stock in scope.",
+      "consignment": "{count} consignment location(s); {low} line(s) below the agreed minimum.",
+      "lines": {
+        "one": "{count} line",
+        "other": "{count} lines"
+      },
+      "followUps": {
+        "one": "You have {count} open follow-up:",
+        "other": "You have {count} open follow-ups:"
+      },
+      "performance": "Your sales this month are {amount}: {pct}% of your {target} target.",
+      "purchaseOrders": {
+        "one": "{count} purchase order is open:",
+        "other": "{count} purchase orders are open:"
+      },
+      "noOpenOrders": "You have no open orders right now.",
+      "track": "Here are your open orders and their expected delivery dates:",
+      "expected": "expected {date}",
+      "trackOne": "Track {number}",
+      "frequent": "Based on the order history, these are the most frequently purchased products:",
+      "viewTop": "View top product",
+      "noRepeat": "I couldn't find a previous order to repeat.",
+      "repeat": "Your last completed order was {number} on {date} for {amount} ({count} items). I can add the same items to your cart at today's prices – you'll review before submitting.",
+      "orders": {
+        "one": "Here is the most recent order:",
+        "other": "Here are the {count} most recent orders:"
+      },
+      "allOrders": "View all orders",
+      "help": "I can help with:",
+      "notUnderstood": "I didn't quite get that. I can help with:"
+    }
   },
   "offline": {
     "banner": "You are offline. Catalog and recent data are served from cache; new orders are saved as Pending Sync.",
@@ -1273,7 +1415,29 @@
       "company": "Company",
       "product": "Product",
       "notice": "Important notice"
-    }
+    },
+    "updated": "Announcement updated",
+    "created": "Announcement created",
+    "editTitle": "Edit announcement",
+    "new": "New announcement",
+    "titleRequired": "Title is required",
+    "titleLabel": "Title",
+    "message": "Message",
+    "categoryLabel": "Category",
+    "publishNow": "Publish now",
+    "publishOn": "Publish on",
+    "target": "Target audience",
+    "pinToTop": "Pin to top",
+    "publishedToast": "Published – audience notified",
+    "unpublishedToast": "Unpublished",
+    "deleted": "Announcement deleted",
+    "introManage": "Create and publish updates for customers and internal teams.",
+    "introView": "Company news, product updates and important notices.",
+    "notices": "Important notices",
+    "empty": "No announcements",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "deleteTitle": "Delete announcement?"
   },
   "customers": {
     "detail": {
@@ -1431,7 +1595,8 @@
       "cancelTitle": "Cancel {number}?",
       "cancelText": "The order is withdrawn. This can't be undone.",
       "cancelConfirm": "Cancel order"
-    }
+    },
+    "repriced": "Prices refreshed to the current customer pricing."
   },
   "reps": {
     "kpi": {
@@ -1485,5 +1650,376 @@
       "other": "{count} products"
     },
     "empty": "No suppliers"
+  },
+  "followUps": {
+    "intro": "Calls, visits, quotations and payment reminders for your customers.",
+    "add": "Add follow-up",
+    "caughtUp": "You're all caught up.",
+    "markedDone": "Marked as done",
+    "markDone": "Mark done",
+    "reopen": "Reopen",
+    "pickCustomer": "Select a customer",
+    "added": "Follow-up added",
+    "selectCustomer": "Select customer",
+    "type": "Type",
+    "notes": "Notes"
+  },
+  "notifications": {
+    "title": "Notification center",
+    "unread": {
+      "one": "{count} unread",
+      "other": "{count} unread"
+    },
+    "unreadTab": "Unread",
+    "enablePush": "Enable push",
+    "pushUnsupported": "Push notifications are not supported on this device",
+    "pushGranted": "Push permission granted – server push starts once the backend is connected",
+    "pushState": "Permission: {state}",
+    "emptyTitle": "You're all caught up",
+    "emptyText": "New notifications will appear here."
+  },
+  "performance": {
+    "title": "Sales performance",
+    "target": "Monthly target",
+    "activeCustomers": "Active customers",
+    "achievement": "Target achievement",
+    "toGo": "{amount} to go · {days} days left",
+    "trend": "Sales vs target – last 6 months",
+    "topCustomers": "Top customers (all time)"
+  },
+  "settingsPage": {
+    "intro": "How this installation connects to the ERP, its language and the app on devices.",
+    "save": "Save changes",
+    "saved": "Settings saved",
+    "erp": "ERP integration",
+    "adapter": "Adapter: sage-x3 · through the Nexus backend",
+    "mockMode": "Mock mode",
+    "liveMode": "Live mode",
+    "apiUrl": "Backend API base URL",
+    "apiHint": "To switch every screen from mock data to the backend, set",
+    "dataSource": "Current data source:",
+    "test": "Test connection",
+    "mockTest": "Running on mock data – there is no backend to test yet.",
+    "connOk": "Backend reachable",
+    "connFail": "Backend not reachable ({status})",
+    "planned": "Planned adapters: SAP Business One / S/4HANA, Microsoft Dynamics 365, Oracle NetSuite.",
+    "rules": "Order and approval rules",
+    "rulesText": "Credit mode, auto-approval limits and who approves what are set on the Workflow rules page.",
+    "language": "Language & region",
+    "yourLanguage": "Your language",
+    "languageHint": "Every screen is translated. The languages offered and the default are set in the installation's settings file.",
+    "currency": "Currency",
+    "region": "Number format",
+    "pwa": "App & notifications",
+    "manifest": "Web app manifest configured",
+    "sw": "Service worker: {state}",
+    "swState": {
+      "checking": "checking…",
+      "active": "active",
+      "prodOnly": "registered in production builds",
+      "unsupported": "not supported"
+    },
+    "offlineQueue": "Offline order queue (Pending Sync) enabled",
+    "installed": "App installed",
+    "install": "Install app",
+    "installUnavailable": "Install available in supported browsers",
+    "pushOrders": "Push notifications for order updates",
+    "digest": "Daily email digest for managers"
+  },
+  "quickOrder": {
+    "scanTitle": "Scan product barcode",
+    "scanText": "Point the camera at a product or shelf label. Each scan adds one MOQ.",
+    "camStarting": "Starting camera…",
+    "camUnsupported": "Live barcode scanning isn't supported in this browser (it works in Chrome on Android). Use the demo scan below or type the code.",
+    "camDenied": "Camera permission was denied. Allow camera access or type the code.",
+    "simulate": "Simulate a scan (demo)",
+    "rounded": "Rounded to a multiple of the MOQ ({moq})",
+    "noMatch": "No product matches \"{code}\"",
+    "unknownBarcode": "Unknown barcode: {code}",
+    "pasted": {
+      "one": "{count} line added",
+      "other": "{count} lines added"
+    },
+    "pastedSome": "{ok} added · {bad} not recognised",
+    "addedToCart": {
+      "one": "{count} line added to cart",
+      "other": "{count} lines added to cart"
+    },
+    "pickCustomerTitle": "Select a customer first",
+    "pickCustomerText": "Quick order uses the customer's price list and offers.",
+    "selectCustomer": "Select customer",
+    "intro": "Type a product code and quantity, press Enter, repeat. Or scan barcodes, or paste a list from Excel.",
+    "pasteList": "Paste list",
+    "scan": "Scan",
+    "code": "Product code",
+    "codePlaceholder": "SKU or name, e.g. BRG-6205 or helmet",
+    "qtyPlaceholder": "Qty (MOQ)",
+    "add": "Add",
+    "pasteLabel": "Paste one product per line:",
+    "pasteFormat": "SKU quantity",
+    "addLines": "Add lines",
+    "notRecognised": "Not recognised",
+    "emptyTitle": "No lines yet",
+    "emptyText": "Start typing a product code above. Quantities are rounded up to the pack MOQ automatically.",
+    "lines": {
+      "one": "{count} line",
+      "other": "{count} lines"
+    },
+    "clearAll": "Clear all",
+    "exceeds": "exceeds stock ({stock})",
+    "qtyFor": "Quantity for {name}",
+    "remove": "Remove {name}",
+    "estimated": "Estimated (excl. tax)"
+  },
+  "pdp": {
+    "back": "Back to catalog",
+    "added": "Added {qty} {uom} to cart",
+    "specs": "Specifications",
+    "packSize": "Pack size",
+    "tax": "Tax rate",
+    "per": "per {uom}",
+    "contractApplied": "contract price applied",
+    "tierDiscount": "Tier {tier} discount {pct}%",
+    "available": "Available",
+    "tip": "Tip: order in multiples of {qty} {uom} ({pack}).",
+    "goToCart": "Go to cart ({count})",
+    "ships": {
+      "one": "Ships in {count} day",
+      "other": "Ships in {count} days"
+    },
+    "genuine": "Genuine {brand}"
+  },
+  "newOrder": {
+    "cartCleared": "Cart cleared – prices are customer-specific.",
+    "orderingFor": "Ordering for {name}",
+    "orderingForLabel": "Ordering for",
+    "intro": "Select the customer you are ordering for. Their price list, offers and credit apply automatically.",
+    "searchLabel": "Search customers",
+    "searchPlaceholder": "Search customer, code or city…",
+    "tier": "Tier {tier}",
+    "outstanding": "Outstanding {amount}",
+    "progress": "Order progress",
+    "steps": {
+      "customer": "Customer",
+      "products": "Products",
+      "cart": "Cart",
+      "review": "Review"
+    },
+    "credit": "Available credit {amount}",
+    "change": "Change"
+  },
+  "adminDash": {
+    "intro": "Live view across customers, orders and users.",
+    "reviewUsers": "Review user approvals",
+    "totalCustomers": "Business customers",
+    "activeHint": "{count} active",
+    "pendingUsers": "Pending user approvals",
+    "awaitingReview": "Awaiting review",
+    "totalOrders": "Total orders",
+    "allTime": "All time",
+    "requestsToReview": "Requests to review",
+    "sales30": "Sales value (30 days)",
+    "unread": "Unread messages",
+    "erpSync": "ERP sync status",
+    "healthy": "Healthy",
+    "trend30": "Sales – last 30 days",
+    "byStatus": "Orders by status (30 days)",
+    "activity": "Recent activity",
+    "recentOrders": "Recent orders",
+    "byCategory": "Sales by category"
+  },
+  "managerDash": {
+    "openApprovals": "Open approvals",
+    "pendingApprovals": "Pending approvals",
+    "ordersToday": "Orders today",
+    "salesToday": "Sales today",
+    "activeReps": "Active sales reps",
+    "pendingIssues": "Pending issues",
+    "issuesHint": "Messages & change requests",
+    "creditAlerts": "Credit alerts ({count})",
+    "creditHint": "Requests above available credit",
+    "onHold": "account on hold",
+    "overBy": "over by {amount}",
+    "utilisation": "utilisation {pct}%",
+    "reviewOverride": "Review & override",
+    "awaiting": "Awaiting your approval",
+    "by": "by {name}",
+    "noApprovals": "No pending approvals",
+    "activity": "Recent customer activity",
+    "trend14": "Sales – last 14 days"
+  },
+  "salesDash": {
+    "visitUpdated": "Visit updated",
+    "visits": "Today's visits",
+    "completed": "{count} completed",
+    "monthly": "Monthly sales",
+    "ofTarget": "{pct}% of target",
+    "pendingFollowUps": "Pending follow-ups",
+    "route": "Today's route",
+    "stops": {
+      "one": "{count} stop",
+      "other": "{count} stops"
+    },
+    "checkIn": "Check in",
+    "order": "Order",
+    "complete": "Complete & report",
+    "viewReport": "View report",
+    "addReport": "Add report",
+    "ofAmount": "of {amount} target",
+    "ordersMonth": "Orders (month)",
+    "remaining": "Remaining",
+    "followDue": "Follow-ups due",
+    "recentOrders": "My recent orders"
+  },
+  "workQueue": {
+    "title": "Needs your attention",
+    "clear": "Nothing waiting – all clear.",
+    "quotesToAnswer": {
+      "one": "Quote waiting for your answer",
+      "other": "Quotes waiting for your answer"
+    },
+    "quotesPending": {
+      "one": "Quote request being priced",
+      "other": "Quote requests being priced"
+    },
+    "onTheWay": {
+      "one": "Delivery on its way",
+      "other": "Deliveries on their way"
+    },
+    "quotesToPrice": {
+      "one": "Quote request to price",
+      "other": "Quote requests to price"
+    },
+    "quotesWaiting": {
+      "one": "Quote sent, waiting for the customer",
+      "other": "Quotes sent, waiting for the customer"
+    },
+    "paymentsToVerify": {
+      "one": "Payment to verify",
+      "other": "Payments to verify"
+    },
+    "deliveriesDue": {
+      "one": "Delivery due today or late",
+      "other": "Deliveries due today or late"
+    },
+    "deliveriesFailed": {
+      "one": "Failed delivery to reschedule",
+      "other": "Failed deliveries to reschedule"
+    },
+    "transfersToApprove": {
+      "one": "Stock transfer to approve",
+      "other": "Stock transfers to approve"
+    },
+    "transfersToReceive": {
+      "one": "Incoming transfer to receive",
+      "other": "Incoming transfers to receive"
+    },
+    "posInTransit": {
+      "one": "Purchase order in transit",
+      "other": "Purchase orders in transit"
+    },
+    "requestsToReview": {
+      "one": "Sales request to review",
+      "other": "Sales requests to review"
+    },
+    "followUpsDue": {
+      "one": "Follow-up due today or late",
+      "other": "Follow-ups due today or late"
+    }
+  },
+  "visits": {
+    "outcome": {
+      "order_placed": "Order placed",
+      "quote_requested": "Quote requested",
+      "payment_collected": "Payment collected",
+      "no_order": "No order",
+      "issue_reported": "Issue reported"
+    },
+    "maxPhotos": "Up to {count} photos per visit",
+    "badImage": "Could not read that image",
+    "saved": "Visit report saved",
+    "followScheduled": "Follow-up scheduled for {date}",
+    "saveFailed": "Could not save the report (device storage may be full – try fewer photos)",
+    "title": "Visit report",
+    "needNotes": "Add a few notes about the visit",
+    "outcomeLabel": "Outcome",
+    "contact": "Contact met",
+    "notesPlaceholder": "Requirements discussed, stock seen on shelf, competitor activity, feedback…",
+    "photos": "Photos",
+    "photo": "Visit photo",
+    "photoN": "Visit photo {n}",
+    "removePhoto": "Remove photo {n}",
+    "photosHint": "Shelf, damaged goods, competitor displays. Photos are compressed on the device.",
+    "nextSteps": "Next steps",
+    "nextPlaceholder": "e.g. Send revised quote for EP2 grease by Friday",
+    "followDate": "Follow-up date",
+    "followType": "Follow-up type",
+    "followAdded": "A follow-up will be added to your list.",
+    "save": "Save visit report",
+    "emptyTitle": "No visit reports yet",
+    "emptyText": "Reports logged by the sales representative appear here.",
+    "followOn": "follow-up {date}",
+    "noPhotos": "No photos"
+  },
+  "messages": {
+    "started": "Conversation started",
+    "titleCustomer": "Messages & support",
+    "introCustomer": "Chat with your sales representative and our support team.",
+    "introStaff": "Customer conversations and internal threads.",
+    "new": "New conversation",
+    "search": "Search conversations",
+    "searchPlaceholder": "Search conversations…",
+    "empty": "No conversations",
+    "select": "Select a conversation",
+    "selectText": "Choose a thread from the list or start a new one.",
+    "replyPlaceholder": "Type a reply…",
+    "subject": "Subject",
+    "subjectPlaceholder": "e.g. Delivery query for SO-26-04120"
+  },
+  "customersList": {
+    "assigned": {
+      "one": "{count} customer assigned to you",
+      "other": "{count} customers assigned to you"
+    },
+    "intro": "Business partners synchronised from {erp}.",
+    "searchPlaceholder": "Company, code, contact or city…",
+    "statusFilter": "Status filter",
+    "allStatuses": "All statuses",
+    "repFilter": "Sales rep filter",
+    "allReps": "All sales reps",
+    "col": {
+      "code": "Code",
+      "company": "Company",
+      "contact": "Contact",
+      "location": "Location",
+      "outstanding": "Outstanding"
+    }
+  },
+  "ordersList": {
+    "introCustomer": "Track every order from submission to delivery.",
+    "introRep": "Orders for your assigned customers.",
+    "introStaff": "All customer orders.",
+    "search": "Search orders",
+    "searchPlaceholder": "Order no., customer, PO or product…",
+    "empty": "No orders found",
+    "col": {
+      "order": "Order"
+    },
+    "eta": "ETA"
+  },
+  "team": {
+    "intro": "Monthly performance of field sales representatives.",
+    "thisMonth": "This month",
+    "achievement": "{name} target achievement",
+    "target": "Target {amount}",
+    "customers": {
+      "one": "{count} customer",
+      "other": "{count} customers"
+    },
+    "orders": {
+      "one": "{count} order",
+      "other": "{count} orders"
+    },
+    "chart": "Sales this month by representative"
   }
 }

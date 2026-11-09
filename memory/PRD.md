@@ -87,3 +87,11 @@ Set NEXT_PUBLIC_DATA_SOURCE=api + NEXT_PUBLIC_API_BASE_URL to hit the Node.js ba
 - Offers page (customers: only offers that apply to them; staff: all, with filters by type and status, last sync time, Refresh from ERP); offer page with locked "Terms from Sage X3" (rule, quantity breaks, audience, sites, ERP reference) and products with the viewer's price
 - Catalog badges and prices follow offers; product page price follows the typed quantity; cart/checkout/requests/orders/invoices show applied offer codes and free lines; quotes show staff what offer the customer would get without a quote; consignment call-offs get no offers
 - Admin gets the Offers module by default
+
+## Iteration 12 – Frontend completion pass (Nov 2026)
+- Every remaining screen moved onto translations (about 380 new keys in all six languages): catalog, product page, quick order, new order flow, dashboards, customers, orders, follow-ups, visit reports, messages, announcements, notifications, performance, sales team, settings, assistant
+- "Needs your attention" work queue on the supervisor, sales rep and customer dashboards: quotes to price/answer, payments to verify, deliveries due or failed, transfers to approve/receive, purchase orders in transit (only queues the role can open)
+- AI assistant (preview) knows the newer modules: what needs attention, quotes, deliveries, payments to verify, offers, stock lookup by name/SKU (with other sites), transfers, consignment, follow-ups, performance, purchase orders; answers in the user's language; suggestion chips per role; understands keywords in all six languages
+- Settings page rebuilt: ERP connection with a real health check in live mode, link to Workflow rules (the earlier dummy approval switches were removed), language, app install and notification preferences
+- Offline: requests saved on the device are now sent automatically when the connection returns on any page (not only on Sales requests); verified with the network actually switched off (pages load from the service worker, order saved as draft, sent on reconnect)
+- Right-to-left safe spacing (start/end instead of left/right) on the touched screens

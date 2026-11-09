@@ -19,10 +19,7 @@ import { cn } from '@/lib/utils';
 import { isCustomerRole } from '@/types/domain';
 import type { Order } from '@/types/domain';
 
-const TABS = [
-  { key: 'all', label: 'All' }, { key: 'open', label: 'Open' },
-  { key: 'confirmed', label: 'Confirmed' }, { key: 'processing', label: 'Processing' }, { key: 'dispatched', label: 'Dispatched' }, { key: 'delivered', label: 'Delivered' }, { key: 'cancelled', label: 'Cancelled' },
-];
+const TABS = ['all', 'open', 'confirmed', 'processing', 'dispatched', 'delivered', 'cancelled'].map((key) => ({ key }));
 
 function OrdersInner() {
   const { t } = useT();
@@ -45,36 +42,36 @@ function OrdersInner() {
 
   return (
     <div>
-      <PageHeader title={t('nav.orders')} description={isCustomerRole(user.role) ? 'Track every order from submission to delivery.' : user.role === 'SALES_REP' ? 'Orders for your assigned customers.' : 'All customer orders across the platform.'}
-        actions={canOrder ? <Button asChild><Link href={user.role === 'SALES_REP' ? '/orders/new' : '/catalog'}><PlusCircle className="mr-2 h-4 w-4" />New order</Link></Button> : undefined} />
+      <PageHeader title={t('nav.orders')} description={isCustomerRole(user.role) ? t('ordersList.introCustomer') : user.role === 'SALES_REP' ? t('ordersList.introRep') : t('ordersList.introStaff')}
+        actions={canOrder ? <Button asChild><Link href={user.role === 'SALES_REP' ? '/orders/new' : '/catalog'}><PlusCircle className="me-2 h-4 w-4" aria-hidden="true" />{t('nav.newOrder')}</Link></Button> : undefined} />
       <div className="mb-4 flex flex-col gap-3">
-        <div className="relative max-w-md"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input aria-label="Search orders" data-testid="orders-search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Order no., customer, PO or product…" className="h-10 bg-card pl-9" /></div>
+        <div className="relative max-w-md"><Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" /><Input aria-label={t('ordersList.search')} data-testid="orders-search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('ordersList.searchPlaceholder')} className="h-10 bg-card ps-9" /></div>
         <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none" role="tablist">
           {TABS.map((x) => (
             <button key={x.key} role="tab" aria-selected={tab === x.key} onClick={() => setTab(x.key)} data-testid={`orders-tab-${x.key}`} className={cn('shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium', tab === x.key ? 'border-primary bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:text-foreground')}>
-              {x.label} <span className="ml-1 tabular opacity-70">{count(x.key)}</span>
+              {x.key === 'all' ? t('common.all') : t(`status.${x.key}`)} <span className="ms-1 tabular opacity-70">{count(x.key)}</span>
             </button>
           ))}
         </div>
       </div>
       <QueryView query={q}>
         {() => (
-          <DataTable<Order> testId="orders-table" rows={rows} rowKey={(o) => o.id} onRowClick={(o) => router.push(`/orders/${o.id}`)} empty={<EmptyState title="No orders found" />}
+          <DataTable<Order> testId="orders-table" rows={rows} rowKey={(o) => o.id} onRowClick={(o) => router.push(`/orders/${o.id}`)} empty={<EmptyState title={t('ordersList.empty')} />}
             columns={[
-              { key: 'n', header: 'Order', cell: (o) => <div><div className="font-mono text-xs font-semibold">{o.number}{o.site && <span className="ms-2 rounded bg-muted px-1.5 py-0.5 font-sans text-[10px] font-medium text-muted-foreground" title={t('sites.label')}>{o.site}</span>}</div>{o.poNumber && <div className="text-[11px] text-muted-foreground">{o.poNumber}</div>}</div> },
+              { key: 'n', header: t('ordersList.col.order'), cell: (o) => <div><div className="font-mono text-xs font-semibold">{o.number}{o.site && <span className="ms-2 rounded bg-muted px-1.5 py-0.5 font-sans text-[10px] font-medium text-muted-foreground" title={t('sites.label')}>{o.site}</span>}</div>{o.poNumber && <div className="text-[11px] text-muted-foreground">{o.poNumber}</div>}</div> },
               { key: 'd', header: t('common.date'), cell: (o) => fmtDate(o.date), className: 'whitespace-nowrap' },
-              ...(showCustomer ? [{ key: 'c', header: t('common.customer'), cell: (o: Order) => <div><div className="font-medium">{o.customerName}</div><div className="text-[11px] text-muted-foreground">by {o.createdBy.name}</div></div> }] : []),
-              { key: 'i', header: 'Items', cell: (o) => o.lines.length, align: 'center' },
+              ...(showCustomer ? [{ key: 'c', header: t('common.customer'), cell: (o: Order) => <div><div className="font-medium">{o.customerName}</div><div className="text-[11px] text-muted-foreground">{t('managerDash.by', { name: o.createdBy.name })}</div></div> }] : []),
+              { key: 'i', header: t('orders.detail.items'), cell: (o) => o.lines.length, align: 'center' },
               { key: 'a', header: t('common.amount'), cell: (o) => <span className="font-medium">{fmtMoney(o.total)}</span>, align: 'right' },
               { key: 's', header: t('common.status'), cell: (o) => <StatusBadge status={o.status} /> },
-              { key: 'e', header: 'Expected', cell: (o) => (o.status === 'pending_sync' ? '—' : fmtDate(o.expectedDelivery)), className: 'whitespace-nowrap text-muted-foreground' },
-              ...(canOrder ? [{ key: 'r', header: '', cell: (o: Order) => <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); reorder(o); }} aria-label={`Repeat ${o.number}`}><RotateCcw className="h-4 w-4" /></Button> }] : []),
+              { key: 'e', header: t('orders.detail.expected'), cell: (o) => (o.status === 'pending_sync' ? '—' : fmtDate(o.expectedDelivery)), className: 'whitespace-nowrap text-muted-foreground' },
+              ...(canOrder ? [{ key: 'r', header: '', cell: (o: Order) => <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); reorder(o); }} aria-label={t('customerDash.reorder', { number: o.number })}><RotateCcw className="h-4 w-4" /></Button> }] : []),
             ]}
             mobileCard={(o) => (
               <div>
-                <div className="flex items-start justify-between gap-2"><div><div className="font-mono text-xs font-semibold">{o.number}</div><div className="text-xs text-muted-foreground">{fmtDate(o.date)} · {o.lines.length} items</div></div><StatusBadge status={o.status} /></div>
+                <div className="flex items-start justify-between gap-2"><div><div className="font-mono text-xs font-semibold">{o.number}</div><div className="text-xs text-muted-foreground">{fmtDate(o.date)} · {t('customerDash.items', { count: o.lines.length })}</div></div><StatusBadge status={o.status} /></div>
                 {showCustomer && <div className="mt-2 text-sm font-medium">{o.customerName}</div>}
-                <div className="mt-2 flex items-center justify-between"><span className="text-xs text-muted-foreground">ETA {o.status === 'pending_sync' ? 'after sync' : fmtDate(o.expectedDelivery)}</span><span className="font-semibold tabular">{fmtMoney(o.total)}</span></div>
+                <div className="mt-2 flex items-center justify-between"><span className="text-xs text-muted-foreground">{t('ordersList.eta')} {o.status === 'pending_sync' ? t('orders.detail.afterSync') : fmtDate(o.expectedDelivery)}</span><span className="font-semibold tabular">{fmtMoney(o.total)}</span></div>
               </div>
             )}
           />
